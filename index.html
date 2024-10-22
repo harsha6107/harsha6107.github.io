@@ -3,28 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harsha Tummala's Portfolio</title>
+    <title>Hriday Muley's Portfolio</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+
+    <!-- Navigation Bar -->
+    <nav id="navbar">
+        <div class="container">
+            <h1>Harsha Tummala</h1>
+            <ul>
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
 
     <!-- Header Section -->
     <header>
         <div class="container">
             <div class="header-content">
-                <img src="images/profile.jpg" alt="Profile Picture" class="profile-img">
-                <h1>Harsha Tummala</h1>
+                <h1>Hi, I'm Harsha Tummala</h1>
                 <p>Software Engineer | Machine Learning Enthusiast</p>
+                <a href="#projects" class="btn">View My Work</a>
             </div>
         </div>
     </header>
 
     <!-- About Section -->
     <section id="about">
-        <div class="container">
-            <h2>About Me</h2>
-            <p>I’m a software engineer with a passion for solving problems and building efficient solutions. I specialize in backend development, machine learning, and iOS app development.</p>
+        <div class="container about-container">
+            <img src="images/profile.jpg" alt="Profile Picture" class="profile-img">
+            <div class="about-text">
+                <h2>About Me</h2>
+                <p>I’m a software engineer passionate about solving complex problems through coding. With expertise in backend development, machine learning, and iOS app development, I aim to build scalable and efficient solutions.</p>
+            </div>
         </div>
     </section>
 
@@ -32,15 +49,17 @@
     <section id="projects">
         <div class="container">
             <h2>Projects</h2>
-            <div class="project">
-                <h3>Project 1: Machine Learning Classifier</h3>
-                <p>A classifier built using Python, NumPy, and Scikit-learn, capable of detecting patterns in large datasets.</p>
-                <a href="https://github.com/harsha6107/ml-classifier" target="_blank">View on GitHub</a>
-            </div>
-            <div class="project">
-                <h3>Project 2: iOS App SDK Integration</h3>
-                <p>Developed a feature-rich SDK for iOS applications, integrated with a robust backend API.</p>
-                <a href="https://github.com/harsha6107/ios-sdk" target="_blank">View on GitHub</a>
+            <div class="project-grid">
+                <div class="project">
+                    <h3>Project 1: Machine Learning Classifier</h3>
+                    <p>A classifier built using Python, NumPy, and Scikit-learn, capable of detecting patterns in large datasets.</p>
+                    <a href="https://github.com/yourusername/ml-classifier" target="_blank">View on GitHub</a>
+                </div>
+                <div class="project">
+                    <h3>Project 2: iOS App SDK Integration</h3>
+                    <p>Developed a feature-rich SDK for iOS applications, integrated with a robust backend API.</p>
+                    <a href="https://github.com/yourusername/ios-sdk" target="_blank">View on GitHub</a>
+                </div>
             </div>
         </div>
     </section>
@@ -49,7 +68,7 @@
     <section id="skills">
         <div class="container">
             <h2>Skills</h2>
-            <div class="skills">
+            <div class="skills-grid">
                 <div><i class="fab fa-python"></i> Python</div>
                 <div><i class="fab fa-js"></i> JavaScript</div>
                 <div><i class="fab fa-apple"></i> iOS Development</div>
@@ -74,5 +93,6 @@
         <p>© 2024 Harsha Tummala</p>
     </footer>
 
+    <script src="js/scripts.js"></script>
 </body>
 </html>
