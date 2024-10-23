@@ -237,6 +237,7 @@ nav .container {
 
 .project-card:hover {
   transform: translateY(-10px);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
 }
 
 .project-card img {
@@ -343,6 +344,82 @@ nav .container {
 
 .contact-links a:hover {
   background-color: #00adb5;
+}
+
+/* Hobbies Section */
+.hobbies {
+  padding: 100px 0;
+  text-align: center;
+  background-color: #f7f7f7;
+}
+
+.hobbies h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.hobbies p {
+  font-size: 1.2em;
+  margin-bottom: 40px;
+  color: #666;
+}
+
+.hobby-grid {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.hobby-item {
+  width: 200px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.hobby-item:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.hobby-item i {
+  font-size: 3em;
+  color: #00adb5;
+  transition: color 0.3s ease;
+}
+
+.hobby-item h3 {
+  margin-top: 15px;
+  font-size: 1.5em;
+  color: #333;
+}
+
+.hobby-item p {
+  margin-top: 10px;
+  font-size: 1em;
+  color: #666;
+}
+
+/* Hover effects for specific items */
+#gym:hover i {
+  color: #e63946; /* Red for gym */
+}
+
+#running:hover i {
+  color: #f4a261; /* Orange for running */
+}
+
+#racket-sports:hover i {
+  color: #2a9d8f; /* Green for racket sports */
+}
+
+#lego:hover i {
+  color: #e9c46a; /* Yellow for LEGO */
 }
 
 /* Footer */

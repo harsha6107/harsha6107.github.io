@@ -135,6 +135,41 @@
     </div>
   </section>
 
+  <!-- Hobbies Section -->
+  <section id="hobbies" class="hobbies">
+    <h2>Life Beyond Code</h2>
+    <p>I’m passionate about fitness, creativity, and fun — here’s how I spend my time outside of work!</p>
+    <div class="hobby-grid">
+        <!-- Gym Hobby Block -->
+        <div class="hobby-item" id="gym" data-aos="fade-up">
+          <i class="fas fa-dumbbell"></i>
+          <h3>Gym</h3>
+          <p>Strong code, stronger body!</p>
+        </div>
+    
+        <!-- Running Hobby Block -->
+        <div class="hobby-item" id="running" data-aos="fade-up" data-aos-delay="100">
+          <i class="fas fa-running"></i>
+          <h3>Running</h3>
+          <p>Running clears my mind for the next big idea.</p>
+        </div>
+    
+        <!-- Racket Sports Hobby Block -->
+        <div class="hobby-item" id="racket-sports" data-aos="fade-up" data-aos-delay="200">
+          <i class="fas fa-table-tennis"></i>
+          <h3>Racket Sports</h3>
+          <p>Strategy and precision, on the court and in code!</p>
+        </div>
+    
+        <!-- LEGO Hobby Block -->
+        <div class="hobby-item" id="lego" data-aos="fade-up" data-aos-delay="300">
+          <i class="fas fa-cube"></i>
+          <h3>Building LEGO Sets</h3>
+          <p>One brick at a time, just like solving puzzles.</p>
+        </div>
+    </div>
+  </section>  
+
   <!-- Footer -->
   <footer>
     <div class="container">
@@ -149,7 +184,11 @@
   <!-- AOS JS -->
   <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
   <script>
-    AOS.init();
+    AOS.init({
+      duration: 1000, // Animation duration
+      easing: 'ease-in-out', // Animation easing
+      once: true // Animate only once when in view
+    });
   </script>
 </body>
 </html>
