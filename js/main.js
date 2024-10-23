@@ -1,49 +1,63 @@
-// Mobile Menu Toggle
-const navToggle = document.getElementById('nav-toggle');
-const navMenu = document.getElementById('nav-menu');
+document.addEventListener('DOMContentLoaded', () => {
+  // Mobile Menu Toggle
+  const navToggle = document.getElementById('nav-toggle');
+  const navMenu = document.getElementById('nav-menu');
 
-navToggle.addEventListener('click', () => {
-  navMenu.classList.toggle('show-menu');
-  navToggle.querySelector('i').classList.toggle('fa-bars');
-  navToggle.querySelector('i').classList.toggle('fa-times');
-});
+  if (navToggle && navMenu) {
+    navToggle.addEventListener('click', () => {
+      navMenu.classList.toggle('show-menu');
+      navToggle.querySelector('i').classList.toggle('fa-bars');
+      navToggle.querySelector('i').classList.toggle('fa-times');
+    });
+  }
 
-// Close menu when link is clicked
-const navLinks = document.querySelectorAll('.nav-link');
+  // Close menu when link is clicked
+  const navLinks = document.querySelectorAll('.nav-link');
+  
+  if (navLinks) {
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        navMenu.classList.remove('show-menu');
+        navToggle.querySelector('i').classList.add('fa-bars');
+        navToggle.querySelector('i').classList.remove('fa-times');
+      });
+    });
+  }
 
-navLinks.forEach(link => {
-  link.addEventListener('click', () => {
-    navMenu.classList.remove('show-menu');
-    navToggle.querySelector('i').classList.add('fa-bars');
-    navToggle.querySelector('i').classList.remove('fa-times');
+  // Scroll Animation (Sticky Header)
+  window.addEventListener('scroll', () => {
+    const header = document.querySelector('nav');
+    if (header) {
+      header.classList.toggle('sticky', window.scrollY > 0);
+    }
   });
-});
 
-// Scroll Animation
-window.addEventListener('scroll', () => {
-  const header = document.querySelector('nav');
-  header.classList.toggle('sticky', window.scrollY > 0);
-});
+  // Initialize TypewriterJS
+  if (typeof Typewriter !== 'undefined') {
+    const typewriter = new Typewriter('#typewriter-text', {
+      loop: true
+    });
 
-// Initialize TypewriterJS
-const typewriter = new Typewriter('#typewriter-text', {
-  loop: true
-});
+    typewriter.typeString('Software Engineer')
+      .pauseFor(2000)
+      .deleteAll()
+      .typeString('Machine Learning Enthusiast')
+      .pauseFor(2000)
+      .deleteAll()
+      .typeString('iOS Developer')
+      .pauseFor(2000)
+      .start();
+  } else {
+    console.error("TypewriterJS is not defined.");
+  }
 
-typewriter.typeString('Software Engineer')
-  .pauseFor(2000)
-  .deleteAll()
-  .typeString('Machine Learning Enthusiast')
-  .pauseFor(2000)
-  .deleteAll()
-  .typeString('iOS Developer')
-  .pauseFor(2000)
-  .start();
+  // Dark/Light Mode Toggle
+  const themeToggle = document.getElementById('theme-toggle');
+  const body = document.body;
 
-// Dark/Light Mode Toggle
-const themeToggle = document.getElementById('theme-toggle');
-const body = document.body;
-
-themeToggle.addEventListener('click', () => {
-  body.classList.toggle('light-mode');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      body.classList.toggle('light-mode');
+    });
+  }
 });
