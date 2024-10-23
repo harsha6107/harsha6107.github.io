@@ -366,13 +366,11 @@ nav .container {
 .hobbies h2 {
   font-size: 2.5em;
   margin-bottom: 20px;
-  color: #333;
 }
 
 .hobbies p {
   font-size: 1.2em;
   margin-bottom: 40px;
-  color: #666;
 }
 
 .hobby-grid {
@@ -382,14 +380,22 @@ nav .container {
   flex-wrap: wrap;
 }
 
+/* Hobby Item LEGO Block */
 .hobby-item {
-  width: 200px;
-  padding: 20px;
+  width: 180px;
+  height: 180px;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  padding: 20px;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
 }
 
 .hobby-item:hover {
@@ -397,39 +403,35 @@ nav .container {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.hobby-item i {
+/* Hidden Information (Revealed on Click) */
+.hidden-info {
+  display: none;
+  margin-top: 10px;
+  font-size: 1em;
+  line-height: 1.4;
+}
+
+/* Hobby Icon Styling */
+.hobby-icon {
   font-size: 3em;
   color: #00adb5;
-  transition: color 0.3s ease;
+  margin-bottom: 10px;
 }
 
 .hobby-item h3 {
-  margin-top: 15px;
-  font-size: 1.5em;
-  color: #333;
+  font-size: 1.2em;
+  font-weight: 600;
 }
 
-.hobby-item p {
-  margin-top: 10px;
-  font-size: 1em;
-  color: #666;
-}
+/* LEGO-like colors for each hobby */
+#gym { background-color: #ff5252; } /* Red Block */
+#running { background-color: #4caf50; } /* Green Block */
+#racket-sports { background-color: #ff9800; } /* Orange Block */
+#lego { background-color: #2196f3; } /* Blue Block */
 
-/* Hover effects for specific items */
-#gym:hover i {
-  color: #e63946; /* Red for gym */
-}
-
-#running:hover i {
-  color: #f4a261; /* Orange for running */
-}
-
-#racket-sports:hover i {
-  color: #2a9d8f; /* Green for racket sports */
-}
-
-#lego:hover i {
-  color: #e9c46a; /* Yellow for LEGO */
+/* Expanding the block on click */
+.expanded .hidden-info {
+  display: block;
 }
 
 /* Footer */

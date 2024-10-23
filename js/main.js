@@ -54,6 +54,17 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error("TypewriterJS is not defined.");
   }
 
+  // Select all hobby items
+  const hobbyItems = document.querySelectorAll('.hobby-item');
+
+  // Add click event listener to each hobby item
+  hobbyItems.forEach(item => {
+    item.addEventListener('click', () => {
+      // Toggle the 'expanded' class on click to reveal hidden info
+      item.classList.toggle('expanded');
+    });
+  });
+
   // Dark/Light Mode Toggle
   const themeToggle = document.getElementById('theme-toggle');
   const body = document.body;
