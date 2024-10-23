@@ -51,12 +51,6 @@ nav {
   z-index: 1000;
 }
 
-/* Hover Effect for Project Cards */
-.project-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
-}
-
 nav .container {
   display: flex;
   align-items: center;
@@ -101,10 +95,16 @@ nav .container {
   display: none;
 }
 
+/* Hover Effect for Project Cards */
+.project-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
+}
+
 /* Hero Section */
 .hero {
   height: 100vh;
-  background: url('images/hero-bg.jpg') no-repeat center center/cover;
+  background: url('../images/hero-bg.jpg') no-repeat center center/cover;
   display: flex;
   align-items: center;
   text-align: center;
