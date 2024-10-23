@@ -396,11 +396,12 @@ nav .container {
   position: relative;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
+  opacity: 0; /* Hidden initially for animation */
 }
 
-.hobby-item:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+.hobby-item[data-aos="snap-down"] {
+  opacity: 1;
+  animation: snapDown 1s ease-out-back forwards;
 }
 
 /* Hidden Information (Revealed on Click) */
@@ -414,7 +415,7 @@ nav .container {
 /* Hobby Icon Styling */
 .hobby-icon {
   font-size: 3em;
-  color: #00adb5;
+  color: #ffffff; /* Ensure the icons are readable */
   margin-bottom: 10px;
 }
 
@@ -429,9 +430,20 @@ nav .container {
 #racket-sports { background-color: #ff9800; } /* Orange Block */
 #lego { background-color: #2196f3; } /* Blue Block */
 
-/* Expanding the block on click */
-.expanded .hidden-info {
-  display: block;
+/* Keyframes for Snapping Animation */
+@keyframes snapDown {
+  0% {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(10px);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* Footer */
