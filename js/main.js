@@ -74,11 +74,4 @@ document.addEventListener('DOMContentLoaded', () => {
       body.classList.toggle('light-mode');
     });
   }
-
-  // Initialize AOS Animations
-  AOS.init({
-    duration: 1000, // Duration for the animations
-    easing: 'ease-out-back', // Easing effect for "snapping" animations
-    once: true // Animation happens only once on scroll
-  });
 });

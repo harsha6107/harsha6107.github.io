@@ -53,7 +53,7 @@
   </section>
 
   <!-- About Section -->
-  <section id="about" class="about" data-aos="fade-up">
+<section id="about" class="about" data-aos="fade-up" data-aos-delay="200">
     <div class="container">
       <div class="about-content">
         <div class="about-text">
@@ -67,9 +67,9 @@
       </div>
     </div>
   </section>
-
+  
   <!-- Projects Section -->
-  <section id="projects" class="projects" data-aos="zoom-in">
+  <section id="projects" class="projects" data-aos="zoom-in" data-aos-delay="400">
     <div class="container">
       <h2>Projects</h2>
       <div class="projects-grid">
@@ -94,9 +94,9 @@
       </div>
     </div>
   </section>
-
+  
   <!-- Skills Section -->
-  <section id="skills" class="skills" data-aos="fade-right">
+  <section id="skills" class="skills" data-aos="fade-right" data-aos-delay="600">
     <div class="container">
       <h2>Skills</h2>
       <div class="skills-grid">
@@ -123,9 +123,9 @@
       </div>
     </div>
   </section>
-
+  
   <!-- Contact Section -->
-  <section id="contact" class="contact" data-aos="fade-left">
+  <section id="contact" class="contact" data-aos="fade-left" data-aos-delay="800">
     <div class="container">
       <h2>Contact Me</h2>
       <p>Feel free to reach out for collaborations or job opportunities in Backend, Full Stack, or Machine Learning roles.</p>
@@ -136,41 +136,42 @@
       </div>
     </div>
   </section>
-
-  <section id="hobbies" class="hobbies">
+  
+  <!-- Hobbies Section -->
+  <section id="hobbies" class="hobbies" data-aos="fade-up" data-aos-delay="1000">
     <h2>Life Beyond Code</h2>
     <p>I’m passionate about fitness, creativity, and fun—here’s how I spend my time outside of work!</p>
     
     <div class="hobby-grid">
       <!-- Gym Hobby Block -->
-      <div class="hobby-item" id="gym" data-aos="snap-down">
+      <div class="hobby-item" id="gym" data-aos="snap-down" data-aos-delay="1100">
         <div class="hobby-icon"><i class="fas fa-dumbbell"></i></div>
         <h3>Gym</h3>
         <p class="hidden-info">Strong code, stronger body!</p>
       </div>
   
       <!-- Running Hobby Block -->
-      <div class="hobby-item" id="running" data-aos="snap-down">
+      <div class="hobby-item" id="running" data-aos="snap-down" data-aos-delay="1200">
         <div class="hobby-icon"><i class="fas fa-running"></i></div>
         <h3>Running</h3>
         <p class="hidden-info">Running clears my mind for the next big idea.</p>
       </div>
   
       <!-- Racket Sports Hobby Block -->
-      <div class="hobby-item" id="racket-sports" data-aos="snap-down">
+      <div class="hobby-item" id="racket-sports" data-aos="snap-down" data-aos-delay="1300">
         <div class="hobby-icon"><i class="fas fa-table-tennis"></i></div>
         <h3>Racket Sports</h3>
         <p class="hidden-info">Strategy and precision, on the court and in code!</p>
       </div>
   
       <!-- LEGO Hobby Block -->
-      <div class="hobby-item" id="lego" data-aos="snap-down">
+      <div class="hobby-item" id="lego" data-aos="snap-down" data-aos-delay="1400">
         <div class="hobby-icon"><i class="fas fa-cube"></i></div>
         <h3>Building LEGO Sets</h3>
         <p class="hidden-info">One brick at a time, just like solving puzzles.</p>
       </div>
     </div>
-  </section>
+  </section>  
 
   <!-- Footer -->
   <footer>
@@ -187,9 +188,10 @@
   <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
   <script>
     AOS.init({
-      duration: 1000, // Animation duration
-      easing: 'ease-out-back', // Add some bounce for the "snapping" effect
-      once: true // Ensure the animation happens only once when scrolled into view
+      duration: 1200, // Adjusted animation duration
+      easing: 'ease-out-back', // A bit of bounce for the animations
+      delay: 200, // Default delay (can be overridden by individual elements)
+      once: false, // Animate only once on scroll
     });
   </script>
 </body>
