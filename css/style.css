@@ -28,18 +28,28 @@ a {
   margin: 0 auto;
 }
 
-/* Dark and Light Mode CSS Variables */
+/* Default Dark Mode */
 :root {
   --primary-color: #00adb5;
   --background-dark: #0e0e0e;
-  --background-light: #ffffff;
   --text-dark: #ffffff;
+  --background-light: #ffffff;
   --text-light: #000000;
+}
+
+body {
+  background-color: var(--background-dark);
+  color: var(--text-dark);
 }
 
 body.light-mode {
   background-color: var(--background-light);
   color: var(--text-light);
+}
+
+body.light-mode .btn {
+  background-color: #007a7e;
+  color: #ffffff;
 }
 
 /* Navigation */
