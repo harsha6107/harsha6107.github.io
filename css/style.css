@@ -366,11 +366,13 @@ nav .container {
 .hobbies h2 {
   font-size: 2.5em;
   margin-bottom: 20px;
+  color: #333333; /* Darkened the color for better visibility */
 }
 
 .hobbies p {
   font-size: 1.2em;
   margin-bottom: 40px;
+  color: #555555; /* Darker shade for visibility */
 }
 
 .hobby-grid {
@@ -422,6 +424,7 @@ nav .container {
 .hobby-item h3 {
   font-size: 1.2em;
   font-weight: 600;
+  color: #ffffff; /* Icon label text color */
 }
 
 /* LEGO-like colors for each hobby */
