@@ -38,13 +38,16 @@ document.addEventListener('DOMContentLoaded', () => {
       loop: true
     });
 
-    typewriter.typeString('Software Engineer')
+    typewriter.typeString('Backend Development')
       .pauseFor(2000)
       .deleteAll()
-      .typeString('Machine Learning Enthusiast')
+      .typeString('Full Stack Development')
       .pauseFor(2000)
       .deleteAll()
-      .typeString('iOS Developer')
+      .typeString('Machine Learning Engineering')
+      .pauseFor(2000)
+      .deleteAll()
+      .typeString('Cloud Computing')
       .pauseFor(2000)
       .start();
   } else {
