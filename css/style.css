@@ -95,12 +95,6 @@ nav .container {
   display: none;
 }
 
-/* Hover Effect for Project Cards */
-.project-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
-}
-
 /* Hero Section */
 .hero {
   height: 100vh;
