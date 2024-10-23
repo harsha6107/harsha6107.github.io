@@ -1,198 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Meta Tags -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harsha Tummala's Portfolio</title>
-    
-    <!-- CSS Links -->
-    <link rel="stylesheet" href="css/styles.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <meta charset="UTF-8">
+  <title>Harsha Tummala | Software Engineer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Favicon -->
+  <link rel="icon" href="images/favicon.ico">
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- AOS CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav id="navbar">
-        <div class="container">
-            <h1 class="logo"><a href="#home">Harsha Tummala</a></h1>
-            <ul class="nav-links">
-                <li><a href="#about">About</a></li>
-                <li><a href="#experience">Experience</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            <!-- Mobile Menu Icon -->
-            <div class="menu-toggle">
-                <i class="fas fa-bars"></i>
-            </div>
+  <!-- Navigation -->
+  <nav>
+    <div class="container">
+      <div class="nav-brand">
+        <a href="#home">Harsha Tummala</a>
+      </div>
+      <div class="nav-toggle" id="nav-toggle">
+        <i class="fas fa-bars"></i>
+      </div>
+      <ul class="nav-menu" id="nav-menu">
+        <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
+        <li class="nav-item"><a href="#projects" class="nav-link">Projects</a></li>
+        <li class="nav-item"><a href="#skills" class="nav-link">Skills</a></li>
+        <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1>Hello, I'm <span class="highlight">Harsha</span></h1>
+        <p id="typewriter-text"></p>
+        <a href="#projects" class="btn">View My Work</a>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <a href="#about"><i class="fas fa-chevron-down"></i></a>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="about" data-aos="fade-up">
+    <div class="container">
+      <div class="about-content">
+        <div class="about-text">
+          <h2>About Me</h2>
+          <p>I'm a passionate software engineer with experience in developing scalable web and mobile applications. My expertise lies in backend development, machine learning, and iOS app development.</p>
+          <p>I love to explore new technologies and apply them to solve real-world problems.</p>
         </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <header id="home">
-        <div class="hero-container">
-            <h2>Hello, I'm <span class="highlight">Harsha</span></h2>
-            <h1>Software Engineer & Machine Learning Enthusiast</h1>
-            <p>Transforming ideas into reality through code.</p>
-            <a href="#projects" class="btn">View My Work</a>
+        <div class="about-image">
+          <img src="images/profile.jpg" alt="Harsha Tummala">
         </div>
-    </header>
+      </div>
+    </div>
+  </section>
 
-    <!-- About Section -->
-    <section id="about">
-        <div class="container about-container">
-            <div class="about-img">
-                <img src="images/profile.jpg" alt="Harsha Tummala">
-            </div>
-            <div class="about-text">
-                <h2>About Me</h2>
-                <p>I am a software engineer with over 3 years of industry experience in backend development, big data systems, cloud computing, and machine learning workflows. I thrive in ambiguous projects, bringing clarity through strong communication and problem-solving skills.</p>
-                <p>Currently pursuing my Master's in Software Engineering at Carnegie Mellon University, I am expanding my expertise in software architecture, distributed systems, and AI engineering.</p>
-                <a href="#contact" class="btn">Let's Connect</a>
-            </div>
+  <!-- Projects Section -->
+  <section id="projects" class="projects" data-aos="zoom-in">
+    <div class="container">
+      <h2>Projects</h2>
+      <div class="projects-grid">
+        <!-- Project 1 -->
+        <div class="project-card">
+          <img src="images/project1.jpg" alt="Project 1">
+          <div class="project-info">
+            <h3>Machine Learning Classifier</h3>
+            <p>Developed a classifier using Python and Scikit-learn to analyze large datasets efficiently.</p>
+            <a href="https://github.com/harsha6107/ml-classifier" target="_blank">View on GitHub</a>
+          </div>
         </div>
-    </section>
-
-    <!-- Experience Section -->
-    <section id="experience">
-        <div class="container">
-            <h2>Professional Experience</h2>
-            <div class="experience-grid">
-                <!-- Experience 1 -->
-                <div class="experience-card">
-                    <h3>Associate Software Engineer II</h3>
-                    <h4>BlackRock - Aladdin Product Group</h4>
-                    <p><em>July 2022 - May 2023 | Gurgaon, India</em></p>
-                    <ul>
-                        <li>Engineered a production application for Hadoop process monitoring with Flask, reducing workload by 30% for multiple high-impact teams.</li>
-                        <li>Consolidated data from multiple database servers, improving data accessibility and decreasing retrieval times by 25%.</li>
-                        <li>Led a team of four, managed scrum ceremonies, and mentored new interns.</li>
-                    </ul>
-                </div>
-                <!-- Experience 2 -->
-                <div class="experience-card">
-                    <h3>Analyst / Full Stack Developer</h3>
-                    <h4>BlackRock - Aladdin Product Group</h4>
-                    <p><em>July 2020 - June 2022 | Gurgaon, India</em></p>
-                    <ul>
-                        <li>Designed a Unified Data Model with Apache Cassandra, consolidating investment data from over 100 sources.</li>
-                        <li>Enhanced data pipeline on Hadoop, boosting processing speed and accuracy for trade data by 30%.</li>
-                        <li>Implemented fail-safes for data migration to ensure seamless integration and zero data loss.</li>
-                    </ul>
-                </div>
-                <!-- Add more experiences as needed -->
-            </div>
+        <!-- Project 2 -->
+        <div class="project-card">
+          <img src="images/project2.jpg" alt="Project 2">
+          <div class="project-info">
+            <h3>iOS SDK Integration</h3>
+            <p>Implemented an SDK for iOS apps, enhancing functionality and user experience.</p>
+            <a href="https://github.com/harsha6107/ios-sdk" target="_blank">View on GitHub</a>
+          </div>
         </div>
-    </section>
+        <!-- Add more projects as needed -->
+      </div>
+    </div>
+  </section>
 
-    <!-- Projects Section -->
-    <section id="projects">
-        <div class="container">
-            <h2>Projects</h2>
-            <div class="projects-grid">
-                <!-- Project 1 -->
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="images/project1.jpg" alt="Adrich Studio Project">
-                    </div>
-                    <div class="project-info">
-                        <h3>Adrich Studio Project</h3>
-                        <p>Led system scaling for Adrich's IoT-powered platform, expanding capacity from 20,000 to 5 million embedded chips, supporting a 250x increase in operational scope.</p>
-                        <a href="https://www.adrich.io/" target="_blank">Learn More</a>
-                    </div>
-                </div>
-                <!-- Project 2 -->
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="images/project2.jpg" alt="Movie Recommendation System">
-                    </div>
-                    <div class="project-info">
-                        <h3>Movie Recommendation System</h3>
-                        <p>Engineered an end-to-end movie recommendation system using boosting algorithms and continuous model updates with Kafka streams.</p>
-                        <a href="https://github.com/harsha6107/movie-recommendation-system" target="_blank">View on GitHub</a>
-                    </div>
-                </div>
-                <!-- Project 3 -->
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="images/project3.jpg" alt="Accented Speech Recognition">
-                    </div>
-                    <div class="project-info">
-                        <h3>Accented Speech Recognition</h3>
-                        <p>Developed an automatic speech recognition system based on Whisper, improving recognition accuracy by 30% for accented speech.</p>
-                        <a href="https://github.com/harsha6107/accented-speech-recognition" target="_blank">View on GitHub</a>
-                    </div>
-                </div>
-                <!-- Add more projects as needed -->
-            </div>
+  <!-- Skills Section -->
+  <section id="skills" class="skills" data-aos="fade-right">
+    <div class="container">
+      <h2>Skills</h2>
+      <div class="skills-grid">
+        <div class="skill-item">
+          <i class="fab fa-python"></i>
+          <p>Python</p>
         </div>
-    </section>
-
-    <!-- Skills Section -->
-    <section id="skills">
-        <div class="container">
-            <h2>Skills</h2>
-            <div class="skills-grid">
-                <!-- Skill 1 -->
-                <div class="skill">
-                    <i class="fab fa-python"></i>
-                    <p>Python</p>
-                </div>
-                <!-- Skill 2 -->
-                <div class="skill">
-                    <i class="fab fa-java"></i>
-                    <p>Java</p>
-                </div>
-                <!-- Skill 3 -->
-                <div class="skill">
-                    <i class="fab fa-js-square"></i>
-                    <p>JavaScript</p>
-                </div>
-                <!-- Skill 4 -->
-                <div class="skill">
-                    <img src="images/swift-icon.png" alt="Swift Icon">
-                    <p>Swift</p>
-                </div>
-                <!-- Skill 5 -->
-                <div class="skill">
-                    <i class="fab fa-docker"></i>
-                    <p>Docker</p>
-                </div>
-                <!-- Skill 6 -->
-                <div class="skill">
-                    <img src="images/hadoop-icon.png" alt="Hadoop Icon">
-                    <p>Hadoop</p>
-                </div>
-                <!-- Add more skills as needed -->
-            </div>
+        <div class="skill-item">
+          <i class="fab fa-js-square"></i>
+          <p>JavaScript</p>
         </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact">
-        <div class="container contact-container">
-            <h2>Contact Me</h2>
-            <p>Feel free to reach out for collaborations or just a friendly chat.</p>
-            <div class="contact-links">
-                <a href="mailto:harsha6107@gmail.com"><i class="fas fa-envelope"></i> Email</a>
-                <a href="https://github.com/harsha6107" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-                <a href="https://linkedin.com/in/harsha-tummala-8a6bb6167" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
-            </div>
+        <div class="skill-item">
+          <i class="fab fa-apple"></i>
+          <p>iOS Development</p>
         </div>
-    </section>
+        <div class="skill-item">
+          <i class="fab fa-react"></i>
+          <p>React</p>
+        </div>
+        <div class="skill-item">
+          <i class="fab fa-node-js"></i>
+          <p>Node.js</p>
+        </div>
+        <!-- Add more skills as needed -->
+      </div>
+    </div>
+  </section>
 
-    <!-- Footer -->
-    <footer>
-        <p>© 2024 Harsha Tummala</p>
-    </footer>
+  <!-- Contact Section -->
+  <section id="contact" class="contact" data-aos="fade-left">
+    <div class="container">
+      <h2>Contact Me</h2>
+      <p>Feel free to reach out for collaborations or just a friendly chat.</p>
+      <div class="contact-links">
+        <a href="mailto:harsha6107@gmail.com"><i class="fas fa-envelope"></i> Email</a>
+        <a href="https://github.com/harsha6107" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+        <a href="https://linkedin.com/in/harsha-tummala-8a6bb6167" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
+      </div>
+    </div>
+  </section>
 
-    <!-- JavaScript -->
-    <script src="js/scripts.js"></script>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>© 2024 Harsha Tummala</p>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="js/main.js"></script>
+  <!-- AOS JS -->
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    AOS.init();
+  </script>
+  <!-- TypewriterJS -->
+  <script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
 </body>
 </html>
