@@ -30,6 +30,17 @@ a {
   max-width: 1200px;
   margin: 0 auto;
   max-width: 100%;
+  overflow-x: hidden;
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+section {
+  width: 100vw;
+  overflow-x: hidden;
 }
 
 /* Default Dark Mode */
@@ -86,6 +97,19 @@ nav .container {
   gap: 30px;
 }
 
+.nav-menu .show-menu {
+  display: flex; /* For a horizontal menu */
+  flex-direction: column; /* Adjust if you want vertical layout */
+  position: absolute;
+  right: 0;
+  top: 60px;
+  background-color: rgba(14, 14, 14, 0.95); /* Matches your dark theme */
+  width: 200px;
+  padding: 20px;
+  border-radius: 0 0 0 10px;
+  z-index: 1001;
+}
+
 .nav-item .nav-link {
   color: #ffffff;
   font-weight: 500;
@@ -119,9 +143,7 @@ nav .container {
   align-items: center;
   text-align: center;
   position: relative;
-  overflow: hidden;
   width: 100%;
-  overflow: hidden;
   max-width: 100%;
   overflow-x: hidden;
 }
