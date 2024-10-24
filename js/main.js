@@ -54,14 +54,17 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error("TypewriterJS is not defined.");
   }
 
-  // Select all hobby items
-  const hobbyItems = document.querySelectorAll('.hobby-item');
-
   // Add click event listener to each hobby item
+  const hobbyItems = document.querySelectorAll('.hobby-item');
   hobbyItems.forEach(item => {
-    item.addEventListener('click', () => {
-      // Toggle the 'expanded' class on click to reveal hidden info
-      item.classList.toggle('expanded');
+    item.addEventListener('click', function() {
+      this.classList.toggle('expanded');
+      let hiddenInfo = this.querySelector('.hidden-info');
+      if (this.classList.contains('expanded')) {
+        hiddenInfo.style.maxHeight = hiddenInfo.scrollHeight + "px";
+      } else {
+        hiddenInfo.style.maxHeight = '0';
+      }
     });
   });
 
