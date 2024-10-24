@@ -17,6 +17,7 @@ body {
 img {
   max-width: 100%;
   height: auto;
+  display: block;
 }
 
 a {
@@ -121,6 +122,8 @@ nav .container {
   overflow: hidden;
   width: 100%;
   overflow: hidden;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .hero::before {
@@ -197,6 +200,8 @@ nav .container {
   padding: 100px 0;
   width: 100%;
   overflow: hidden;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .about-content {
@@ -204,6 +209,7 @@ nav .container {
   align-items: center;
   flex-wrap: wrap;
   gap: 50px;
+  max-width: 100%; 
 }
 
 .about-text {
@@ -235,6 +241,8 @@ nav .container {
   padding: 100px 0;
   background-color: #1a1a1a;
   width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   overflow: hidden;
 }
 
@@ -248,6 +256,8 @@ nav .container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 30px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .project-card {
@@ -296,7 +306,9 @@ nav .container {
 .skills {
   padding: 100px 0;
   width: 100%;
+  max-width: 100%;
   overflow: hidden;
+  overflow-x: hidden;
 }
 
 .skills h2 {
@@ -310,6 +322,9 @@ nav .container {
   flex-wrap: wrap;
   justify-content: center;
   gap: 30px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
 }
 
 .skill-item {
@@ -341,6 +356,8 @@ nav .container {
   text-align: center;
   width: 100%;
   overflow: hidden;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .contact h2 {
@@ -377,6 +394,8 @@ nav .container {
   padding: 100px 0;
   text-align: center;
   background-color: #f7f7f7;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .hobbies h2 {
