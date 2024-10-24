@@ -10,6 +10,8 @@ body {
   background-color: var(--background-dark);
   color: var(--text-dark);
   scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 img {
@@ -26,6 +28,7 @@ a {
   width: 90%;
   max-width: 1200px;
   margin: 0 auto;
+  max-width: 100%;
 }
 
 /* Default Dark Mode */
@@ -40,6 +43,8 @@ a {
 body {
   background-color: var(--background-dark);
   color: var(--text-dark);
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body.light-mode {
@@ -113,6 +118,8 @@ nav .container {
   align-items: center;
   text-align: center;
   position: relative;
+  overflow: hidden;
+  width: 100%;
   overflow: hidden;
 }
 
@@ -188,6 +195,8 @@ nav .container {
 /* About Section */
 .about {
   padding: 100px 0;
+  width: 100%;
+  overflow: hidden;
 }
 
 .about-content {
@@ -225,6 +234,8 @@ nav .container {
 .projects {
   padding: 100px 0;
   background-color: #1a1a1a;
+  width: 100%;
+  overflow: hidden;
 }
 
 .projects h2 {
@@ -284,6 +295,8 @@ nav .container {
 /* Skills Section */
 .skills {
   padding: 100px 0;
+  width: 100%;
+  overflow: hidden;
 }
 
 .skills h2 {
@@ -326,6 +339,8 @@ nav .container {
   padding: 100px 0;
   background-color: #1a1a1a;
   text-align: center;
+  width: 100%;
+  overflow: hidden;
 }
 
 .contact h2 {
