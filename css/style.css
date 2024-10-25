@@ -221,7 +221,6 @@ nav .container {
 .about {
   padding: 100px 0;
   width: 100%;
-  overflow: hidden;
   max-width: 100%;
   overflow-x: hidden;
 }
@@ -265,7 +264,6 @@ nav .container {
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
-  overflow: hidden;
 }
 
 .projects h2 {
@@ -329,7 +327,6 @@ nav .container {
   padding: 100px 0;
   width: 100%;
   max-width: 100%;
-  overflow: hidden;
   overflow-x: hidden;
 }
 
@@ -377,7 +374,6 @@ nav .container {
   background-color: #1a1a1a;
   text-align: center;
   width: 100%;
-  overflow: hidden;
   max-width: 100%;
   overflow-x: hidden;
 }
