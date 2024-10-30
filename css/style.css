@@ -363,6 +363,120 @@ nav .container {
   background-color: #00adb5;
 }
 
+/* Hobbies Section */
+.hobbies {
+  padding: 100px 0;
+  text-align: center;
+  background-color: #f7f7f7;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.hobbies h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  color: #333333;
+}
+
+.hobbies p {
+  font-size: 1.2em;
+  margin-bottom: 40px;
+  color: #555555;
+}
+
+.hobby-grid {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+/* Hobby Item LEGO Block */
+.hobby-item {
+  width: 180px;
+  height: 180px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  position: relative;
+  opacity: 0; /* Hidden initially for animation */
+}
+
+/* Keyframes for Snapping Animation */
+@keyframes snapDown {
+  0% {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Applying snap-down to elements */
+[data-aos="snap-down"] {
+  opacity: 0;  /* Start hidden */
+  transform: translateY(-30px); /* Start above the final position */
+}
+
+/* Ensure AOS applies the animation when in view */
+[data-aos="snap-down"].aos-animate {
+  opacity: 1;
+  transform: translateY(0);
+  animation: snapDown 0.6s ease-out forwards; /* Controlled duration and easing */
+}
+
+/* Hobby Icon Styling */
+.hobby-icon {
+  font-size: 3em;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.hobby-item {
+  /* existing styles */
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.hobby-item h3 {
+  font-size: 1.2em;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* Expanded Hobby Item */
+.hobby-item.expanded {
+  height: auto;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.4s ease, height 0.4s ease;
+}
+
+.hidden-info {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.4s ease, max-height 0.4s ease;
+}
+
+.hobby-item.expanded .hidden-info {
+  opacity: 1;
+  max-height: 200px; /* Adjust depending on how much text you have */
+}
+
+/* LEGO-like colors for each hobby */
+#gym { background-color: #ff5252; }
+#running { background-color: #4caf50; }
+#racket-sports { background-color: #ff9800; }
+#lego { background-color: #2196f3; }
+
 /* Footer */
 footer {
   padding: 20px 0;
