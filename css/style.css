@@ -33,16 +33,6 @@ a {
   overflow-x: hidden;
 }
 
-html, body {
-  width: 100%;
-  overflow-x: hidden;
-}
-
-section {
-  width: 100vw;
-  overflow-x: hidden;
-}
-
 /* Default Dark Mode */
 :root {
   --primary-color: #00adb5;
@@ -55,8 +45,6 @@ section {
 body {
   background-color: var(--background-dark);
   color: var(--text-dark);
-  width: 100%;
-  overflow-x: hidden;
 }
 
 body.light-mode {
@@ -97,19 +85,6 @@ nav .container {
   gap: 30px;
 }
 
-.nav-menu .show-menu {
-  display: flex; /* For a horizontal menu */
-  flex-direction: column; /* Adjust if you want vertical layout */
-  position: absolute;
-  right: 0;
-  top: 60px;
-  background-color: rgba(14, 14, 14, 0.95); /* Matches your dark theme */
-  width: 200px;
-  padding: 20px;
-  border-radius: 0 0 0 10px;
-  z-index: 1001;
-}
-
 .nav-item .nav-link {
   color: #ffffff;
   font-weight: 500;
@@ -144,8 +119,6 @@ nav .container {
   text-align: center;
   position: relative;
   width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
 }
 
 .hero::before {
@@ -192,37 +165,10 @@ nav .container {
   background-color: #007a7e;
 }
 
-.scroll-indicator {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.scroll-indicator a {
-  color: #ffffff;
-  font-size: 2em;
-  animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateX(-50%) translateY(0);
-  }
-  40% {
-    transform: translateX(-50%) translateY(-15px);
-  }
-  60% {
-    transform: translateX(-50%) translateY(-7px);
-  }
-}
-
 /* About Section */
 .about {
   padding: 100px 0;
   width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
 }
 
 .about-content {
@@ -230,7 +176,6 @@ nav .container {
   align-items: center;
   flex-wrap: wrap;
   gap: 50px;
-  max-width: 100%; 
 }
 
 .about-text {
@@ -261,9 +206,7 @@ nav .container {
 .projects {
   padding: 100px 0;
   background-color: #1a1a1a;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
+  color: #ffffff;
 }
 
 .projects h2 {
@@ -276,8 +219,6 @@ nav .container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 30px;
-  max-width: 100%;
-  overflow: hidden;
 }
 
 .project-card {
@@ -325,9 +266,6 @@ nav .container {
 /* Skills Section */
 .skills {
   padding: 100px 0;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
 }
 
 .skills h2 {
@@ -341,9 +279,6 @@ nav .container {
   flex-wrap: wrap;
   justify-content: center;
   gap: 30px;
-  overflow: hidden;
-  width: 100%;
-  max-width: 100%;
 }
 
 .skill-item {
@@ -368,14 +303,35 @@ nav .container {
   font-weight: 500;
 }
 
+/* Education Section */
+.education {
+  padding: 100px 0;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  text-align: center;
+}
+
+.education h2 {
+  font-size: 2.5em;
+  margin-bottom: 50px;
+}
+
+.education-item h3 {
+  font-size: 1.5em;
+  color: #00adb5;
+  margin-bottom: 10px;
+}
+
+.education-item p {
+  font-size: 1.1em;
+  color: #ddd;
+}
+
 /* Contact Section */
 .contact {
   padding: 100px 0;
   background-color: #1a1a1a;
   text-align: center;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
 }
 
 .contact h2 {
@@ -406,120 +362,6 @@ nav .container {
 .contact-links a:hover {
   background-color: #00adb5;
 }
-
-/* Hobbies Section */
-.hobbies {
-  padding: 100px 0;
-  text-align: center;
-  background-color: #f7f7f7;
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-.hobbies h2 {
-  font-size: 2.5em;
-  margin-bottom: 20px;
-  color: #333333;
-}
-
-.hobbies p {
-  font-size: 1.2em;
-  margin-bottom: 40px;
-  color: #555555;
-}
-
-.hobby-grid {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  flex-wrap: wrap;
-}
-
-/* Hobby Item LEGO Block */
-.hobby-item {
-  width: 180px;
-  height: 180px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 20px;
-  position: relative;
-  opacity: 0; /* Hidden initially for animation */
-}
-
-/* Keyframes for Snapping Animation */
-@keyframes snapDown {
-  0% {
-    transform: translateY(-30px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Applying snap-down to elements */
-[data-aos="snap-down"] {
-  opacity: 0;  /* Start hidden */
-  transform: translateY(-30px); /* Start above the final position */
-}
-
-/* Ensure AOS applies the animation when in view */
-[data-aos="snap-down"].aos-animate {
-  opacity: 1;
-  transform: translateY(0);
-  animation: snapDown 0.6s ease-out forwards; /* Controlled duration and easing */
-}
-
-/* Hobby Icon Styling */
-.hobby-icon {
-  font-size: 3em;
-  color: #ffffff;
-  margin-bottom: 10px;
-}
-
-.hobby-item {
-  /* existing styles */
-  cursor: pointer;
-  overflow: hidden;
-}
-
-.hobby-item h3 {
-  font-size: 1.2em;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-/* Expanded Hobby Item */
-.hobby-item.expanded {
-  height: auto;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  transition: box-shadow 0.4s ease, height 0.4s ease;
-}
-
-.hidden-info {
-  opacity: 0;
-  max-height: 0;
-  overflow: hidden;
-  transition: opacity 0.4s ease, max-height 0.4s ease;
-}
-
-.hobby-item.expanded .hidden-info {
-  opacity: 1;
-  max-height: 200px; /* Adjust depending on how much text you have */
-}
-
-/* LEGO-like colors for each hobby */
-#gym { background-color: #ff5252; }
-#running { background-color: #4caf50; }
-#racket-sports { background-color: #ff9800; }
-#lego { background-color: #2196f3; }
 
 /* Footer */
 footer {

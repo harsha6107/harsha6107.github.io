@@ -4,19 +4,14 @@
   <meta charset="UTF-8">
   <title>Harsha Tummala | Software Engineer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Favicon -->
   <link rel="icon" href="images/favicon.ico">
-  <!-- CSS -->
   <link rel="stylesheet" href="css/style.css">
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
-  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- AOS CSS -->
   <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 </head>
 <body>
+
   <!-- Navigation -->
   <nav>
     <div class="container">
@@ -30,10 +25,9 @@
         <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
         <li class="nav-item"><a href="#projects" class="nav-link">Projects</a></li>
         <li class="nav-item"><a href="#skills" class="nav-link">Skills</a></li>
+        <li class="nav-item"><a href="#education" class="nav-link">Education</a></li>
         <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
       </ul>
-      <!-- Dark/Light Mode Toggle Button
-      <button id="theme-toggle" class="btn-toggle">Toggle Dark/Light Mode</button> -->
     </div>
   </nav>
 
@@ -53,13 +47,13 @@
   </section>
 
   <!-- About Section -->
-<section id="about" class="about" data-aos="fade-up" data-aos-delay="200">
+  <section id="about" class="about" data-aos="fade-up" data-aos-delay="200">
     <div class="container">
       <div class="about-content">
         <div class="about-text">
           <h2>About Me</h2>
-          <p>With 3+ years of industry experience in Backend Development, Cloud Computing, and Machine Learning workflows, I thrive in solving complex problems and driving successful project execution.</p>
-          <p>I'm passionate about scalable and maintainable solutions, and I'm currently pursuing my Master's degree at Carnegie Mellon University (CMU).</p>
+          <p>I'm a Software Engineering Master's student at Carnegie Mellon University with over 3 years of experience in Backend Development, Big Data systems, and Machine Learning workflows. Previously, I worked at BlackRock, where I contributed to data-driven projects to enhance accessibility and streamline data workflows.</p>
+          <p>My academic journey has allowed me to gain expertise in AI, Software Architecture, and Distributed Systems, and I'm always driven to tackle complex challenges with innovative solutions.</p>
         </div>
         <div class="about-image">
           <img src="images/profile.jpg" alt="Harsha Tummala">
@@ -67,59 +61,68 @@
       </div>
     </div>
   </section>
-  
+
   <!-- Projects Section -->
   <section id="projects" class="projects" data-aos="zoom-in" data-aos-delay="400">
     <div class="container">
       <h2>Projects</h2>
       <div class="projects-grid">
-        <!-- Project 1 -->
         <div class="project-card">
-          <img src="images/project1.jpg" alt="Project 1">
+          <img src="images/project1.jpg" alt="Movie Recommendation System">
           <div class="project-info">
             <h3>Movie Recommendation System</h3>
-            <p>Engineered an end-to-end movie recommendation system using boosting, Kafka streams, and continuous model updates.</p>
+            <p>Built an end-to-end movie recommendation system using Kafka streams with continuous model updates and boosting, ensuring robust and scalable recommendation capabilities.</p>
             <a href="https://github.com/harsha6107/ml-classifier" target="_blank">View on GitHub</a>
           </div>
         </div>
-        <!-- Project 2 -->
         <div class="project-card">
-          <img src="images/project2.jpg" alt="Project 2">
+          <img src="images/project2.jpg" alt="IoT-powered Consumer Insights">
           <div class="project-info">
             <h3>IoT-powered Consumer Insights</h3>
-            <p>Led a project that scaled Adrich’s IoT-powered platform to handle 5 million embedded chips, reducing assembly costs by 60%.</p>
+            <p>Led a project at Adrich to scale an IoT platform from 20,000 to 5 million embedded chips, optimizing data capture and reducing costs by 60%.</p>
             <a href="https://github.com/harsha6107/ios-sdk" target="_blank">View on GitHub</a>
+          </div>
+        </div>
+        <div class="project-card">
+          <img src="images/project3.jpg" alt="Speech Recognition System">
+          <div class="project-info">
+            <h3>Accented Speech Recognition System</h3>
+            <p>Developed an automatic speech recognition system based on Whisper, improving recognition accuracy for accented speech by 30%.</p>
+            <a href="https://github.com/harsha6107/accented-speech-recognition" target="_blank">View on GitHub</a>
           </div>
         </div>
       </div>
     </div>
   </section>
-  
+
   <!-- Skills Section -->
   <section id="skills" class="skills" data-aos="fade-right" data-aos-delay="600">
     <div class="container">
       <h2>Skills</h2>
       <div class="skills-grid">
-        <div class="skill-item">
-          <i class="fab fa-python"></i>
-          <p>Python</p>
-        </div>
-        <div class="skill-item">
-          <i class="fab fa-js-square"></i>
-          <p>JavaScript</p>
-        </div>
-        <div class="skill-item">
-          <i class="fab fa-apple"></i>
-          <p>iOS Development</p>
-        </div>
-        <div class="skill-item">
-          <i class="fab fa-react"></i>
-          <p>React</p>
-        </div>
-        <div class="skill-item">
-          <i class="fab fa-node-js"></i>
-          <p>Node.js</p>
-        </div>
+        <div class="skill-item"><i class="fab fa-python"></i><p>Python</p></div>
+        <div class="skill-item"><i class="fab fa-js-square"></i><p>JavaScript</p></div>
+        <div class="skill-item"><i class="fab fa-apple"></i><p>iOS Development</p></div>
+        <div class="skill-item"><i class="fab fa-react"></i><p>React</p></div>
+        <div class="skill-item"><i class="fab fa-node-js"></i><p>Node.js</p></div>
+        <div class="skill-item"><i class="fas fa-database"></i><p>Big Data Systems</p></div>
+        <div class="skill-item"><i class="fab fa-docker"></i><p>Docker</p></div>
+        <div class="skill-item"><i class="fas fa-cloud"></i><p>Cloud: AWS, GCP</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Education Section -->
+  <section id="education" class="education" data-aos="fade-up" data-aos-delay="800">
+    <div class="container">
+      <h2>Education</h2>
+      <div class="education-item">
+        <h3>Carnegie Mellon University</h3>
+        <p>Master of Software Engineering (Expected Dec 2024), GPA: 3.97</p>
+      </div>
+      <div class="education-item">
+        <h3>Manipal Institute of Technology</h3>
+        <p>Bachelor of Science Eng., Computer Science</p>
       </div>
     </div>
   </section>
