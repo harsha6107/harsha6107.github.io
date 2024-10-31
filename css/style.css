@@ -325,12 +325,13 @@ nav .container {
 .education-item p {
   font-size: 1.1em;
   color: #ddd;
+  margin-bottom: 15px;
 }
 
 /* Contact Section */
 .contact {
   padding: 100px 0;
-  background-color: #1a1a1a;
+  background-color: #262626;
   text-align: center;
 }
 
