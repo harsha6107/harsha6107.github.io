@@ -1,80 +1,67 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Mobile Menu Toggle
+  // Initialize AOS
+  AOS.init({
+      duration: 800,
+      easing: 'ease-in-out',
+      once: true
+  });
+
+  // Navigation functionality
   const navToggle = document.getElementById('nav-toggle');
   const navMenu = document.getElementById('nav-menu');
+  const header = document.querySelector('nav');
 
-  if (navToggle && navMenu) {
-    navToggle.addEventListener('click', () => {
+  navToggle?.addEventListener('click', () => {
       navMenu.classList.toggle('show-menu');
       navToggle.querySelector('i').classList.toggle('fa-bars');
       navToggle.querySelector('i').classList.toggle('fa-times');
-    });
-  }
+  });
 
-  // Close menu when link is clicked
-  const navLinks = document.querySelectorAll('.nav-link');
-  
-  if (navLinks) {
-    navLinks.forEach(link => {
+  // Close menu on link click
+  document.querySelectorAll('.nav-link').forEach(link => {
       link.addEventListener('click', () => {
-        navMenu.classList.remove('show-menu');
-        navToggle.querySelector('i').classList.add('fa-bars');
-        navToggle.querySelector('i').classList.remove('fa-times');
+          navMenu.classList.remove('show-menu');
+          navToggle.querySelector('i').classList.add('fa-bars');
+          navToggle.querySelector('i').classList.remove('fa-times');
       });
-    });
-  }
+  });
 
-  // Scroll Animation (Sticky Header)
+  // Sticky header
   window.addEventListener('scroll', () => {
-    const header = document.querySelector('nav');
-    if (header) {
-      header.classList.toggle('sticky', window.scrollY > 0);
-    }
+      header.classList.toggle('sticky', window.scrollY > 50);
   });
 
-  // Initialize TypewriterJS
-  if (typeof Typewriter !== 'undefined') {
-    const typewriter = new Typewriter('#typewriter-text', {
-      loop: true
-    });
-
-    typewriter.typeString('Backend Development')
-      .pauseFor(2000)
-      .deleteAll()
-      .typeString('Full Stack Development')
-      .pauseFor(2000)
-      .deleteAll()
-      .typeString('Machine Learning Engineering')
-      .pauseFor(2000)
-      .deleteAll()
-      .typeString('Cloud Computing')
-      .pauseFor(2000)
-      .start();
-  } else {
-    console.error("TypewriterJS is not defined.");
-  }
-
-  // Add click event listener to each hobby item
-  const hobbyItems = document.querySelectorAll('.hobby-item');
-  hobbyItems.forEach(item => {
-    item.addEventListener('click', function() {
-      this.classList.toggle('expanded');
-      let hiddenInfo = this.querySelector('.hidden-info');
-      if (this.classList.contains('expanded')) {
-        hiddenInfo.style.maxHeight = hiddenInfo.scrollHeight + "px";
-      } else {
-        hiddenInfo.style.maxHeight = '0';
-      }
-    });
+  // Typewriter effect
+  new Typewriter('#typewriter-text', {
+      strings: [
+          'Software Engineer',
+          'Backend Developer',
+          'ML/AI Engineer'
+      ],
+      autoStart: true,
+      loop: true,
+      deleteSpeed: 50,
+      delay: 80
   });
 
-  // Dark/Light Mode Toggle
+  // Theme toggle
   const themeToggle = document.getElementById('theme-toggle');
   const body = document.body;
+  const icon = themeToggle.querySelector('i');
 
-  if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
+  themeToggle.addEventListener('click', () => {
       body.classList.toggle('light-mode');
-    });
-  }
+      icon.classList.toggle('fa-moon');
+      icon.classList.toggle('fa-sun');
+  });
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute('href')).scrollIntoView({
+              behavior: 'smooth'
+          });
+      });
+  });
 });
