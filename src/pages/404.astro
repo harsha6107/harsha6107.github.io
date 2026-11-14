@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getSiteData, getSortedProjects } from '../utils/content';
+
+const site = await getSiteData();
+const projects = await getSortedProjects();
+---
+
+<BaseLayout
+  title="404 — Vector Out of Bounds"
+  description={site.ui.notFoundBody}
+>
+  <section class="section" style="border-bottom: none; min-height: 68dvh; display: flex; align-items: center;">
+    <div class="container">
+      <div class="spotlight-card" style="max-width: 46rem; padding: clamp(1.75rem, 4vw, 3rem);">
+        <span class="mono" style="font-size: var(--text-xs); color: var(--accent); font-weight: 700;">
+          HTTP 404 // {site.ui.notFoundCode}
+        </span>
+
+        <h1 style="margin-top: var(--space-3); font-size: var(--text-2xl);">
+          {site.ui.notFoundTitle}
+        </h1>
+
+        <p style="margin-top: var(--space-3);">
+          {site.ui.notFoundBody}
+        </p>
+
+        <div style="margin-top: var(--space-5); padding: var(--space-3) var(--space-4); border-radius: var(--radius-sm); background-color: var(--bg-subtle); border: 1px solid var(--border-subtle);" class="mono">
+          <span style="font-size: var(--text-xs); color: var(--text-muted);">
+            nearest_neighbors(query_uri, k=3) →
+          </span>
+          <ul style="list-style: none; margin-top: var(--space-2); display: grid; gap: 8px; font-size: var(--text-xs);">
+            {projects.slice(0, 3).map((p) => (
+              <li style="min-height: 26px; display: flex; align-items: center; flex-wrap: wrap; gap: 4px;">
+                <a href={`/projects/${p.data.slug}`} style="font-weight: 600; min-height: 26px; display: inline-flex; align-items: center;">
+                  /projects/{p.data.slug}
+                </a>
+                <span style="color: var(--text-muted);"> — {p.data.headlineMetric}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5);">
+          <a href="/" class="btn btn-primary">
+            <span>{site.ui.notFoundCta}</span>
+            <span aria-hidden="true" class="mono">→</span>
+          </a>
+          <a href="/projects" class="btn">
+            <span>All Case Studies</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

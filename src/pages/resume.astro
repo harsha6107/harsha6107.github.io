@@ -1,0 +1,215 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getSiteData, getSortedProjects } from '../utils/content';
+
+const site = await getSiteData();
+const projects = await getSortedProjects();
+---
+
+<BaseLayout
+  title="Résumé"
+  description={`Curriculum Vitae and engineering résumé of ${site.name}, ${site.role}.`}
+  ogImage="/og/default.png"
+>
+  <section class="section" style="border-bottom: none;">
+    <div class="container">
+      <div class="section-header no-print">
+        <div>
+          <span class="section-index">SPECIFICATION // CURRICULUM VITAE</span>
+          <h1 style="margin-top: var(--space-2);">Résumé</h1>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: var(--space-3);">
+          <a href={site.links.resumePdf} class="btn btn-primary" download>
+            <span>Download PDF</span>
+            <span aria-hidden="true" class="mono">↓</span>
+          </a>
+          <button
+            type="button"
+            class="btn"
+            onclick="window.print()"
+          >
+            <span>Print Specification</span>
+            <span aria-hidden="true" class="kbd-badge">⌘P</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="resume-sheet spotlight-card">
+        <!-- Header -->
+        <header class="resume-header">
+          <div>
+            <h2 style="font-size: var(--text-2xl);">{site.name}</h2>
+            <p class="mono" style="font-size: var(--text-sm); color: var(--accent); font-weight: 600; margin-top: 4px;">
+              {site.role} · {site.tagline}
+            </p>
+          </div>
+          <div class="mono resume-contact">
+            <span>{site.phone}</span>
+            <a href={`mailto:${site.email}`}>{site.email}</a>
+            <a href={site.links.linkedin} target="_blank" rel="noopener noreferrer">linkedin.com/in/harsha-tummala</a>
+            <a href={site.links.github} target="_blank" rel="noopener noreferrer">github.com/harsha6107</a>
+          </div>
+        </header>
+
+        <!-- Summary -->
+        <section class="resume-section" aria-labelledby="res-summary">
+          <h3 id="res-summary" class="resume-sec-title mono">01 // EXECUTIVE SUMMARY</h3>
+          <p style="max-width: 85ch; font-size: var(--text-sm);">
+            {site.positioningHeadline} {site.aboutShort[0]}
+          </p>
+        </section>
+
+        <!-- Skills -->
+        <section class="resume-section" aria-labelledby="res-skills">
+          <h3 id="res-skills" class="resume-sec-title mono">02 // TECHNICAL CAPABILITIES</h3>
+          <div style="display: grid; gap: var(--space-2); font-size: var(--text-sm);">
+            {site.skillGroups.map((g) => (
+              <div>
+                <strong style="color: var(--text-primary);">{g.category}: </strong>
+                <span style="color: var(--text-secondary);">{g.items.join(' · ')}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Experience -->
+        <section class="resume-section" aria-labelledby="res-exp">
+          <h3 id="res-exp" class="resume-sec-title mono">03 // PROFESSIONAL EXPERIENCE</h3>
+          <div style="display: flex; flex-direction: column; gap: var(--space-5);">
+            {site.experience.map((exp) => (
+              <div>
+                <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); align-items: baseline;">
+                  <div>
+                    <strong style="font-size: var(--text-base); color: var(--text-primary);">
+                      {exp.company}
+                    </strong>
+                    <span style="color: var(--text-secondary); font-size: var(--text-sm);">
+                      {' '}— {exp.role}
+                    </span>
+                  </div>
+                  <span class="mono" style="font-size: var(--text-xs); color: var(--text-muted);">
+                    {exp.period} · {exp.location}
+                  </span>
+                </div>
+                {exp.product && (
+                  <p style="font-size: var(--text-xs); color: var(--text-muted); margin-top: 2px;">
+                    {exp.product}
+                  </p>
+                )}
+                <ul style="margin-top: var(--space-2); padding-left: var(--space-4); display: grid; gap: 6px;">
+                  {exp.highlights.map((h) => (
+                    <li style="font-size: var(--text-sm); max-width: 88ch;">
+                      <strong style="color: var(--text-primary);">{h.domain} ({h.metric}): </strong>
+                      <span>{h.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Selected Engineering Projects -->
+        <section class="resume-section" aria-labelledby="res-proj">
+          <h3 id="res-proj" class="resume-sec-title mono">04 // SELECTED CASE STUDIES</h3>
+          <div style="display: grid; gap: var(--space-3);">
+            {projects.map((p) => (
+              <div style="font-size: var(--text-sm);">
+                <a href={`/projects/${p.data.slug}`} style="font-weight: 600; color: var(--text-primary);">
+                  {p.data.title}
+                </a>
+                <span class="mono" style="font-size: var(--text-xs); color: var(--accent);">
+                  {' '}[{p.data.headlineMetric}]
+                </span>
+                <p style="font-size: var(--text-sm); max-width: 88ch; margin-top: 2px;">
+                  {p.data.summary}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Education & Leadership -->
+        <section class="resume-section" style="border-bottom: none; padding-bottom: 0;" aria-labelledby="res-edu">
+          <h3 id="res-edu" class="resume-sec-title mono">05 // EDUCATION &amp; ACADEMIC LEADERSHIP</h3>
+          <div style="display: grid; gap: var(--space-3);">
+            {site.education.map((edu) => (
+              <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); font-size: var(--text-sm);">
+                <div>
+                  <strong style="color: var(--text-primary);">{edu.institution}</strong> — {edu.degree}
+                  {edu.gpa && <span class="mono" style="color: var(--accent);"> (GPA {edu.gpa})</span>}
+                </div>
+                <span class="mono" style="font-size: var(--text-xs); color: var(--text-muted);">
+                  {edu.period} · {edu.location}
+                </span>
+              </div>
+            ))}
+            {site.leadership.map((lead) => (
+              <div style="font-size: var(--text-sm);">
+                <strong style="color: var(--text-primary);">{lead.role}: </strong>
+                <span>{lead.details}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .resume-sheet {
+    padding: clamp(1.5rem, 4vw, 3rem);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .resume-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-bottom: var(--space-4);
+    border-bottom: 2px solid var(--border-strong);
+  }
+
+  .resume-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    text-align: right;
+  }
+
+  .resume-contact a,
+  .resume-contact span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 26px;
+  }
+
+  @media (max-width: 42rem) {
+    .resume-contact {
+      text-align: left;
+    }
+    .resume-contact a,
+    .resume-contact span {
+      justify-content: flex-start;
+    }
+  }
+
+  .resume-section {
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .resume-sec-title {
+    font-size: var(--text-xs);
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    margin-bottom: var(--space-3);
+  }
+</style>

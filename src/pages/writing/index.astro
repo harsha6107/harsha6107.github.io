@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getSiteData, getSortedWriting } from '../../utils/content';
+
+const site = await getSiteData();
+const posts = await getSortedWriting();
+---
+
+<BaseLayout
+  title="Technical Writing"
+  description={site.ui.writingSub}
+  ogImage="/og/default.png"
+>
+  <section class="section" style="border-bottom: none;">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="section-index">{site.ui.writingIndex}</span>
+          <h1 style="margin-top: var(--space-2);">{site.ui.writingTitle}</h1>
+          <p style="margin-top: var(--space-3); font-size: var(--text-lg);">
+            {site.ui.writingSub}
+          </p>
+        </div>
+        <a href="/rss.xml" class="btn">
+          <span class="mono">RSS 2.0 Feed</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: var(--space-5);">
+        {posts.map((post, idx) => (
+          <article class="spotlight-card">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2);" class="mono">
+              <span style="font-size: var(--text-xs); color: var(--accent); font-weight: 700;">
+                ESSAY 0{idx + 1} // {post.data.category.toUpperCase()}
+              </span>
+              <time
+                datetime={post.data.pubDate.toISOString()}
+                style="font-size: var(--text-xs); color: var(--text-muted);"
+              >
+                {post.data.pubDate.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: '2-digit',
+                })} · {post.data.readingTime}
+              </time>
+            </div>
+
+            <h2 style="font-size: var(--text-xl); margin-top: var(--space-3);">
+              <a href={`/writing/${post.data.slug}`} style="text-decoration: none;">
+                {post.data.title}
+              </a>
+            </h2>
+
+            <p style="margin-top: var(--space-2); font-size: var(--text-base);">
+              {post.data.summary}
+            </p>
+
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-4); margin-top: var(--space-4);">
+              <ul class="tag-list" aria-label="Article tags">
+                {post.data.tags.map((tag) => (
+                  <li class="tag">{tag}</li>
+                ))}
+              </ul>
+              <a
+                href={`/writing/${post.data.slug}`}
+                class="btn"
+                aria-label={`Read essay: ${post.data.title}`}
+              >
+                <span>Read Essay</span>
+                <span aria-hidden="true" class="mono">→</span>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

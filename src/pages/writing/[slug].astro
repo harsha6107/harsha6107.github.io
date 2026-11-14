@@ -1,0 +1,84 @@
+---
+import { type CollectionEntry, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getSortedWriting } from '../../utils/content';
+
+export async function getStaticPaths() {
+  const posts = await getSortedWriting();
+  return posts.map((post) => ({
+    params: { slug: post.data.slug },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'writing'>;
+}
+
+const { post } = Astro.props;
+const { data } = post;
+const { Content } = await render(post);
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.summary}
+  ogImage={`/og/writing/${data.slug}.png`}
+  articleDate={data.pubDate}
+  showReadingProgress={true}
+>
+  <article class="section" style="border-bottom: none;">
+    <div class="container">
+      <nav aria-label="Breadcrumb" class="mono" style="font-size: var(--text-xs); color: var(--text-muted); margin-bottom: var(--space-5);">
+        <a href="/">Home</a>
+        <span aria-hidden="true"> / </span>
+        <a href="/writing">Writing</a>
+        <span aria-hidden="true"> / </span>
+        <span style="color: var(--accent);">{data.category}</span>
+      </nav>
+
+      <header style="max-width: var(--measure-prose); padding-bottom: var(--space-6); border-bottom: 1px solid var(--border-subtle);">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);" class="mono">
+          <span class="metric-chip">{data.category}</span>
+          <time datetime={data.pubDate.toISOString()} style="font-size: var(--text-xs); color: var(--text-muted);">
+            {data.pubDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: '2-digit',
+            })}
+          </time>
+          <span style="font-size: var(--text-xs); color: var(--text-muted);">· {data.readingTime}</span>
+        </div>
+
+        <h1 style="margin-top: var(--space-4); font-size: var(--text-2xl);">
+          {data.title}
+        </h1>
+
+        <p style="margin-top: var(--space-3); font-size: var(--text-lg); color: var(--text-secondary);">
+          {data.summary}
+        </p>
+
+        <ul class="tag-list" style="margin-top: var(--space-4);" aria-label="Article tags">
+          {data.tags.map((tag) => (
+            <li class="tag">{tag}</li>
+          ))}
+        </ul>
+      </header>
+
+      <div class="prose" style="margin-top: var(--space-6);">
+        <Content />
+      </div>
+
+      <footer style="max-width: var(--measure-prose); margin-top: var(--space-8); padding-top: var(--space-5); border-top: 1px solid var(--border-subtle); display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-3);">
+        <a href="/writing" class="btn">
+          <span aria-hidden="true" class="mono">←</span>
+          <span>All Technical Writing</span>
+        </a>
+        <a href="/projects" class="btn">
+          <span>Explore Related Case Studies</span>
+          <span aria-hidden="true" class="mono">→</span>
+        </a>
+      </footer>
+    </div>
+  </article>
+</BaseLayout>

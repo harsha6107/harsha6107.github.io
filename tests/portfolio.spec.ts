@@ -1,0 +1,95 @@
+import AxeBuilder from '@axe-core/playwright';
+import { expect, test } from '@playwright/test';
+
+const ROUTES = [
+  '/',
+  '/projects',
+  '/projects/catalog-search-26m',
+  '/projects/agentic-ai-mcp-platform',
+  '/writing',
+  '/writing/part-number-search-at-26m-scale',
+  '/about',
+  '/resume',
+  '/404.html',
+];
+
+test.describe('WCAG 2.2 AA Accessibility & Theme Contrast Suite', () => {
+  for (const route of ROUTES) {
+    for (const theme of ['dark', 'light'] as const) {
+      test(`${route} has zero Axe WCAG 2.2 AA violations in ${theme} mode`, async ({ page }) => {
+        await page.addInitScript((t) => {
+          localStorage.setItem('theme', t);
+        }, theme);
+        await page.goto(route, { waitUntil: 'networkidle' });
+        await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+
+        const results = await new AxeBuilder({ page })
+          .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+          .analyze();
+
+        expect(results.violations).toEqual([]);
+      });
+    }
+  }
+});
+
+test.describe('Responsive Viewport Integrity (320px to 2560px)', () => {
+  const WIDTHS = [320, 375, 768, 1440, 2560];
+  for (const width of WIDTHS) {
+    test(`Home and Case Study have zero horizontal overflow at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      for (const route of ['/', '/projects/catalog-search-26m', '/about', '/resume']) {
+        await page.goto(route, { waitUntil: 'networkidle' });
+        const overflow = await page.evaluate(() => {
+          return document.documentElement.scrollWidth > window.innerWidth;
+        });
+        expect(overflow, `Overflow detected on ${route} at ${width}px`).toBe(false);
+      }
+    });
+  }
+});
+
+test.describe('Interactive Features: Theme Toggle, Command Palette & Embedding Map', () => {
+  test('Theme toggle switches between dark and light mode cleanly', async ({ page }) => {
+    await page.goto('/');
+    const html = page.locator('html');
+    const initial = await html.getAttribute('data-theme');
+    await page.locator('#theme-toggle').click();
+    const next = initial === 'dark' ? 'light' : 'dark';
+    await expect(html).toHaveAttribute('data-theme', next);
+  });
+
+  test('Command Palette opens via button and filters items with keyboard navigation', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    const dialog = page.locator('#cmd-palette');
+    await expect(dialog).not.toBeVisible();
+
+    await page.locator('#cmd-trigger').click();
+    await expect(dialog).toBeVisible();
+
+    const input = page.locator('#cmd-input');
+    await input.fill('Snowflake');
+    const visibleOptions = page.locator('[data-cmd-item]:not([hidden])');
+    await expect(visibleOptions.first()).toContainText('CDC');
+
+    await page.keyboard.press('Escape');
+    await expect(dialog).not.toBeVisible();
+  });
+
+  test('2D Embedding Map lazy-loads and computes cosine nearest neighbors on focus', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    const explorer = page.locator('[data-embedding-explorer]');
+    await explorer.scrollIntoViewIfNeeded();
+    await expect(explorer).toHaveAttribute('data-initialized', 'true');
+
+    const mcpNode = page.locator('[data-node-trigger="proj-agentic-ai-mcp-platform"]');
+    await mcpNode.focus();
+
+    await expect(page.locator('#emb-title')).toContainText('Agentic AI');
+    await expect(page.locator('#emb-neighbors')).toContainText('cos θ =');
+  });
+});

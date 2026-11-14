@@ -1,0 +1,506 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface SkillNode {
+  id: string;
+  label: string;
+  cluster: 'search' | 'agents' | 'data' | 'ml';
+  x: number;
+  y: number;
+  vector: number[];
+  detail: string;
+  relatedProjectSlug: string;
+}
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+  posts: CollectionEntry<'writing'>[];
+  skillNodes: SkillNode[];
+  sectionIndex: string;
+  title: string;
+  subtitle: string;
+}
+
+const { projects, posts, skillNodes, sectionIndex, title, subtitle } = Astro.props;
+
+interface MapPoint {
+  id: string;
+  label: string;
+  kind: 'project' | 'essay' | 'skill';
+  cluster: 'search' | 'agents' | 'data' | 'ml';
+  x: number;
+  y: number;
+  vector: number[];
+  summary: string;
+  href: string;
+  metricBadge: string;
+}
+
+const points: MapPoint[] = [
+  ...projects.map((p) => ({
+    id: `proj-${p.data.slug}`,
+    label: p.data.shortTitle,
+    kind: 'project' as const,
+    cluster: p.data.embedding.cluster,
+    x: p.data.embedding.x,
+    y: p.data.embedding.y,
+    vector: p.data.embedding.vector,
+    summary: p.data.summary,
+    href: `/projects/${p.data.slug}`,
+    metricBadge: p.data.headlineMetric,
+  })),
+  ...posts.map((post) => ({
+    id: `post-${post.data.slug}`,
+    label: post.data.title.split(':')[0] ?? post.data.title,
+    kind: 'essay' as const,
+    cluster: post.data.embedding.cluster,
+    x: post.data.embedding.x,
+    y: post.data.embedding.y,
+    vector: post.data.embedding.vector,
+    summary: post.data.summary,
+    href: `/writing/${post.data.slug}`,
+    metricBadge: `Essay · ${post.data.readingTime}`,
+  })),
+  ...skillNodes.map((s) => ({
+    id: s.id,
+    label: s.label,
+    kind: 'skill' as const,
+    cluster: s.cluster,
+    x: s.x,
+    y: s.y,
+    vector: s.vector,
+    summary: s.detail,
+    href: `/projects/${s.relatedProjectSlug}`,
+    metricBadge: `Capability → /projects/${s.relatedProjectSlug}`,
+  })),
+];
+
+const clusterMeta = [
+  { id: 'all', label: 'All Clusters (18)', cx: 0, cy: 0 },
+  { id: 'search', label: 'Search & RAG', cx: 23, cy: 27 },
+  { id: 'agents', label: 'Agentic AI & MCP', cx: 73, cy: 27 },
+  { id: 'data', label: 'Streaming CDC & Data', cx: 23, cy: 75 },
+  { id: 'ml', label: 'Applied ML, Vision & ASR', cx: 73, cy: 75 },
+];
+
+function cosineSimilarity(a: number[], b: number[]): number {
+  let dot = 0;
+  let normA = 0;
+  let normB = 0;
+  for (let i = 0; i < a.length; i++) {
+    const va = a[i] ?? 0;
+    const vb = b[i] ?? 0;
+    dot += va * vb;
+    normA += va * va;
+    normB += vb * vb;
+  }
+  const denom = Math.sqrt(normA) * Math.sqrt(normB);
+  return denom === 0 ? 0 : dot / denom;
+}
+
+const initialSource = points[0];
+const initialNeighbors = initialSource
+  ? points
+      .filter((pt) => pt.id !== initialSource.id)
+      .map((pt) => ({
+        point: pt,
+        score: cosineSimilarity(initialSource.vector, pt.vector),
+      }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+  : [];
+---
+
+<section id="latent-space" class="section scroll-reveal" aria-labelledby="latent-space-heading">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-index">{sectionIndex}</span>
+        <h2 id="latent-space-heading" style="margin-top: var(--space-2);">{title}</h2>
+        <p style="margin-top: var(--space-2);">{subtitle}</p>
+      </div>
+      <div class="cluster-pills" role="toolbar" aria-label="Filter embedding clusters">
+        {clusterMeta.map((c, idx) => (
+          <button
+            type="button"
+            class="btn btn-icon cluster-btn"
+            data-cluster-filter={c.id}
+            aria-pressed={idx === 0 ? 'true' : 'false'}
+          >
+            {c.label}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div
+      class="embedding-explorer"
+      data-embedding-explorer
+      data-points={JSON.stringify(points)}
+    >
+      <div class="embedding-canvas-wrap">
+        <svg
+          class="embedding-svg"
+          viewBox="0 0 1000 540"
+          role="group"
+          aria-label="2D UMAP Embedding Map of Projects, Essays, and ML Systems"
+        >
+          <defs>
+            <pattern id="umap-grid" width="50" height="50" patternUnits="userSpaceOnUse">
+              <path
+                d="M 50 0 L 0 0 0 50"
+                fill="none"
+                stroke="var(--border-subtle)"
+                stroke-width="0.75"
+              />
+            </pattern>
+          </defs>
+
+          <!-- Coordinate Grid Background -->
+          <rect width="1000" height="540" fill="url(#umap-grid)" />
+
+          <!-- Quadrant Axis Dividers -->
+          <line x1="500" y1="0" x2="500" y2="540" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 4" />
+          <line x1="0" y1="270" x2="1000" y2="270" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 4" />
+
+          <!-- Axis Telemetry Labels -->
+          <text x="16" y="24" fill="var(--text-muted)" font-size="11" class="mono">
+            UMAP-2 ↑ [RETRIEVAL &amp; AGENTIC REASONING]
+          </text>
+          <text x="16" y="524" fill="var(--text-muted)" font-size="11" class="mono">
+            UMAP-1 → [INFRASTRUCTURE &amp; STREAMING ← · → MODEL &amp; AGENT SURFACES]
+          </text>
+
+          <!-- Semantic Cluster Ellipses -->
+          <ellipse cx="235" cy="148" rx="205" ry="96" fill="var(--accent-subtle)" fill-opacity="0.35" stroke="var(--border-strong)" stroke-dasharray="3 3" />
+          <text x="55" y="70" fill="var(--accent)" font-size="11" font-weight="700" class="mono">CLUSTER 01 // SEARCH &amp; HYBRID RAG</text>
+
+          <ellipse cx="735" cy="148" rx="215" ry="96" fill="var(--accent-subtle)" fill-opacity="0.35" stroke="var(--border-strong)" stroke-dasharray="3 3" />
+          <text x="545" y="70" fill="var(--accent)" font-size="11" font-weight="700" class="mono">CLUSTER 02 // AGENTIC AI, MCP &amp; EVALS</text>
+
+          <ellipse cx="235" cy="402" rx="205" ry="92" fill="var(--accent-subtle)" fill-opacity="0.35" stroke="var(--border-strong)" stroke-dasharray="3 3" />
+          <text x="55" y="324" fill="var(--accent)" font-size="11" font-weight="700" class="mono">CLUSTER 03 // STREAMING CDC &amp; DATA</text>
+
+          <ellipse cx="735" cy="402" rx="215" ry="92" fill="var(--accent-subtle)" fill-opacity="0.35" stroke="var(--border-strong)" stroke-dasharray="3 3" />
+          <text x="545" y="324" fill="var(--accent)" font-size="11" font-weight="700" class="mono">CLUSTER 04 // VISION, OCR, ASR &amp; IoT</text>
+
+          <!-- Dynamic k-NN Cosine Similarity Edges Layer -->
+          <g id="knn-edges-layer" aria-hidden="true">
+            {initialSource && initialNeighbors.map((nb) => (
+              <line
+                x1={Math.round(initialSource.x * 10)}
+                y1={Math.round(initialSource.y * 5.4)}
+                x2={Math.round(nb.point.x * 10)}
+                y2={Math.round(nb.point.y * 5.4)}
+                stroke="var(--accent)"
+                stroke-width="1.75"
+                stroke-dasharray="5 4"
+                stroke-opacity="0.8"
+              />
+            ))}
+          </g>
+
+          <!-- Interactive Vector Nodes -->
+          {points.map((pt, idx) => {
+            const cx = Math.round(pt.x * 10);
+            const cy = Math.round(pt.y * 5.4);
+            const isProject = pt.kind === 'project';
+            const radius = isProject ? 10 : pt.kind === 'essay' ? 7.5 : 6;
+            return (
+              <g
+                class="umap-node-group"
+                data-node-id={pt.id}
+                data-cluster={pt.cluster}
+                data-cx={cx}
+                data-cy={cy}
+              >
+                <a
+                  href={pt.href}
+                  class="umap-node-link"
+                  data-node-trigger={pt.id}
+                  aria-label={`${pt.kind.toUpperCase()}: ${pt.label} (${pt.metricBadge}) — Click to open ${pt.href}`}
+                >
+                  {isProject && (
+                    <circle
+                      cx={cx}
+                      cy={cy}
+                      r={radius + 6}
+                      fill="none"
+                      stroke="var(--accent)"
+                      stroke-width="1.25"
+                      stroke-opacity="0.55"
+                      class="umap-pulse-ring"
+                    />
+                  )}
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={radius}
+                    fill={isProject ? 'var(--accent)' : pt.kind === 'essay' ? 'var(--text-primary)' : 'var(--bg-surface)'}
+                    stroke={isProject ? 'var(--bg-surface)' : 'var(--accent)'}
+                    stroke-width="2"
+                  />
+                  <text
+                    x={cx + 14}
+                    y={cy + 4}
+                    fill="var(--text-primary)"
+                    font-size={isProject ? '12.5' : '11'}
+                    font-weight={isProject ? '700' : '500'}
+                    class="mono umap-label"
+                  >
+                    {pt.label}
+                  </text>
+                </a>
+              </g>
+            );
+          })}
+        </svg>
+
+        <div class="embedding-legend mono">
+          <span><i class="legend-dot legend-dot--project"></i> Case Study (Click to open)</span>
+          <span><i class="legend-dot legend-dot--essay"></i> Technical Essay</span>
+          <span><i class="legend-dot legend-dot--skill"></i> Production Capability</span>
+        </div>
+      </div>
+
+      <!-- Live Telemetry & Nearest-Neighbor Inspector Panel -->
+      <aside class="embedding-inspector" aria-live="polite">
+        <div class="inspector-header mono">
+          <span>VECTOR TELEMETRY INSPECTOR</span>
+          <span id="emb-kind-badge" class="metric-chip">PROJECT</span>
+        </div>
+
+        <h3 id="emb-title" style="font-size: var(--text-lg); margin-top: var(--space-2);">
+          {points[0]?.label}
+        </h3>
+
+        <p id="emb-metric" class="mono" style="font-size: var(--text-xs); color: var(--accent); font-weight: 600; margin-top: var(--space-1);">
+          {points[0]?.metricBadge}
+        </p>
+
+        <p id="emb-summary" style="font-size: var(--text-sm); margin-top: var(--space-3);">
+          {points[0]?.summary}
+        </p>
+
+        <div class="inspector-vector mono">
+          <span style="color: var(--text-muted); font-size: 0.72rem;">EMBEDDING [SEARCH, AGENT, DATA, ML]:</span>
+          <code id="emb-vector" style="font-size: var(--text-xs); color: var(--text-primary);">
+            [{points[0]?.vector.map((v) => v.toFixed(2)).join(', ')}]
+          </code>
+        </div>
+
+        <div style="margin-top: var(--space-4);">
+          <p class="mono" style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+            Top k=3 Cosine Nearest Neighbors
+          </p>
+          <ul id="emb-neighbors" class="neighbor-list mono">
+            {initialNeighbors.map((nb) => (
+              <li>
+                <span>{nb.point.label}</span>
+                <span style="color: var(--accent); font-weight: 600;">cos θ = {nb.score.toFixed(3)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div style="margin-top: auto; padding-top: var(--space-4);">
+          <a id="emb-cta" href={points[0]?.href} class="btn btn-primary" style="width: 100%;">
+            <span>Open Case Study Specification</span>
+            <span aria-hidden="true" class="mono">→</span>
+          </a>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Accessible Static Fallback Summary for Screen Readers / No-JS -->
+    <details class="static-fallback-details">
+      <summary class="mono" style="font-size: var(--text-xs); color: var(--text-muted); cursor: pointer; padding-block: var(--space-2);">
+        View Tabular Matrix Fallback (All 18 Embedded Systems &amp; Capabilities)
+      </summary>
+      <div style="overflow-x: auto; margin-top: var(--space-3);">
+        <table style="width: 100%; border-collapse: collapse; font-size: var(--text-sm);">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border-strong); text-align: left;" class="mono">
+              <th style="padding: var(--space-2);">Node</th>
+              <th style="padding: var(--space-2);">Type</th>
+              <th style="padding: var(--space-2);">Cluster</th>
+              <th style="padding: var(--space-2);">Outcome / Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            {points.map((pt) => (
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: var(--space-2); font-weight: 600;">
+                  <a href={pt.href}>{pt.label}</a>
+                </td>
+                <td style="padding: var(--space-2);" class="mono">{pt.kind}</td>
+                <td style="padding: var(--space-2);" class="mono">{pt.cluster}</td>
+                <td style="padding: var(--space-2); color: var(--text-secondary);">{pt.metricBadge}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </div>
+</section>
+
+<style>
+  .cluster-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .cluster-btn[aria-pressed="true"] {
+    background-color: var(--text-primary);
+    color: var(--bg-canvas);
+    border-color: var(--text-primary);
+  }
+
+  .embedding-explorer {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+    align-items: stretch;
+  }
+
+  @media (min-width: 60rem) {
+    .embedding-explorer {
+      grid-template-columns: 1.75fr 1fr;
+    }
+  }
+
+  .embedding-canvas-wrap {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    box-shadow: var(--shadow-xs);
+    overflow-x: auto;
+  }
+
+  .embedding-svg {
+    width: 100%;
+    height: auto;
+    min-width: 560px;
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-canvas);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .umap-node-group {
+    transition: opacity var(--duration-base) var(--ease-out);
+  }
+
+  .umap-node-group[data-dimmed="true"] {
+    opacity: 0.2;
+  }
+
+  .umap-node-link {
+    cursor: pointer;
+    outline: none;
+  }
+
+  .umap-node-link:focus-visible circle {
+    stroke: var(--text-primary);
+    stroke-width: 3px;
+  }
+
+  .umap-label {
+    paint-order: stroke;
+    stroke: var(--bg-canvas);
+    stroke-width: 4px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .embedding-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    padding-top: var(--space-3);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  .legend-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+
+  .legend-dot--project {
+    background-color: var(--accent);
+  }
+
+  .legend-dot--essay {
+    background-color: var(--text-primary);
+  }
+
+  .legend-dot--skill {
+    background-color: var(--bg-surface);
+    border: 2px solid var(--accent);
+  }
+
+  .embedding-inspector {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    box-shadow: var(--shadow-xs);
+  }
+
+  .inspector-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .inspector-vector {
+    margin-top: var(--space-4);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-xs);
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .neighbor-list {
+    list-style: none;
+    margin-top: var(--space-2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+  }
+
+  .neighbor-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.35rem 0.55rem;
+    border-radius: var(--radius-xs);
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+  }
+
+  .static-fallback-details {
+    margin-top: var(--space-4);
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-surface);
+  }
+</style>

@@ -1,0 +1,58 @@
+---
+title: "Beyond the 25-Case Golden Set: Building a Continuous Eval Loop with Redacted Production Traces"
+slug: "beyond-golden-set-evals"
+pubDate: 2026-05-11
+readingTime: "5 min read"
+category: "LLM Evaluation & Evals"
+summary: "Passing 25/25 on a pre-launch golden evaluation set got our 42-tool AI assistant to production. Keeping it reliable required redacted 100-conversation trace sampling, a failure-mode taxonomy, calibrated rubric judges, and weekly CI gates."
+tags:
+  - "LLM Evals"
+  - "Agentic AI"
+  - "Observability"
+  - "CI/CD"
+  - "Python"
+featured: true
+order: 4
+embedding:
+  x: 58
+  y: 49
+  cluster: "agents"
+  vector: [0.34, 0.90, 0.16, 0.32]
+---
+
+Before launching our production AI assistant at eParts Services, we curated a **25-case golden evaluation set** covering tool selection across 42 Azure AI Foundry tools, multi-tenant ReBAC refusal boundaries, part-number disambiguation, and RAG citation accuracy. We iterated on system prompts, tool descriptions, and parameter schemas until the agent scored **25/25**.
+
+Then real users arrived.
+
+Within two weeks of beta traffic, we observed failure patterns that no pre-launch synthetic benchmark had anticipated: buyers pasting malformed tab-separated ERP exports mid-sentence, switching active browser tabs between turns, or asking compound queries that required chaining catalog search with purchase-order history.
+
+A static golden set is a **floor**, not a ceiling. Here is how we designed the continuous evaluation and error-discovery loop that followed.
+
+## Step 1: PII-Redacted Production Trace Exports (~100 Conversations / Cycle)
+
+You cannot fix failure modes you refuse to look at, and you cannot inspect raw multi-tenant enterprise conversations without strict privacy controls.
+
+We built an automated export pipeline that samples **~100 real production conversations per evaluation cycle** (stratified across negative user feedback thumbs-downs, tool-call retries, high-latency turns, and random baseline traffic) and passes them through a deterministic **redaction stage** stripping customer emails, pricing figures, and proprietary tenant identifiers while preserving structural tool-call arguments.
+
+## Step 2: Open Coding & Failure-Mode Taxonomy
+
+Rather than immediately asking an LLM to grade traces on a vague 1–5 scale, we manually reviewed batches of redacted traces and clustered errors into an explicit **failure-mode taxonomy**:
+
+| Failure Code | Category | Example Root Cause | Mitigation Path |
+| :--- | :--- | :--- | :--- |
+| `FM-01` | **Viewport vs. Memory Drift** | User opened Project B in UI, but model targeted Project A from 3 turns prior | Make active page context deterministically outrank conversation memory |
+| `FM-02` | **Scope Over-Reach on "My Orders"** | Model queried workspace-wide POs instead of filtering by authenticated user | Enforce `user_id` scope binding inside the tool handler |
+| `FM-03` | **Slash-SKU Token Split in RAG** | Datasheet lookup dropped `/` delimiter on part number | Route RAG part lookups through Tier-1/Tier-2 normalized SKU analyzer |
+| `FM-04` | **Premature Tool Abstention** | Model claimed it could not inspect a CSV BOM attachment | Replace broken inline BOM import with a read-only row-search tool |
+
+Every newly discovered failure cluster was distilled into 2–3 reproducible regression cases and promoted into the permanent golden evaluation suite.
+
+## Step 3: Calibrating an LLM Rubric Judge Against Human Labels
+
+To run evaluations automatically on every pull request without human bottlenecking, we built a binary **LLM Rubric Judge**—each rubric checks one narrow, observable assertion (e.g., *"Did the assistant invoke `search_project_rows` before answering a question about an uploaded spreadsheet?"*) rather than subjective prose quality.
+
+Crucially, we **evaluated the evaluator**: we measured precision and recall of the LLM rubric judge against human-labeled trace annotations before trusting it in CI.
+
+## Step 4: Weekly CI Eval Gates on Chatbot PRs
+
+Today, any pull request modifying system prompts, tool schemas, retrieval ranking, or model versions must pass the automated CI evaluation gate before merge—turning production failures into permanent architectural ratchet steps.

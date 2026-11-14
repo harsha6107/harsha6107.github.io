@@ -1,0 +1,116 @@
+---
+title: "Production Agentic AI Platform & Stateless OAuth 2.1 MCP Server"
+shortTitle: "Agentic AI & MCP Server"
+slug: "agentic-ai-mcp-platform"
+index: "02"
+organization: "eParts Services · Peregrin AI"
+period: "2025 – Present"
+role: "Senior ML Engineer & Chatbot Lead"
+featured: true
+order: 2
+headlineMetric: "25/25 Golden Eval · 42 Foundry Tools · 36 MCP Tools"
+summary: "Architected and shipped Peregrin's production tool-calling assistant on Azure AI Foundry and a stateless OAuth 2.1 Model Context Protocol (MCP) server—enforcing relationship-based access control (ReBAC), signed 5-minute human-in-the-loop write tokens, and continuous trace evaluation."
+problem: "Enterprise procurement users needed an AI assistant capable of querying orders, comparing supplier quotes, searching 26M parts, and mutating project BOMs—both inside the web app and externally from Claude, ChatGPT, and VS Code—without risking cross-tenant data leaks, prompt-injected writes, or context-memory hallucinations."
+constraints:
+  - "Strict multi-tenant isolation: an agent must never read or mutate purchase orders, pricing, or projects across workspace or organization boundaries."
+  - "Zero unconfirmed state mutations: destructive or financial actions (adding BOM items, submitting RFQs, modifying orders) require cryptographic human-in-the-loop verification."
+  - "External MCP interoperability: the MCP server had to run statelessly across horizontal replicas while authenticating Claude, ChatGPT, and VS Code clients via OAuth 2.1."
+  - "Untrusted file attachments: buyer-uploaded CSV/XLSX Bills of Materials can contain prompt injection payloads or exceed LLM context windows."
+approachSummary: "Benchmarked Azure AI Foundry against LangGraph, CrewAI, and AutoGen; built 42 strict function-calling tools backed by Permit ReBAC and signed 5-minute HMAC action tokens; shipped a stateless 36-tool OAuth 2.1 MCP server (156 tests); and established a continuous eval loop with redacted trace exports and CI rubric judges."
+metrics:
+  - value: "25/25"
+    label: "Golden Eval Score"
+    detail: "Pre-launch benchmark + weekly CI eval gate on PRs"
+  - value: "42"
+    label: "Foundry Agent Tools"
+    detail: "Strict schema validation + Permit ReBAC enforcement"
+  - value: "36"
+    label: "OAuth 2.1 MCP Tools"
+    detail: "Stateless server with 156 automated integration tests"
+  - value: "5 min"
+    label: "Signed Write Tokens"
+    detail: "Human-in-the-loop HMAC confirmation for all mutations"
+stack:
+  - "Azure AI Foundry"
+  - "Model Context Protocol (MCP)"
+  - "TypeScript"
+  - "Python"
+  - "OAuth 2.1"
+  - "Permit (ReBAC)"
+  - "LLM Evals"
+diagramId: "agentic-mcp"
+diagramTitle: "Fig 2.1 — Dual-Surface Agentic Architecture: Azure AI Foundry + Stateless OAuth 2.1 MCP Server"
+diagramCaption: "Read tools execute through endpoint-matched Permit ReBAC; write tools emit a signed 5-minute action token requiring explicit user confirmation before state mutation."
+retrospective:
+  - title: "Prioritize active viewport context over multi-turn conversation memory from day one"
+    detail: "Early in beta, a user switched open projects mid-conversation and asked the assistant to import items, causing a High-priority bug where items landed in the previously discussed project. Making the active page context deterministically outrank conversation history—and removing an ungrounded chat BOM import path—eliminated the entire class of cross-project targeting errors."
+  - title: "Treat uploaded spreadsheets as queryable databases, never raw prompt text"
+    detail: "Instead of stuffing CSV/XLSX BOM rows into the system prompt, we isolated attachments behind a read-only row-search tool that treats all cell strings as untrusted data, preventing indirect prompt injection and cutting token consumption."
+  - title: "Move beyond static golden sets immediately after launch"
+    detail: "Scoring 25/25 on our initial golden set was necessary to ship, but real user phrasing diverged within weeks. Building the redacted 100-conversation export pipeline and failure-mode taxonomy early is what kept regression rates near zero."
+links:
+  - label: "Read Essay: Human-in-the-Loop Write Guards for MCP"
+    href: "/writing/mcp-oauth-human-in-the-loop-guards"
+  - label: "Read Essay: Beyond the 25-Case Golden Set"
+    href: "/writing/beyond-golden-set-evals"
+embedding:
+  x: 62
+  y: 24
+  cluster: "agents"
+  vector: [0.26, 0.96, 0.22, 0.18]
+---
+
+## Context & Architectural Selection
+
+Before writing production agent code, I benchmarked **Azure AI Foundry** against **LangGraph, CrewAI, and AutoGen** across four operational dimensions: tool-call schema determinism, P95 turn latency, per-conversation token cost, and enterprise RBAC/ReBAC composability.
+
+Multi-agent orchestration frameworks introduced unnecessary hop latency and opaque prompt state for deterministic B2B procurement workflows. We chose a **single-orchestrator, strict tool-calling architecture on Azure AI Foundry** paired with a **stateless Model Context Protocol (MCP) server**, sharing a unified permission and audit core.
+
+## Core System Design
+
+### 1. 42 Strict Function-Calling Tools with Permit ReBAC & Signed 5-Minute Action Tokens
+
+Every tool exposed to the LLM is classified as either `READ_SAFE` or `WRITE_GUARDED`:
+
+- **Relationship-Based Access Control (ReBAC)**: Before any tool executes, the caller's identity and active workspace relationship are verified against **Permit** (`user -> member_of -> workspace -> owns -> purchase_order`). Furthermore, queries like *"show my orders"* are deterministically scoped at the data-access layer to the authenticated user's own POs.
+- **Two-Phase Cryptographic Write Confirmation**: When the model invokes any write tool (e.g., `add_bom_items_to_project`, `create_rfq_draft`), the tool does **not** mutate the database. Instead, it validates permissions, computes a dry-run diff, and returns a **signed 5-minute HMAC action token** (`act_tok_...`) to the UI card. The mutation only commits when the human user clicks **Confirm**, submitting the signed token directly to the backend verification endpoint.
+
+```typescript
+// Two-phase human-in-the-loop write token issuance (MCP & Foundry shared guard)
+export async function stageGuardedWrite<TPayload>(
+  ctx: AgentAuthContext,
+  toolName: string,
+  payload: TPayload,
+): Promise<StagedWriteResponse<TPayload>> {
+  const allowed = await permit.check(ctx.userId, 'write', {
+    type: 'project',
+    key: ctx.activeProjectId,
+    tenant: ctx.tenantId,
+  });
+  if (!allowed) {
+    throw new ForbiddenToolError(`User ${ctx.userId} lacks write access on ${ctx.activeProjectId}`);
+  }
+
+  const expiresAt = Date.now() + 5 * 60 * 1000; // 5-minute TTL
+  const payloadHash = sha256Canonical(JSON.stringify({ toolName, payload, expiresAt, sub: ctx.userId }));
+  const signature = hmacSign(payloadHash, process.env.ACTION_TOKEN_SECRET!);
+
+  return {
+    status: 'CONFIRMATION_REQUIRED',
+    actionToken: `${expiresAt}.${ payloadHash }.${signature}`,
+    previewDiff: buildHumanReadableDiff(toolName, payload),
+  };
+}
+```
+
+### 2. Stateless 36-Tool OAuth 2.1 MCP Server
+
+To make Peregrin native inside **Claude Desktop/Web, ChatGPT, and VS Code**, I built a **stateless MCP server** exposing **36 tools** backed by **156 automated tests**:
+
+- **OAuth 2.1 with PKCE & Endpoint-Matched Scopes**: External MCP clients authenticate via OAuth 2.1. Each MCP tool maps 1:1 to the underlying REST API's permission matrix, ensuring an external agent can never bypass application-tier authorization.
+- **Browser Extension Agent**: Complemented the server-side platform with a **TypeScript Chrome/Edge browser extension agent** that automates supplier portal price research, distilling live DOM trees to fit strict LLM token budgets and ranking offers by landed cost.
+
+### 3. Grounding & The Continuous Eval Loop
+
+- **Company Knowledge Layer (eParts Brain)**: Designed a unified internal retrieval layer across **Granola meeting notes, Linear issues, GitHub PRs, and Confluence pages** using hash-merged incremental ingestion into Snowflake and **Cortex Search hybrid retrieval** behind Snowflake's managed MCP server—complete with secret scanning on ingest and a weekly top-5 retrieval eval at **~$15–30/month**.
+- **From 25/25 Golden Set to Continuous Error Discovery**: Designed the post-launch evaluation loop that exports **~100 PII-redacted production conversations per cycle**, categorizes failure modes into a structured taxonomy mapped to golden regression cases, calibrates an **LLM rubric judge** against human annotations, and runs a **weekly CI eval gate** on every chatbot pull request.

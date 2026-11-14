@@ -1,0 +1,67 @@
+---
+title: "Designing Human-in-the-Loop Write Guards for Production MCP & Tool-Calling Agents"
+slug: "mcp-oauth-human-in-the-loop-guards"
+pubDate: 2026-08-04
+readingTime: "6 min read"
+category: "Agentic AI & Security"
+summary: "When we exposed 42 Azure AI Foundry tools and a 36-tool OAuth 2.1 MCP server for Claude, ChatGPT, and VS Code, we enforced a strict invariant: an LLM can stage a write, but only a cryptographically verified human action token can commit it."
+tags:
+  - "MCP"
+  - "OAuth 2.1"
+  - "ReBAC"
+  - "Agentic AI"
+  - "TypeScript"
+featured: true
+order: 2
+embedding:
+  x: 56
+  y: 16
+  cluster: "agents"
+  vector: [0.22, 0.95, 0.20, 0.15]
+---
+
+Giving an LLM read access to an enterprise SaaS platform is a retrieval problem. Giving that same LLM **write tools**—creating purchase orders, mutating Bills of Materials (BOMs), or triggering supplier workflows—across multi-tenant workspaces is a **distributed systems security problem**.
+
+At eParts Services, we shipped two agent surfaces for Peregrin:
+
+1. An in-app agentic assistant built on **Azure AI Foundry** with **42 strict function-calling tools** (scoring **25/25** on our golden evaluation set).
+2. A **stateless Model Context Protocol (MCP) server** with **36 tools** and **156 automated tests**, authenticated via **OAuth 2.1**, allowing users to operate Peregrin directly from **Claude, ChatGPT, and VS Code**.
+
+Here are the three architectural invariants that kept both surfaces safe in production.
+
+## Invariant 1: Active Viewport Beats Conversation Memory
+
+Early in our beta, a buyer discussed *Project Alpha* with the assistant, navigated their browser tab to *Project Beta*, and typed: *"Add these 12 bearings to the project."* Because *Project Alpha* appeared repeatedly in recent assistant turns, the model passed `project_id: alpha` to the write tool—causing a high-priority production bug.
+
+We fixed this structurally:
+
+- **Deterministic Context Precedence**: The active page URL / workspace state injected by the host client outranks conversation history. If the model attempts to target an entity ID that conflicts with the active viewport without an explicit cross-project override, the tool layer halts and asks for disambiguation.
+- **Treating Uploaded Files as Untrusted Databases**: Rather than injecting uploaded CSV/XLSX attachments into prompt text (which risks both context overflow and indirect prompt injection), attachments stay outside the prompt behind a **read-only row-search tool**.
+
+## Invariant 2: Permit ReBAC on Every Tool Invocation
+
+Coarse role checks (`role == "buyer"`) are insufficient in multi-tenant procurement where users belong to multiple organizations and supplier workspaces. Every tool invocation evaluates a relationship tuple in **Permit (ReBAC)**:
+
+```typescript
+// Endpoint-matched ReBAC check shared between REST API, Foundry tools & MCP server
+const isAuthorized = await permit.check(
+  { key: session.userId, attributes: { orgId: session.activeOrgId } },
+  toolDefinition.requiredAction, // e.g., 'bom:append'
+  {
+    type: toolDefinition.resourceType,
+    key: args.resourceId,
+    tenant: session.tenantId,
+  },
+);
+```
+
+And for natural-language queries like *"status of my recent orders"*, the tool schema doesn't even let the LLM pass an arbitrary `owner_id`—the execution harness binds `created_by = session.userId` directly at the SQL/repository boundary.
+
+## Invariant 3: Signed 5-Minute Action Tokens for Human-in-the-Loop Writes
+
+Prompt guardrails ("Always ask the user for confirmation before calling `submit_order`") are probabilistic; a single jailbreak or ambiguous turn can cause the model to call the write tool immediately.
+
+Instead, **write tools never mutate state when called by the LLM**:
+
+1. **Stage & Preview**: When the LLM calls any write tool across our 42 Foundry tools or 36 MCP tools, the server validates schema and ReBAC permissions, computes a deterministic preview diff, and mints a **signed 5-minute HMAC action token** bound to `(user_id, tenant_id, tool_name, canonical_payload_hash, exp)`.
+2. **Out-of-Band Commit**: The UI (or MCP confirmation prompt) renders the diff and a confirmation action. Only when the user confirms does the client submit the signed token to the commit endpoint, which verifies the signature, checks expiration (≤ 5 min), and executes the transaction idempotently.

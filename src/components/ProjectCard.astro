@@ -1,0 +1,93 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  readMoreLabel: string;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { project, readMoreLabel, headingLevel = 'h3' } = Astro.props;
+const { data } = project;
+const HeadingTag = headingLevel;
+---
+
+<article
+  class="spotlight-card scroll-reveal"
+  style={`view-transition-name: project-card-${data.slug};`}
+>
+  <div class="project-card-grid">
+    <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);">
+        <span
+          class="mono"
+          style="font-size: var(--text-xs); font-weight: 700; color: var(--accent);"
+        >
+          SYS.{data.index}
+        </span>
+        <span
+          class="metric-chip"
+          style={`view-transition-name: project-metric-${data.slug};`}
+        >
+          {data.headlineMetric}
+        </span>
+        <span
+          class="mono"
+          style="font-size: var(--text-xs); color: var(--text-muted); margin-left: auto;"
+        >
+          {data.organization} · {data.period}
+        </span>
+      </div>
+
+      <HeadingTag
+        style={`font-size: var(--text-xl); margin-top: var(--space-1); view-transition-name: project-title-${data.slug};`}
+      >
+        <a
+          href={`/projects/${data.slug}`}
+          style="text-decoration: none; display: inline-block;"
+        >
+          {data.title}
+        </a>
+      </HeadingTag>
+
+      <p style="font-size: var(--text-sm); color: var(--text-muted); font-family: var(--font-mono);">
+        {data.role}
+      </p>
+
+      <p style="color: var(--text-secondary); font-size: var(--text-base);">
+        {data.summary}
+      </p>
+
+      <ul class="tag-list" aria-label="Technology stack" style="margin-top: var(--space-1);">
+        {data.stack.map((tech) => (
+          <li class="tag">{tech}</li>
+        ))}
+      </ul>
+
+      <div style="margin-top: var(--space-2);">
+        <a
+          href={`/projects/${data.slug}`}
+          class="btn"
+          aria-label={`${readMoreLabel}: ${data.title}`}
+        >
+          <span>{readMoreLabel}</span>
+          <span aria-hidden="true" class="mono">→</span>
+        </a>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+      <div class="metrics-panel" aria-label={`Key metrics for ${data.shortTitle}`}>
+        {data.metrics.map((m) => (
+          <div class="metric-item">
+            <span class="metric-value">{m.value}</span>
+            <span class="metric-label" style="font-weight: 600; color: var(--text-secondary);">
+              {m.label}
+            </span>
+            <span class="metric-label">{m.detail}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</article>

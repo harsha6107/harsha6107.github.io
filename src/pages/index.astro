@@ -1,0 +1,391 @@
+---
+import EmbeddingMap from '../components/EmbeddingMap.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getSiteData, getSortedProjects, getSortedWriting } from '../utils/content';
+
+const site = await getSiteData();
+const allProjects = await getSortedProjects();
+const featuredProjects = allProjects.filter((p) => p.data.featured).slice(0, 4);
+const posts = await getSortedWriting();
+---
+
+<BaseLayout
+  description={site.positioningHeadline}
+  ogImage="/og/default.png"
+>
+  <!-- Positioning Hero Section -->
+  <section class="section hero-section" aria-labelledby="hero-heading">
+    <div class="container">
+      <div class="hero-meta mono">
+        <span class="status-pill">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span>{site.availability}</span>
+        </span>
+        <span class="text-muted">{site.location} · {site.tagline}</span>
+      </div>
+
+      <h1 id="hero-heading" class="hero-headline">
+        {site.positioningHeadline}
+      </h1>
+
+      <p class="hero-subhead">
+        {site.positioningSubhead}
+      </p>
+
+      <div class="hero-cta-row">
+        <a href="#selected-work" class="btn btn-primary">
+          <span>Explore Case Studies</span>
+          <span aria-hidden="true" class="mono">↓</span>
+        </a>
+        <a href={site.links.resumePdf} class="btn" download>
+          <span>Résumé PDF</span>
+          <span aria-hidden="true" class="mono">↗</span>
+        </a>
+        <button
+          type="button"
+          class="btn"
+          data-copy-email={site.email}
+          data-copy-feedback={site.ui.copiedEmailFeedback}
+        >
+          <span class="mono">{site.email}</span>
+          <span class="kbd-badge">Copy</span>
+        </button>
+      </div>
+
+      <!-- Production Telemetry Strip -->
+      <div class="telemetry-strip" aria-label="Production engineering impact metrics">
+        {site.heroStats.map((stat, idx) => (
+          <div class="telemetry-cell">
+            <span class="mono" style="font-size: 0.7rem; color: var(--text-muted);">
+              0{idx + 1} // TELEMETRY
+            </span>
+            <span class="telemetry-value mono">{stat.value}</span>
+            <span class="telemetry-label">{stat.label}</span>
+            <span class="telemetry-context">{stat.context}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 01 / Selected Projects -->
+  <section id="selected-work" class="section" aria-labelledby="work-heading">
+    <div class="container cq-grid">
+      <div class="section-header">
+        <div>
+          <span class="section-index">{site.ui.selectedWorkIndex}</span>
+          <h2 id="work-heading" style="margin-top: var(--space-2);">
+            {site.ui.selectedWorkTitle}
+          </h2>
+          <p style="margin-top: var(--space-2);">{site.ui.selectedWorkSub}</p>
+        </div>
+        <a href="/projects" class="btn">
+          <span>{site.ui.viewAllProjects}</span>
+          <span aria-hidden="true" class="mono">→</span>
+        </a>
+      </div>
+
+      <div class="projects-stack">
+        {featuredProjects.map((project) => (
+          <ProjectCard
+            project={project}
+            readMoreLabel={site.ui.readCaseStudy}
+            headingLevel="h3"
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 / Signature ML Moment: 2D UMAP Embedding Map -->
+  <EmbeddingMap
+    projects={allProjects}
+    posts={posts}
+    skillNodes={site.skillNodes}
+    sectionIndex={site.ui.latentSpaceIndex}
+    title={site.ui.latentSpaceTitle}
+    subtitle={site.ui.latentSpaceSub}
+  />
+
+  <!-- 03 / Recent Technical Writing -->
+  <section id="writing" class="section scroll-reveal" aria-labelledby="writing-heading">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="section-index">{site.ui.writingIndex}</span>
+          <h2 id="writing-heading" style="margin-top: var(--space-2);">
+            {site.ui.writingTitle}
+          </h2>
+          <p style="margin-top: var(--space-2);">{site.ui.writingSub}</p>
+        </div>
+        <a href="/writing" class="btn">
+          <span>{site.ui.viewAllWriting}</span>
+          <span aria-hidden="true" class="mono">→</span>
+        </a>
+      </div>
+
+      <div class="writing-grid">
+        {posts.map((post) => (
+          <article class="spotlight-card writing-card">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap;" class="mono">
+              <span style="font-size: var(--text-xs); color: var(--accent); font-weight: 600;">
+                {post.data.category}
+              </span>
+              <time
+                datetime={post.data.pubDate.toISOString()}
+                style="font-size: var(--text-xs); color: var(--text-muted);"
+              >
+                {post.data.pubDate.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: '2-digit',
+                })} · {post.data.readingTime}
+              </time>
+            </div>
+
+            <h3 style="font-size: var(--text-lg); margin-top: var(--space-3);">
+              <a href={`/writing/${post.data.slug}`} style="text-decoration: none;">
+                {post.data.title}
+              </a>
+            </h3>
+
+            <p style="font-size: var(--text-sm); margin-top: var(--space-2);">
+              {post.data.summary}
+            </p>
+
+            <ul class="tag-list" style="margin-top: var(--space-4);" aria-label="Article tags">
+              {post.data.tags.map((tag) => (
+                <li class="tag">{tag}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 / Short About & Architectural Principles -->
+  <section id="about-preview" class="section scroll-reveal" aria-labelledby="about-heading">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="section-index">{site.ui.aboutIndex}</span>
+          <h2 id="about-heading" style="margin-top: var(--space-2);">
+            {site.ui.aboutTitle}
+          </h2>
+        </div>
+        <a href="/about" class="btn">
+          <span>Full Experience &amp; Timeline</span>
+          <span aria-hidden="true" class="mono">→</span>
+        </a>
+      </div>
+
+      <div class="about-split">
+        <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+          {site.aboutShort.map((para) => (
+            <p style="font-size: var(--text-lg); color: var(--text-primary); line-height: 1.65;">
+              {para}
+            </p>
+          ))}
+          <div style="display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-2);">
+            <a href="/about" class="btn">About &amp; Experience</a>
+            <a href="/resume" class="btn">Interactive Résumé</a>
+          </div>
+        </div>
+
+        <div class="principles-list">
+          {site.engineeringPrinciples.map((p) => (
+            <div class="principle-item">
+              <span class="mono" style="font-size: var(--text-xs); color: var(--accent); font-weight: 700;">
+                PRINCIPLE // {p.index}
+              </span>
+              <h3 style="font-size: var(--text-base); margin-top: var(--space-1);">
+                {p.title}
+              </h3>
+              <p style="font-size: var(--text-sm); margin-top: var(--space-1);">
+                {p.body}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 / Contact Channel -->
+  <section id="contact" class="section scroll-reveal" style="border-bottom: none;" aria-labelledby="contact-heading">
+    <div class="container">
+      <div class="spotlight-card" style="padding: clamp(1.75rem, 4vw, 3rem);">
+        <span class="section-index">{site.ui.contactIndex}</span>
+        <h2 id="contact-heading" style="margin-top: var(--space-2);">
+          {site.ui.contactTitle}
+        </h2>
+        <p style="margin-top: var(--space-2); font-size: var(--text-lg);">
+          {site.ui.contactSub}
+        </p>
+
+        <div style="display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5);">
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-copy-email={site.email}
+            data-copy-feedback={site.ui.copiedEmailFeedback}
+          >
+            <span class="mono">{site.email}</span>
+            <span>(Click to Copy)</span>
+          </button>
+          <a href={`mailto:${site.email}`} class="btn">
+            <span>Open Mail Client</span>
+            <span aria-hidden="true" class="mono">↗</span>
+          </a>
+          <a href={site.links.linkedin} class="btn" target="_blank" rel="noopener noreferrer">
+            <span>LinkedIn</span>
+            <span aria-hidden="true" class="mono">↗</span>
+          </a>
+          <a href={site.links.github} class="btn" target="_blank" rel="noopener noreferrer">
+            <span>GitHub</span>
+            <span aria-hidden="true" class="mono">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero-section {
+    padding-top: clamp(2.5rem, 6vw, 5rem);
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--text-xs);
+    margin-bottom: var(--space-5);
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--status-ok-bg);
+    color: var(--status-ok);
+    font-weight: 600;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--status-ok);
+  }
+
+  .hero-headline {
+    font-size: var(--text-display);
+    max-width: 24ch;
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+  }
+
+  .hero-subhead {
+    margin-top: var(--space-5);
+    font-size: var(--text-lg);
+    max-width: 62ch;
+    color: var(--text-secondary);
+  }
+
+  .hero-cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+
+  .telemetry-strip {
+    margin-top: var(--space-8);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-surface);
+    overflow: hidden;
+  }
+
+  .telemetry-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--border-subtle);
+    border-right: 1px solid var(--border-subtle);
+  }
+
+  .telemetry-value {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    margin-top: 2px;
+  }
+
+  .telemetry-label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .telemetry-context {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  .writing-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  @media (min-width: 48rem) {
+    .writing-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .writing-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .about-split {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
+  }
+
+  @media (min-width: 56rem) {
+    .about-split {
+      grid-template-columns: 1.15fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .principles-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .principle-item {
+    padding: var(--space-4);
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+  }
+</style>

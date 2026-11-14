@@ -1,0 +1,38 @@
+---
+import ProjectCard from '../../components/ProjectCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getSiteData, getSortedProjects } from '../../utils/content';
+
+const site = await getSiteData();
+const projects = await getSortedProjects();
+---
+
+<BaseLayout
+  title="Production Case Studies"
+  description="Architecture, constraints, SVG system schematics, and measured outcomes across search, RAG, agentic AI, MCP servers, and CDC data platforms."
+  ogImage="/og/default.png"
+>
+  <section class="section" style="border-bottom: none;">
+    <div class="container cq-grid">
+      <div class="section-header">
+        <div>
+          <span class="section-index">{site.ui.selectedWorkIndex}</span>
+          <h1 style="margin-top: var(--space-2);">{site.ui.selectedWorkTitle}</h1>
+          <p style="margin-top: var(--space-3); font-size: var(--text-lg);">
+            {site.ui.selectedWorkSub}
+          </p>
+        </div>
+      </div>
+
+      <div class="projects-stack">
+        {projects.map((project) => (
+          <ProjectCard
+            project={project}
+            readMoreLabel={site.ui.readCaseStudy}
+            headingLevel="h2"
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

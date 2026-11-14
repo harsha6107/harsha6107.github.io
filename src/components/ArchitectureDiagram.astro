@@ -1,0 +1,344 @@
+---
+interface Props {
+  diagramId: 'catalog-search' | 'agentic-mcp' | 'cdc-snowflake' | 'rag-etim' | 'iot-asr';
+  title: string;
+  caption: string;
+}
+
+const { diagramId, title, caption } = Astro.props;
+---
+
+<figure class="arch-frame">
+  {diagramId === 'catalog-search' && (
+    <svg
+      viewBox="0 0 880 310"
+      role="img"
+      aria-labelledby="diag-catalog-title diag-catalog-desc"
+      style="width: 100%; height: auto; min-width: 580px; font-family: var(--font-mono);"
+    >
+      <title id="diag-catalog-title">{title}</title>
+      <desc id="diag-catalog-desc">{caption}</desc>
+      <defs>
+        <marker id="arrow-cs" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--accent)" />
+        </marker>
+      </defs>
+
+      <!-- Stage 1: Source & Outbox -->
+      <rect x="16" y="28" width="180" height="115" rx="6" fill="var(--bg-subtle)" stroke="var(--border-strong)" stroke-width="1.5" />
+      <text x="30" y="52" fill="var(--accent)" font-size="10" font-weight="700">01 / SOURCE &amp; OUTBOX</text>
+      <text x="30" y="74" fill="var(--text-primary)" font-size="12" font-weight="600">PostgreSQL + PIMS</text>
+      <text x="30" y="94" fill="var(--text-secondary)" font-size="10">• 26M Active SKUs</text>
+      <text x="30" y="110" fill="var(--text-secondary)" font-size="10">• Keyset (ts, sku_id)</text>
+      <text x="30" y="126" fill="var(--text-secondary)" font-size="10">• 15-min Delta Watermark</text>
+
+      <rect x="16" y="165" width="180" height="115" rx="6" fill="var(--bg-subtle)" stroke="var(--border-subtle)" stroke-width="1.2" />
+      <text x="30" y="189" fill="var(--text-muted)" font-size="10" font-weight="700">EVENT SYNC BUS</text>
+      <text x="30" y="211" fill="var(--text-primary)" font-size="12" font-weight="600">Azure Service Bus</text>
+      <text x="30" y="231" fill="var(--text-secondary)" font-size="10">• Transactional Outbox</text>
+      <text x="30" y="247" fill="var(--text-secondary)" font-size="10">• Field-Level Ownership</text>
+      <text x="30" y="263" fill="var(--text-secondary)" font-size="10">• Partial Doc Upserts</text>
+
+      <!-- Connectors to Stage 2 -->
+      <path d="M 196 85 L 244 85" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-cs)" />
+      <path d="M 196 220 L 220 220 L 220 115 L 244 115" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow-cs)" />
+
+      <!-- Stage 2: Bounded Bulk Workers -->
+      <rect x="248" y="28" width="196" height="252" rx="6" fill="var(--bg-subtle)" stroke="var(--border-strong)" stroke-width="1.5" />
+      <text x="264" y="52" fill="var(--accent)" font-size="10" font-weight="700">02 / BOUNDED INGESTION</text>
+      <text x="264" y="74" fill="var(--text-primary)" font-size="12" font-weight="600">.NET Sync Workers (2x)</text>
+      <rect x="264" y="90" width="164" height="54" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="274" y="110" fill="var(--text-primary)" font-size="10" font-weight="600">Dual Payload Guard</text>
+      <text x="274" y="128" fill="var(--text-secondary)" font-size="10">≤ 1,000 docs | ≤ 5 MB</text>
+
+      <rect x="264" y="156" width="164" height="54" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="274" y="176" fill="var(--text-primary)" font-size="10" font-weight="600">Count-Verified Swap</text>
+      <text x="274" y="194" fill="var(--text-secondary)" font-size="10">Blue/Green Alias Gate</text>
+
+      <rect x="264" y="220" width="164" height="44" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="274" y="240" fill="var(--text-primary)" font-size="10" font-weight="600">Item-Level DLQ</text>
+      <text x="274" y="255" fill="var(--text-muted)" font-size="9">Zero silent bulk drops</text>
+
+      <path d="M 444 154 L 488 154" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-cs)" />
+
+      <!-- Stage 3: 4-Tier Elasticsearch Ranking -->
+      <rect x="492" y="28" width="372" height="252" rx="6" fill="var(--bg-subtle)" stroke="var(--accent)" stroke-width="1.75" />
+      <text x="510" y="52" fill="var(--accent)" font-size="10" font-weight="700">03 / 4-TIER SKU ANALYZER &amp; RANKING (77% SLASH SKUs)</text>
+      <text x="510" y="74" fill="var(--text-primary)" font-size="12" font-weight="600">Elasticsearch 26M-Doc Cluster</text>
+
+      <rect x="510" y="90" width="168" height="48" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="520" y="109" fill="var(--accent)" font-size="10" font-weight="700">T1: Exact Keyword (12x)</text>
+      <text x="520" y="125" fill="var(--text-secondary)" font-size="9">6204-2RS/C3 verbatim</text>
+
+      <rect x="688" y="90" width="160" height="48" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="698" y="109" fill="var(--accent)" font-size="10" font-weight="700">T2: Alnum Fold (8.5x)</text>
+      <text x="698" y="125" fill="var(--text-secondary)" font-size="9">Strips / - . → 62042rsc3</text>
+
+      <rect x="510" y="148" width="168" height="48" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="520" y="167" fill="var(--text-primary)" font-size="10" font-weight="600">T3: Edge Prefix (4.0x)</text>
+      <text x="520" y="183" fill="var(--text-secondary)" font-size="9">Slash-aware n-gram</text>
+
+      <rect x="688" y="148" width="160" height="48" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="698" y="167" fill="var(--text-primary)" font-size="10" font-weight="600">T4: Fuzzy + Pop (1.5x)</text>
+      <text x="698" y="183" fill="var(--text-secondary)" font-size="9">AUTO:4,7 + Order Tie-Break</text>
+
+      <rect x="510" y="210" width="338" height="52" rx="4" fill="var(--bg-surface)" stroke="var(--border-strong)" />
+      <text x="524" y="232" fill="var(--text-primary)" font-size="10" font-weight="700">Scoped Facet Aggregations: 100,000 → 500 Buckets (-99.5%)</text>
+      <text x="524" y="249" fill="var(--text-muted)" font-size="9">Eliminated coordinator heap saturation while preserving filter precision</text>
+    </svg>
+  )}
+
+  {diagramId === 'agentic-mcp' && (
+    <svg
+      viewBox="0 0 880 320"
+      role="img"
+      aria-labelledby="diag-mcp-title diag-mcp-desc"
+      style="width: 100%; height: auto; min-width: 580px; font-family: var(--font-mono);"
+    >
+      <title id="diag-mcp-title">{title}</title>
+      <desc id="diag-mcp-desc">{caption}</desc>
+      <defs>
+        <marker id="arrow-mcp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--accent)" />
+        </marker>
+      </defs>
+
+      <!-- Left: Client Surfaces -->
+      <rect x="16" y="24" width="190" height="125" rx="6" fill="var(--bg-subtle)" stroke="var(--border-strong)" stroke-width="1.5" />
+      <text x="30" y="48" fill="var(--accent)" font-size="10" font-weight="700">IN-APP &amp; BROWSER</text>
+      <text x="30" y="70" fill="var(--text-primary)" font-size="12" font-weight="600">Peregrin Web + Ext</text>
+      <text x="30" y="90" fill="var(--text-secondary)" font-size="10">• Active Viewport Priority</text>
+      <text x="30" y="106" fill="var(--text-secondary)" font-size="10">• Untrusted CSV Search</text>
+      <text x="30" y="122" fill="var(--text-secondary)" font-size="10">• Chrome/Edge Supplier Agent</text>
+
+      <rect x="16" y="168" width="190" height="125" rx="6" fill="var(--bg-subtle)" stroke="var(--border-strong)" stroke-width="1.5" />
+      <text x="30" y="192" fill="var(--accent)" font-size="10" font-weight="700">EXTERNAL AI CLIENTS</text>
+      <text x="30" y="214" fill="var(--text-primary)" font-size="12" font-weight="600">Claude · ChatGPT · IDE</text>
+      <text x="30" y="234" fill="var(--text-secondary)" font-size="10">• OAuth 2.1 + PKCE Flow</text>
+      <text x="30" y="250" fill="var(--text-secondary)" font-size="10">• Stateless HTTP/SSE</text>
+      <text x="30" y="266" fill="var(--text-secondary)" font-size="10">• 36 Tools · 156 Tests</text>
+
+      <path d="M 206 86 L 252 86" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-mcp)" />
+      <path d="M 206 230 L 252 230" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-mcp)" />
+
+      <!-- Center: Orchestration & MCP Runtime -->
+      <rect x="256" y="24" width="250" height="269" rx="6" fill="var(--bg-subtle)" stroke="var(--accent)" stroke-width="1.75" />
+      <text x="272" y="48" fill="var(--accent)" font-size="10" font-weight="700">AGENT &amp; MCP RUNTIME LAYER</text>
+      <rect x="272" y="62" width="218" height="68" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="284" y="82" fill="var(--text-primary)" font-size="11" font-weight="700">Azure AI Foundry (42 Tools)</text>
+      <text x="284" y="100" fill="var(--text-secondary)" font-size="9">Strict JSON Schema + 25/25 Golden Eval</text>
+      <text x="284" y="115" fill="var(--text-muted)" font-size="9">eParts Brain Cortex Hybrid RAG</text>
+
+      <rect x="272" y="142" width="218" height="62" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="284" y="162" fill="var(--text-primary)" font-size="11" font-weight="700">Permit ReBAC Authorization</text>
+      <text x="284" y="180" fill="var(--text-secondary)" font-size="9">Tenant/Workspace tuple verification</text>
+      <text x="284" y="194" fill="var(--text-muted)" font-size="9">"My orders" bound to session.userId</text>
+
+      <rect x="272" y="216" width="218" height="62" rx="4" fill="var(--bg-surface)" stroke="var(--border-strong)" />
+      <text x="284" y="236" fill="var(--accent)" font-size="10" font-weight="700">Continuous Eval Loop</text>
+      <text x="284" y="252" fill="var(--text-secondary)" font-size="9">100 Redacted Traces/Cycle + CI Judge</text>
+      <text x="284" y="266" fill="var(--text-muted)" font-size="9">Weekly PR regression gate</text>
+
+      <path d="M 506 110 L 556 110" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-mcp)" />
+      <path d="M 506 215 L 556 215" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-mcp)" />
+
+      <!-- Right: Two-Phase Write Guard -->
+      <rect x="560" y="24" width="304" height="118" rx="6" fill="var(--bg-subtle)" stroke="var(--border-strong)" stroke-width="1.5" />
+      <text x="576" y="48" fill="var(--text-muted)" font-size="10" font-weight="700">READ_SAFE EXECUTION PATH</text>
+      <text x="576" y="70" fill="var(--text-primary)" font-size="12" font-weight="600">Scoped Data &amp; Hybrid RAG</text>
+      <text x="576" y="92" fill="var(--text-secondary)" font-size="10">• 26M Catalog &amp; 35K Spec Docs</text>
+      <text x="576" y="108" fill="var(--text-secondary)" font-size="10">• Snowflake Cortex MCP (Brain)</text>
+      <text x="576" y="124" fill="var(--text-secondary)" font-size="10">• Zero cross-workspace leakage</text>
+
+      <rect x="560" y="158" width="304" height="135" rx="6" fill="var(--bg-subtle)" stroke="var(--accent)" stroke-width="1.75" />
+      <text x="576" y="182" fill="var(--accent)" font-size="10" font-weight="700">WRITE_GUARDED PATH (HUMAN-IN-LOOP)</text>
+      <text x="576" y="204" fill="var(--text-primary)" font-size="12" font-weight="600">Signed 5-Minute Action Token</text>
+      <text x="576" y="226" fill="var(--text-secondary)" font-size="10">1. Stage dry-run diff + HMAC token</text>
+      <text x="576" y="244" fill="var(--text-secondary)" font-size="10">2. User explicitly clicks Confirm</text>
+      <text x="576" y="262" fill="var(--text-secondary)" font-size="10">3. Verify TTL (≤5m) &amp; commit audit log</text>
+    </svg>
+  )}
+
+  {diagramId === 'cdc-snowflake' && (
+    <svg
+      viewBox="0 0 880 300"
+      role="img"
+      aria-labelledby="diag-cdc-title diag-cdc-desc"
+      style="width: 100%; height: auto; min-width: 580px; font-family: var(--font-mono);"
+    >
+      <title id="diag-cdc-title">{title}</title>
+      <desc id="diag-cdc-desc">{caption}</desc>
+      <defs>
+        <marker id="arrow-cdc" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--accent)" />
+        </marker>
+      </defs>
+
+      <!-- Source SQL Server -->
+      <rect x="16" y="30" width="176" height="240" rx="6" fill="var(--bg-subtle)" stroke="var(--border-strong)" stroke-width="1.5" />
+      <text x="30" y="54" fill="var(--accent)" font-size="10" font-weight="700">01 / OLTP SOURCE</text>
+      <text x="30" y="76" fill="var(--text-primary)" font-size="12" font-weight="600">SQL Server Prod</text>
+      <text x="30" y="100" fill="var(--text-secondary)" font-size="10">• 436 Tracked Tables</text>
+      <text x="30" y="118" fill="var(--text-secondary)" font-size="10">• LSN Change Tables</text>
+      <text x="30" y="136" fill="var(--text-secondary)" font-size="10">• Dynamic Masking on</text>
+      <text x="30" y="152" fill="var(--text-secondary)" font-size="10">  18 Sensitive Tables</text>
+      <rect x="30" y="185" width="148" height="64" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="40" y="206" fill="var(--text-primary)" font-size="10" font-weight="600">v5 Partitioned Schema</text>
+      <text x="40" y="224" fill="var(--text-muted)" font-size="9">Billions-row tenant</text>
+      <text x="40" y="238" fill="var(--text-muted)" font-size="9">pricing delta timestamps</text>
+
+      <path d="M 192 150 L 236 150" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-cdc)" />
+
+      <!-- AKS Strimzi + Debezium -->
+      <rect x="240" y="30" width="224" height="240" rx="6" fill="var(--bg-subtle)" stroke="var(--border-strong)" stroke-width="1.5" />
+      <text x="256" y="54" fill="var(--accent)" font-size="10" font-weight="700">02 / STREAMING (AKS)</text>
+      <text x="256" y="76" fill="var(--text-primary)" font-size="12" font-weight="600">Debezium + Strimzi Kafka</text>
+      <text x="256" y="98" fill="var(--text-secondary)" font-size="10">• Provisioned via Terraform/Helm</text>
+      <text x="256" y="116" fill="var(--text-secondary)" font-size="10">• Connector Task Auto-Restart</text>
+      <rect x="256" y="136" width="192" height="54" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="268" y="156" fill="var(--accent)" font-size="10" font-weight="700">15-Min Lag &amp; DLQ Watchdog</text>
+      <text x="268" y="174" fill="var(--text-secondary)" font-size="9">Zero multi-day sync gaps</text>
+      <rect x="256" y="202" width="192" height="52" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="268" y="222" fill="var(--text-primary)" font-size="10" font-weight="600">Fail-Closed GitHub CI/CD</text>
+      <text x="268" y="238" fill="var(--text-muted)" font-size="9">Verifies offset progression</text>
+
+      <path d="M 464 150 L 508 150" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-cdc)" />
+
+      <!-- Snowflake Bronze & Siemens Share -->
+      <rect x="512" y="30" width="352" height="240" rx="6" fill="var(--bg-subtle)" stroke="var(--accent)" stroke-width="1.75" />
+      <text x="528" y="54" fill="var(--accent)" font-size="10" font-weight="700">03 / SNOWFLAKE BRONZE (493 TABLES) &amp; SIEMENS SHARE</text>
+
+      <rect x="528" y="70" width="320" height="88" rx="4" fill="var(--bg-surface)" stroke="var(--border-strong)" />
+      <text x="542" y="92" fill="var(--text-primary)" font-size="11" font-weight="700">Batched Micro-Drain MERGEs (-95% Compute Spend)</text>
+      <text x="542" y="110" fill="var(--text-secondary)" font-size="10">• Replaced 48 credits/day always-on per-record MERGEs</text>
+      <text x="542" y="126" fill="var(--text-secondary)" font-size="10">• QUALIFY ROW_NUMBER() LSN compaction (500K+ rows/run)</text>
+      <text x="542" y="142" fill="var(--text-muted)" font-size="9">• Scheduled drain windows + immediate warehouse auto-suspend</text>
+
+      <rect x="528" y="172" width="320" height="82" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="542" y="194" fill="var(--accent)" font-size="11" font-weight="700">Siemens Zero-Leak CDC Share (74 Tables · 2.1M Rows)</text>
+      <text x="542" y="212" fill="var(--text-secondary)" font-size="10">• Internal cost &amp; multiplier columns physically withheld</text>
+      <text x="542" y="228" fill="var(--text-secondary)" font-size="10">• Negative-tested read-only role · 2x daily delta refresh</text>
+    </svg>
+  )}
+
+  {diagramId === 'rag-etim' && (
+    <svg
+      viewBox="0 0 880 300"
+      role="img"
+      aria-labelledby="diag-rag-title diag-rag-desc"
+      style="width: 100%; height: auto; min-width: 580px; font-family: var(--font-mono);"
+    >
+      <title id="diag-rag-title">{title}</title>
+      <desc id="diag-rag-desc">{caption}</desc>
+      <defs>
+        <marker id="arrow-rag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--accent)" />
+        </marker>
+      </defs>
+
+      <!-- Track A: 28GB RAG -->
+      <rect x="16" y="24" width="848" height="122" rx="6" fill="var(--bg-subtle)" stroke="var(--border-strong)" stroke-width="1.5" />
+      <text x="32" y="46" fill="var(--accent)" font-size="10" font-weight="700">PIPELINE A / 28 GB INDUSTRIAL SPEC &amp; INSTALLATION RAG (98% INGESTION SUCCESS)</text>
+
+      <rect x="32" y="60" width="180" height="70" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="44" y="82" fill="var(--text-primary)" font-size="11" font-weight="600">~400K Source Rows</text>
+      <text x="44" y="100" fill="var(--text-secondary)" font-size="9">Noisy PDF links across</text>
+      <text x="44" y="114" fill="var(--text-secondary)" font-size="9">~35K spec manuals</text>
+
+      <path d="M 212 95 L 248 95" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-rag)" />
+
+      <rect x="252" y="60" width="196" height="70" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="264" y="82" fill="var(--accent)" font-size="11" font-weight="700">SHA-256 Deduplication</text>
+      <text x="264" y="100" fill="var(--text-secondary)" font-size="9">~29K Canonical Blobs (28 GB)</text>
+      <text x="264" y="114" fill="var(--text-muted)" font-size="9">Parallel Azure Blob Workers</text>
+
+      <path d="M 448 95 L 484 95" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-rag)" />
+
+      <rect x="488" y="60" width="356" height="70" rx="4" fill="var(--bg-surface)" stroke="var(--border-strong)" />
+      <text x="502" y="82" fill="var(--text-primary)" font-size="11" font-weight="700">Azure AI Search Hybrid Index + SKU Linker</text>
+      <text x="502" y="100" fill="var(--text-secondary)" font-size="10">Dense Vectors + BM25 + M:N SKU Join Graph</text>
+      <text x="502" y="116" fill="var(--text-muted)" font-size="9">Every cited datasheet answer links directly to orderable SKUs</text>
+
+      <!-- Track B: ETIM Classification -->
+      <rect x="16" y="164" width="848" height="118" rx="6" fill="var(--bg-subtle)" stroke="var(--accent)" stroke-width="1.75" />
+      <text x="32" y="186" fill="var(--accent)" font-size="10" font-weight="700">PIPELINE B / 382-CLASS ETIM PARTS CLASSIFICATION (21 ms LATENCY)</text>
+
+      <rect x="32" y="200" width="180" height="66" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="44" y="222" fill="var(--text-primary)" font-size="11" font-weight="600">OCR Extraction</text>
+      <text x="44" y="240" fill="var(--text-secondary)" font-size="10">~95% OCR Accuracy</text>
+      <text x="44" y="254" fill="var(--text-muted)" font-size="9">Spec sheet text + tables</text>
+
+      <path d="M 212 233 L 248 233" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-rag)" />
+
+      <rect x="252" y="200" width="196" height="66" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="264" y="222" fill="var(--text-primary)" font-size="11" font-weight="600">382-Class Classifier</text>
+      <text x="264" y="240" fill="var(--accent)" font-size="10" font-weight="700">~92% Class Match · 21 ms</text>
+      <text x="264" y="254" fill="var(--text-muted)" font-size="9">+ Attribute value heads</text>
+
+      <path d="M 448 233 L 484 233" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-rag)" />
+
+      <rect x="488" y="200" width="356" height="66" rx="4" fill="var(--bg-surface)" stroke="var(--border-strong)" />
+      <text x="502" y="222" fill="var(--text-primary)" font-size="11" font-weight="700">Calibrated Confidence Routing → PIMS Writeback</text>
+      <text x="502" y="240" fill="var(--text-secondary)" font-size="10">• p ≥ 0.85: Auto-Accept to PIMS</text>
+      <text x="502" y="255" fill="var(--text-secondary)" font-size="10">• 0.50 ≤ p &lt; 0.85: Human Review Queue · p &lt; 0.50: Triage</text>
+    </svg>
+  )}
+
+  {diagramId === 'iot-asr' && (
+    <svg
+      viewBox="0 0 880 290"
+      role="img"
+      aria-labelledby="diag-iot-title diag-iot-desc"
+      style="width: 100%; height: auto; min-width: 580px; font-family: var(--font-mono);"
+    >
+      <title id="diag-iot-title">{title}</title>
+      <desc id="diag-iot-desc">{caption}</desc>
+      <defs>
+        <marker id="arrow-iot" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--accent)" />
+        </marker>
+      </defs>
+
+      <!-- Left: Adrich 250x IoT -->
+      <rect x="16" y="24" width="416" height="242" rx="6" fill="var(--bg-subtle)" stroke="var(--border-strong)" stroke-width="1.5" />
+      <text x="32" y="48" fill="var(--accent)" font-size="10" font-weight="700">SYSTEM A / ADRICH 250x EMBEDDED IoT AI PLATFORM</text>
+      <rect x="32" y="64" width="176" height="82" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="44" y="86" fill="var(--text-primary)" font-size="11" font-weight="700">5,000,000 Smart Chips</text>
+      <text x="44" y="104" fill="var(--text-secondary)" font-size="9">• Scaled 250x from 20K</text>
+      <text x="44" y="118" fill="var(--text-secondary)" font-size="9">• 5x Sensor Data Density</text>
+      <text x="44" y="132" fill="var(--accent)" font-size="9" font-weight="700">• -60% Assembly Cost</text>
+
+      <path d="M 208 105 L 236 105" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-iot)" />
+
+      <rect x="240" y="64" width="176" height="82" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="252" y="86" fill="var(--text-primary)" font-size="11" font-weight="700">Streamlined Ingestion</text>
+      <text x="252" y="104" fill="var(--text-secondary)" font-size="9">• Compact binary frames</text>
+      <text x="252" y="118" fill="var(--text-secondary)" font-size="9">• Decoupled burst queues</text>
+      <text x="252" y="132" fill="var(--text-secondary)" font-size="9">• Real-time brand analytics</text>
+
+      <rect x="32" y="164" width="384" height="84" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="44" y="186" fill="var(--text-primary)" font-size="11" font-weight="700">Kafka Streaming Recommender (99% Uptime)</text>
+      <text x="44" y="204" fill="var(--text-secondary)" font-size="10">• Continuous gradient-boosting retraining (+40% update cadence)</text>
+      <text x="44" y="220" fill="var(--text-muted)" font-size="9">• Automated fairness, drift &amp; SHAP explainability release gates</text>
+
+      <!-- Right: Whisper Accented ASR -->
+      <rect x="448" y="24" width="416" height="242" rx="6" fill="var(--bg-subtle)" stroke="var(--accent)" stroke-width="1.75" />
+      <text x="464" y="48" fill="var(--accent)" font-size="10" font-weight="700">SYSTEM B / WHISPER ACCENTED SPEECH RECOGNITION</text>
+
+      <rect x="464" y="64" width="384" height="82" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
+      <text x="478" y="86" fill="var(--text-primary)" font-size="11" font-weight="700">1,000,000 Accented Voice Samples</text>
+      <text x="478" y="104" fill="var(--text-secondary)" font-size="10">• Stratified phonetic &amp; regional L1 accent partitions</text>
+      <text x="478" y="120" fill="var(--text-secondary)" font-size="10">• Log-Mel spectrogram extraction + SpecAugment</text>
+
+      <rect x="464" y="164" width="384" height="84" rx="4" fill="var(--bg-surface)" stroke="var(--border-strong)" />
+      <text x="478" y="186" fill="var(--accent)" font-size="11" font-weight="700">Fine-Tuned Whisper Encoder-Decoder</text>
+      <text x="478" y="206" fill="var(--text-primary)" font-size="10" font-weight="600">+30% Accented Recognition Accuracy · -25% Word Error Rate</text>
+      <text x="478" y="224" fill="var(--text-muted)" font-size="9">Layer-selective acoustic adaptation preserving zero-shot lexical breadth</text>
+    </svg>
+  )}
+
+  <figcaption class="arch-caption">
+    <span>{title}</span>
+    <span>{caption}</span>
+  </figcaption>
+</figure>

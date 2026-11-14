@@ -1,0 +1,268 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+  posts: CollectionEntry<'writing'>[];
+  email: string;
+  githubUrl: string;
+  linkedinUrl: string;
+  resumePdfUrl: string;
+  placeholder: string;
+}
+
+const {
+  projects,
+  posts,
+  email,
+  githubUrl,
+  linkedinUrl,
+  resumePdfUrl,
+  placeholder,
+} = Astro.props;
+
+const items = [
+  {
+    id: 'act-theme',
+    group: 'Quick Actions',
+    label: 'Toggle Light / Dark Theme',
+    sub: 'Switch color scheme preference',
+    action: 'toggle-theme',
+    kbd: 'T',
+  },
+  {
+    id: 'act-email',
+    group: 'Quick Actions',
+    label: `Copy Email (${email})`,
+    sub: 'Copy address to clipboard',
+    action: 'copy-email',
+    payload: email,
+    kbd: 'C',
+  },
+  {
+    id: 'act-resume',
+    group: 'Quick Actions',
+    label: 'Download Résumé PDF',
+    sub: 'Harsha_Tummala.pdf',
+    href: resumePdfUrl,
+    kbd: 'R',
+  },
+  {
+    id: 'nav-home',
+    group: 'Navigation',
+    label: 'Home — Overview & Latent Space',
+    sub: '/',
+    href: '/',
+  },
+  {
+    id: 'nav-projects',
+    group: 'Navigation',
+    label: 'Work — All 5 Production Case Studies',
+    sub: '/projects',
+    href: '/projects',
+  },
+  {
+    id: 'nav-writing',
+    group: 'Navigation',
+    label: 'Writing — Technical Architecture Essays',
+    sub: '/writing',
+    href: '/writing',
+  },
+  {
+    id: 'nav-about',
+    group: 'Navigation',
+    label: 'About — Experience Timeline & Philosophy',
+    sub: '/about',
+    href: '/about',
+  },
+  {
+    id: 'nav-resume-page',
+    group: 'Navigation',
+    label: 'Résumé — Interactive & Print Specification',
+    sub: '/resume',
+    href: '/resume',
+  },
+  ...projects.map((p) => ({
+    id: `proj-${p.data.slug}`,
+    group: 'Case Studies',
+    label: `${p.data.index}. ${p.data.title}`,
+    sub: p.data.headlineMetric,
+    href: `/projects/${p.data.slug}`,
+  })),
+  ...posts.map((post) => ({
+    id: `post-${post.data.slug}`,
+    group: 'Technical Writing',
+    label: post.data.title,
+    sub: `${post.data.category} · ${post.data.readingTime}`,
+    href: `/writing/${post.data.slug}`,
+  })),
+  {
+    id: 'ext-github',
+    group: 'External Channels',
+    label: 'GitHub — @harsha6107',
+    sub: githubUrl,
+    href: githubUrl,
+  },
+  {
+    id: 'ext-linkedin',
+    group: 'External Channels',
+    label: 'LinkedIn — Harsha Tummala',
+    sub: linkedinUrl,
+    href: linkedinUrl,
+  },
+];
+---
+
+<dialog
+  id="cmd-palette"
+  class="cmd-dialog"
+  aria-label="Command Palette"
+>
+  <div class="cmd-surface">
+    <div class="cmd-header">
+      <label for="cmd-input" class="sr-only">{placeholder}</label>
+      <span class="mono" style="color: var(--accent); font-size: var(--text-sm); font-weight: 700;" aria-hidden="true">⌘K</span>
+      <input
+        id="cmd-input"
+        type="text"
+        class="cmd-input"
+        placeholder={placeholder}
+        autocomplete="off"
+        spellcheck="false"
+        role="combobox"
+        aria-expanded="true"
+        aria-controls="cmd-listbox"
+        aria-autocomplete="list"
+      />
+      <button
+        type="button"
+        id="cmd-close"
+        class="btn btn-icon"
+        aria-label="Close command palette"
+      >
+        ESC
+      </button>
+    </div>
+
+    <ul
+      id="cmd-listbox"
+      class="cmd-list"
+      role="listbox"
+      aria-label="Command results"
+    >
+      {items.map((item, idx) => (
+        <li
+          id={item.id}
+          role="option"
+          aria-selected={idx === 0 ? 'true' : 'false'}
+          class="cmd-option"
+          data-cmd-item
+          data-label={`${item.group} ${item.label} ${item.sub}`.toLowerCase()}
+          data-href={item.href ?? ''}
+          data-action={item.action ?? ''}
+          data-payload={item.payload ?? ''}
+          tabindex="-1"
+        >
+          <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+            <span class="mono" style="font-size: 0.68rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em;">
+              {item.group}
+            </span>
+            <span style="font-size: var(--text-sm); font-weight: 500; color: var(--text-primary);">
+              {item.label}
+            </span>
+            <span class="mono" style="font-size: var(--text-xs); color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              {item.sub}
+            </span>
+          </div>
+          {item.kbd && <kbd class="kbd-badge">{item.kbd}</kbd>}
+        </li>
+      ))}
+    </ul>
+
+    <div class="cmd-footer mono">
+      <span>↑↓ Navigate</span>
+      <span>↵ Execute</span>
+      <span>ESC Close</span>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .cmd-dialog {
+    margin: clamp(3rem, 10vh, 7rem) auto auto;
+    width: min(92vw, 38rem);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-dialog);
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .cmd-dialog::backdrop {
+    background-color: rgba(10, 12, 16, 0.58);
+    backdrop-filter: blur(4px);
+  }
+
+  .cmd-surface {
+    display: flex;
+    flex-direction: column;
+    max-height: 75dvh;
+  }
+
+  .cmd-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .cmd-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: var(--text-base);
+    color: var(--text-primary);
+    outline: none;
+  }
+
+  .cmd-list {
+    list-style: none;
+    overflow-y: auto;
+    padding: var(--space-2);
+    max-height: 22rem;
+  }
+
+  .cmd-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .cmd-option[aria-selected="true"],
+  .cmd-option:hover {
+    background-color: var(--bg-subtle);
+  }
+
+  .cmd-option[hidden] {
+    display: none !important;
+  }
+
+  .cmd-footer {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-2) var(--space-4);
+    border-top: 1px solid var(--border-subtle);
+    background-color: var(--bg-subtle);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+</style>

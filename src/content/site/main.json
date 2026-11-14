@@ -1,0 +1,413 @@
+{
+  "name": "Harsha Tummala",
+  "monogram": "HT",
+  "role": "Senior ML Engineer",
+  "tagline": "Search & Retrieval · Agentic AI & MCP · Distributed Data Systems",
+  "positioningHeadline": "I build ML and search systems that ship: 26M-SKU catalog intelligence, tool-calling LLM agents, and high-throughput data platforms.",
+  "positioningSubhead": "Senior ML Engineer & Chatbot Lead at eParts Services. Previously Software Engineer II in BlackRock's Aladdin Product Group and Master of Software Engineering at Carnegie Mellon University.",
+  "location": "United States",
+  "availability": "Building production search, RAG, MCP servers & CDC pipelines at eParts Services",
+  "email": "harsha6107@gmail.com",
+  "phone": "+1 412-586-8800",
+  "links": {
+    "github": "https://github.com/harsha6107",
+    "linkedin": "https://linkedin.com/in/harsha-tummala",
+    "website": "https://harsha6107.github.io",
+    "resumePdf": "/resume/Harsha_Tummala.pdf"
+  },
+  "nav": [
+    { "label": "Work", "href": "/projects" },
+    { "label": "Writing", "href": "/writing" },
+    { "label": "About", "href": "/about" },
+    { "label": "Résumé", "href": "/resume" }
+  ],
+  "heroStats": [
+    {
+      "value": "26M",
+      "label": "Catalog SKUs Indexed",
+      "context": "Zero-loss Elasticsearch sync & slash-tolerant part-number ranking"
+    },
+    {
+      "value": "25/25",
+      "label": "Golden Eval Score",
+      "context": "42-tool Azure AI Foundry agent & 36-tool OAuth 2.1 MCP server"
+    },
+    {
+      "value": "-95%",
+      "label": "Snowflake Compute Spend",
+      "context": "436 SQL Server tables streamed via Debezium + Kafka on AKS"
+    },
+    {
+      "value": "35K",
+      "label": "Spec Docs in Production RAG",
+      "context": "28 GB deduplicated corpus at 98% ingestion success & 21 ms ETIM OCR"
+    }
+  ],
+  "aboutShort": [
+    "I am a Senior ML & Systems Engineer with 5+ years of experience owning search, retrieval, agentic AI, and distributed data infrastructure from architecture through production incidents.",
+    "At eParts Services, I lead search relevance, RAG, and LLM agent architecture for Peregrin—a multi-tenant industrial procurement platform serving millions of catalog SKUs. Before graduate school at Carnegie Mellon University (MSE, 3.87 GPA), I spent three years at BlackRock engineering Cassandra and Hadoop data platforms for Aladdin."
+  ],
+  "aboutExtended": [
+    "Most ML failures in production are actually data contract, retrieval, or authorization failures in disguise. A tool-calling agent is only as trustworthy as its permission boundary and golden evaluation loop; a search ranking function only works if the upstream ingestion pipeline doesn't silently drop documents during bulk backpressure.",
+    "My work spans the full vertical slice required to make applied AI reliable in enterprise software: designing partitioned PostgreSQL and Snowflake schemas, running Debezium + Kafka CDC pipelines on Kubernetes, tuning Elasticsearch analyzers for messy industrial part numbers, and shipping human-in-the-loop MCP and Azure AI Foundry agents with strict relationship-based access control (ReBAC).",
+    "Outside of production systems, I mentored graduate students at Carnegie Mellon as a Teaching Assistant for Prompt Engineering and Software Requirements Engineering, and led the Adrich capstone engineering studio scaling embedded IoT telemetry 250x."
+  ],
+  "engineeringPrinciples": [
+    {
+      "index": "01",
+      "title": "Retrieval & data integrity precede model complexity",
+      "body": "Fixing 6 silent bulk-indexing defects on a 26M-SKU Elasticsearch cluster and deduplicating 400K noisy attachment rows into 29K canonical PDFs delivered more end-user accuracy than any prompt tweak."
+    },
+    {
+      "index": "02",
+      "title": "Every agentic write requires a cryptographic & ReBAC boundary",
+      "body": "Production LLM tools should never mutate tenant state on raw model output alone. We pair Permit relationship-based access control with signed 5-minute HMAC action tokens and explicit user confirmation."
+    },
+    {
+      "index": "03",
+      "title": "Measure systems with continuous evals and unit economics",
+      "body": "Whether cutting Snowflake CDC compute by 95% (48 credits/day to batched micro-drains) or gating chatbot PRs with rubric-judged production trace exports, architecture decisions must report back in dollars, milliseconds, and recall."
+    }
+  ],
+  "skillGroups": [
+    {
+      "category": "Search, Retrieval & RAG",
+      "code": "SYS.01",
+      "items": [
+        "Elasticsearch (26M-doc indexing, custom analyzers, fuzzy/prefix/exact ranking, zero-downtime alias swaps)",
+        "Azure AI Search & Snowflake Cortex Search (hybrid vector + BM25 retrieval)",
+        "Production RAG (28 GB PDF deduplication, parallel Blob workers, product-linked citations)",
+        "ETIM Parts Classification (OCR + attribute prediction, confidence routing, 21 ms latency)"
+      ]
+    },
+    {
+      "category": "Agentic AI, MCP & Evaluation",
+      "code": "SYS.02",
+      "items": [
+        "Model Context Protocol (36-tool stateless MCP server, OAuth 2.1, 156 tests for Claude, ChatGPT & VS Code)",
+        "Azure AI Foundry & OpenAI (42 strict function-calling tools, signed 5-min human-in-the-loop action tokens)",
+        "LLM Evals & Observability (25/25 golden sets, redacted trace taxonomy, LLM rubric judges, weekly CI gates)",
+        "Browser Extension Agents (TypeScript Chrome/Edge DOM distillation & token-budgeted supplier ranking)"
+      ]
+    },
+    {
+      "category": "Distributed Data & Streaming Platforms",
+      "code": "SYS.03",
+      "items": [
+        "Change Data Capture (Debezium + Strimzi Kafka on AKS streaming 436 SQL Server tables to Snowflake)",
+        "Snowflake Architecture (Bronze/Silver CDC, batched MERGE micro-drains, secure cross-account data shares)",
+        "PostgreSQL & SQL Server (billions-row partitioned tenant pricing, keyset pagination, dynamic data masking)",
+        "Apache Cassandra, Hadoop & Spark (100+ source consolidation & 500 TB platform modernization at BlackRock)"
+      ]
+    },
+    {
+      "category": "Backend Microservices & Cloud Infrastructure",
+      "code": "SYS.04",
+      "items": [
+        "Languages: Python, TypeScript, C# / .NET, SQL, Java",
+        "Event-Driven .NET & Azure (Service Bus, Transactional Outbox, SignalR across 3–10 replicas, Hangfire, EF Core)",
+        "Security & Access Control (OAuth 2.1, RBAC, Permit ReBAC, SSRF/loop-guarded webhook engines)",
+        "Cloud & IaC (Kubernetes / AKS, Terraform, Helm, Docker, GitHub Actions CI/CD, fail-closed watchdogs)"
+      ]
+    }
+  ],
+  "skillNodes": [
+    {
+      "id": "skill-es",
+      "label": "Elasticsearch 26M Ranking",
+      "cluster": "search",
+      "x": 22,
+      "y": 27,
+      "vector": [0.95, 0.18, 0.32, 0.15],
+      "detail": "Tiered exact/normalized/prefix/fuzzy analyzers for slash-heavy SKUs & 500-bucket aggregations.",
+      "relatedProjectSlug": "catalog-search-26m"
+    },
+    {
+      "id": "skill-rag",
+      "label": "Hybrid RAG & Cortex Search",
+      "cluster": "search",
+      "x": 26,
+      "y": 44,
+      "vector": [0.88, 0.52, 0.25, 0.30],
+      "detail": "35K industrial spec PDFs indexed in Azure AI Search + eParts Brain hybrid MCP knowledge layer.",
+      "relatedProjectSlug": "industrial-rag-etim-classification"
+    },
+    {
+      "id": "skill-mcp",
+      "label": "OAuth 2.1 MCP Server",
+      "cluster": "agents",
+      "x": 70,
+      "y": 31,
+      "vector": [0.22, 0.96, 0.18, 0.12],
+      "detail": "Stateless 36-tool Model Context Protocol server with 156 tests for Claude, ChatGPT & VS Code.",
+      "relatedProjectSlug": "agentic-ai-mcp-platform"
+    },
+    {
+      "id": "skill-evals",
+      "label": "Golden Evals & Rubric Judges",
+      "cluster": "agents",
+      "x": 68,
+      "y": 44,
+      "vector": [0.30, 0.91, 0.15, 0.28],
+      "detail": "25/25 pre-launch golden set + continuous 100-conversation redacted trace taxonomy & CI PR gates.",
+      "relatedProjectSlug": "agentic-ai-mcp-platform"
+    },
+    {
+      "id": "skill-rebac",
+      "label": "ReBAC & Signed Action Tokens",
+      "cluster": "agents",
+      "x": 56,
+      "y": 38,
+      "vector": [0.18, 0.85, 0.42, 0.10],
+      "detail": "Permit relationship-based access control + 5-minute HMAC tokens for human-in-the-loop writes.",
+      "relatedProjectSlug": "agentic-ai-mcp-platform"
+    },
+    {
+      "id": "skill-cdc",
+      "label": "Debezium + Kafka CDC (AKS)",
+      "cluster": "data",
+      "x": 14,
+      "y": 82,
+      "vector": [0.28, 0.14, 0.96, 0.18],
+      "detail": "436 SQL Server tables streamed via Strimzi Kafka on Kubernetes with 15-min lag watchdogs.",
+      "relatedProjectSlug": "cdc-snowflake-pipeline"
+    },
+    {
+      "id": "skill-snowflake",
+      "label": "Snowflake Batch Micro-Drains",
+      "cluster": "data",
+      "x": 24,
+      "y": 90,
+      "vector": [0.32, 0.19, 0.92, 0.22],
+      "detail": "Cut ingestion spend ~95% (from 48 credits/day) and delivered 74-table zero-leak Siemens share.",
+      "relatedProjectSlug": "cdc-snowflake-pipeline"
+    },
+    {
+      "id": "skill-etim",
+      "label": "382-Class ETIM Vision/OCR",
+      "cluster": "ml",
+      "x": 66,
+      "y": 72,
+      "vector": [0.38, 0.25, 0.20, 0.92],
+      "detail": "95% OCR accuracy, 92% class match, and 21 ms inference latency with confidence routing.",
+      "relatedProjectSlug": "industrial-rag-etim-classification"
+    },
+    {
+      "id": "skill-asr",
+      "label": "Whisper Accented ASR & IoT",
+      "cluster": "ml",
+      "x": 68,
+      "y": 89,
+      "vector": [0.15, 0.18, 0.26, 0.96],
+      "detail": "+30% accented speech accuracy across 1M samples & 250x embedded IoT telemetry scaling.",
+      "relatedProjectSlug": "iot-scale-and-accented-asr"
+    }
+  ],
+  "experience": [
+    {
+      "company": "eParts Services",
+      "product": "Peregrin — Multi-Tenant Industrial Procurement & Catalog SaaS",
+      "role": "Senior ML Engineer (Search, RAG & Agentic AI Lead)",
+      "period": "03/2025 – Present",
+      "location": "United States",
+      "summary": "Own search relevance, production RAG, LLM agent architecture, MCP integrations, and Kafka-to-Snowflake CDC data platforms across a 26M-SKU multi-tenant SaaS ecosystem.",
+      "highlights": [
+        {
+          "domain": "Catalog Search & 26M-Doc Pipeline",
+          "metric": "26M SKUs · 500 buckets",
+          "text": "Eliminated silent record loss across a 26M-document Elasticsearch index by root-causing 6 sync defects and rebuilding ingestion with keyset pagination, ~1,000-doc / 5 MB bulk chunks, zero-downtime alias swaps with count verification, 15-minute deltas, and 2x write concurrency. Shipped tiered exact/normalized/prefix/fuzzy ranking for the ~77% of SKUs containing slashes, cutting bucket aggregations from 100,000 to 500."
+        },
+        {
+          "domain": "Agentic AI Platform & Stateless MCP Server",
+          "metric": "25/25 Eval · 42 + 36 Tools",
+          "text": "Shipped Peregrin's production AI assistant on Azure AI Foundry (scoring 25/25 on golden evals) with 42 strict function-calling tools, Permit ReBAC, and signed 5-minute action tokens for human-in-the-loop writes. Built a stateless 36-tool OAuth 2.1 MCP server (156 tests) making Peregrin operable directly from Claude, ChatGPT, and VS Code."
+        },
+        {
+          "domain": "Production RAG & Company Knowledge Layer (eParts Brain)",
+          "metric": "35K Docs · 98% Ingest",
+          "text": "Made ~35K product spec and installation documents (28 GB) answerable by AI agents at ~98% ingestion success by deduplicating ~400K rows to ~29K unique files in Azure Blob + Azure AI Search. Designed eParts Brain across Granola, Linear, GitHub, and Confluence using Snowflake Cortex Search hybrid retrieval behind a managed MCP server with weekly top-5 evals for ~$15–30/mo."
+        },
+        {
+          "domain": "CDC Streaming Platform & 95% Snowflake Cost Reduction",
+          "metric": "436 Tables · -95% Spend",
+          "text": "Streamed 436 production SQL Server tables into a 493-table Snowflake Bronze layer (cut over 04/2026) via Debezium + Strimzi Kafka on AKS provisioned with Terraform, Helm, and GitHub Actions. Cut Snowflake ingestion spend ~95% (from ~48 credits/day per-record MERGEs to scheduled batch MERGEs with auto-suspend) and took Siemens live on a 74-table (~2.1M row) zero-pricing-leak data share."
+        },
+        {
+          "domain": "Event-Driven Microservices, Workflows & ETIM ML",
+          "metric": "21 ms Latency · ~$40/mo",
+          "text": "Built the .NET real-time notification service in 3 weeks (Hangfire, Azure SignalR across 3–10 replicas, SendGrid, PostgreSQL), led the KOBA Service Bus pricing microservice and v5 billion-row partitioned schema migration, designed a native transactional-outbox workflow engine at ~$40/mo (avoiding a ~$50K/yr n8n license and 2026 RCE), and directed a 382-class ETIM OCR classification pipeline (95% OCR, 92% class match, 21 ms latency)."
+        }
+      ],
+      "stack": [
+        "Python",
+        "TypeScript",
+        "C# / .NET",
+        "Elasticsearch",
+        "Azure AI Foundry",
+        "MCP (OAuth 2.1)",
+        "Azure AI Search",
+        "Snowflake Cortex",
+        "Kafka / Debezium",
+        "PostgreSQL",
+        "Kubernetes (AKS)",
+        "Terraform"
+      ]
+    },
+    {
+      "company": "Carnegie Mellon University",
+      "product": "Adrich Capstone Studio & School of Computer Science",
+      "role": "Engineering Team Lead (Adrich) & Graduate Teaching Assistant",
+      "period": "01/2024 – 12/2024",
+      "location": "Pittsburgh, PA",
+      "summary": "Led the client engineering team scaling Adrich's IoT AI consumer-insights platform while mentoring graduate cohorts in Prompt Engineering and Software Requirements.",
+      "highlights": [
+        {
+          "domain": "IoT AI Platform Scaling (Adrich)",
+          "metric": "250x Scale · -60% Cost",
+          "text": "Scaled an IoT AI platform for consumer-goods brands from 20,000 to 5 million embedded smart-label chips (250x) and cut hardware/assembly costs 60% while handling 5x higher sensor data volume."
+        },
+        {
+          "domain": "Graduate Teaching Assistantship",
+          "metric": "Prompt Eng & Req Eng",
+          "text": "Mentored graduate software engineering students in Prompt Engineering (01/2024–04/2024) on LLM evaluation, zero-shot, in-context learning, and chain-of-thought architectures, and in Requirements for Software Engineering (08/2024–12/2024)."
+        }
+      ],
+      "stack": ["Python", "AWS IoT", "Kafka", "Whisper ASR", "PyTorch", "LLM Evals"]
+    },
+    {
+      "company": "BlackRock",
+      "product": "Aladdin Product Group",
+      "role": "Software Engineer II",
+      "period": "07/2022 – 06/2023",
+      "location": "Gurgaon, India",
+      "summary": "Engineered high-availability backend APIs and distributed Hadoop monitoring systems for institutional investment workflows on the Aladdin platform.",
+      "highlights": [
+        {
+          "domain": "Database Server Consolidation",
+          "metric": "-25% Query Latency",
+          "text": "Reduced institutional information retrieval time by 25% by consolidating four high-traffic database servers behind modular, fault-isolated REST APIs."
+        },
+        {
+          "domain": "Distributed Process Observability",
+          "metric": "-30% Manual Ops",
+          "text": "Cut manual operational workload ~30% across four engineering teams by building an automated Flask observability and alerting application for Hadoop batch and streaming pipelines."
+        }
+      ],
+      "stack": ["Python", "Java", "Flask", "Hadoop", "SQL", "REST APIs"]
+    },
+    {
+      "company": "BlackRock",
+      "product": "Aladdin Product Group",
+      "role": "Full Stack Developer",
+      "period": "06/2020 – 06/2022",
+      "location": "Gurgaon, India",
+      "summary": "Designed unified NoSQL data models and mission-critical trade-processing pipelines across 100+ upstream financial feeds.",
+      "highlights": [
+        {
+          "domain": "Unified Apache Cassandra Architecture",
+          "metric": "-40% Redundancy",
+          "text": "Reduced storage and data redundancy ~40% by designing a unified Apache Cassandra partition schema consolidating institutional investment data from 100+ upstream sources."
+        },
+        {
+          "domain": "Trade Processing & Zero-Loss Migration",
+          "metric": "+30% Throughput · 0 Loss",
+          "text": "Improved trade-data processing speed and accuracy 30% by refining distributed Hadoop pipelines, and achieved zero data loss during the enterprise eFront migration through automated reconciliation fail-safes."
+        }
+      ],
+      "stack": ["Apache Cassandra", "Hadoop", "Spark", "Python", "Java", "Angular"]
+    },
+    {
+      "company": "BlackRock",
+      "product": "Aladdin Wealth Tech",
+      "role": "Software Engineering Intern",
+      "period": "01/2020 – 06/2020",
+      "location": "Gurgaon, India",
+      "summary": "Modernized a 500 TB big-data platform and built real-time pipeline health telemetry.",
+      "highlights": [
+        {
+          "domain": "500 TB Platform Modernization",
+          "metric": "5x Availability · -20% Downtime",
+          "text": "Improved data availability ~5x by revamping a ~500 TB big-data platform in Python and reduced Hadoop production downtime 20% via a Flask + Angular pipeline-monitoring dashboard."
+        }
+      ],
+      "stack": ["Python", "Hadoop", "Flask", "Angular"]
+    },
+    {
+      "company": "Virtusa",
+      "product": "Technology Research & Investment Analytics",
+      "role": "Data Science Intern",
+      "period": "05/2019 – 07/2019",
+      "location": "Hyderabad, India",
+      "summary": "Built on-demand NLP trend analysis and visual analytics APIs for investment research.",
+      "highlights": [
+        {
+          "domain": "Automated Tech Theme Analytics",
+          "metric": "On-Demand NLP API",
+          "text": "Delivered on-demand research insights for emerging technology themes by building a Django service with REST APIs generating trend time-series, word clouds, and investment assessment metrics."
+        }
+      ],
+      "stack": ["Python", "Django", "NLP", "REST APIs"]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Carnegie Mellon University",
+      "degree": "Master of Software Engineering (MSE)",
+      "period": "12/2024",
+      "location": "Pittsburgh, PA",
+      "gpa": "3.87 / 4.00",
+      "notes": "School of Computer Science — Graduate Teaching Assistant for Prompt Engineering & Software Requirements; Team Lead for Adrich Studio Capstone."
+    },
+    {
+      "institution": "Manipal Institute of Technology",
+      "degree": "Bachelor of Science in Engineering, Computer Science",
+      "period": "06/2020",
+      "location": "Manipal, India",
+      "notes": "Focus on Distributed Systems, Machine Learning, and Database Engineering."
+    }
+  ],
+  "leadership": [
+    {
+      "role": "Graduate Teaching Assistant — Prompt Engineering (01/2024 – 04/2024)",
+      "organization": "Carnegie Mellon University",
+      "period": "Spring 2024",
+      "details": "Mentored graduate students on rigorous LLM evaluation harnesses, zero-shot and few-shot in-context learning, chain-of-thought reasoning, and failure-mode analysis."
+    },
+    {
+      "role": "Graduate Teaching Assistant — Requirements for Software Engineering (08/2024 – 12/2024)",
+      "organization": "Carnegie Mellon University",
+      "period": "Fall 2024",
+      "details": "Guided engineering teams on formal requirements modeling, quality-attribute scenarios, stakeholder trade-off analysis, and architecture alignment."
+    }
+  ],
+  "ui": {
+    "skipToContent": "Skip to main content",
+    "commandPaletteLabel": "Open command palette",
+    "commandPalettePlaceholder": "Jump to case study, essay, section, or run an action...",
+    "themeToggleLabel": "Toggle color theme",
+    "copyEmailLabel": "Copy email address",
+    "copiedEmailFeedback": "Copied harsha6107@gmail.com",
+    "selectedWorkIndex": "01 / SELECTED SYSTEMS",
+    "selectedWorkTitle": "Production Case Studies",
+    "selectedWorkSub": "End-to-end architecture, constraints, schematics, and measured outcomes from production systems.",
+    "viewAllProjects": "All 5 case studies",
+    "readCaseStudy": "Read architecture case study",
+    "latentSpaceIndex": "02 / LATENT SPACE PROJECTION",
+    "latentSpaceTitle": "2D Embedding Map of Systems & Capabilities",
+    "latentSpaceSub": "Interactive UMAP projection of projects, essays, and technical domains. Hover or focus any vector node to inspect k-NN cosine similarity links; select a node to open its specification.",
+    "writingIndex": "03 / FIELD NOTES & ARCHITECTURE ESSAYS",
+    "writingTitle": "Recent Technical Writing",
+    "writingSub": "Notes on Elasticsearch tokenization, MCP security boundaries, CDC unit economics, and LLM evaluation loops.",
+    "viewAllWriting": "All articles & RSS",
+    "aboutIndex": "04 / ARCHITECTURE & BACKGROUND",
+    "aboutTitle": "Engineering Philosophy & Trajectory",
+    "contactIndex": "05 / DIRECT CHANNEL",
+    "contactTitle": "Start a Technical Conversation",
+    "contactSub": "Reach out regarding Staff/Senior ML, Search, Agentic AI, or Distributed Data Engineering roles and architectural collaborations.",
+    "footerColophon": "Typeset in self-hosted Inter Variable & JetBrains Mono Variable. Built with Astro, strict TypeScript, and OKLCH design tokens.",
+    "notFoundCode": "ERR_404_VECTOR_OUT_OF_BOUNDS",
+    "notFoundTitle": "Query vector fell outside the indexed manifold.",
+    "notFoundBody": "The URL you requested does not match any document in the current index. Use the command palette (⌘K) or return to the root specification.",
+    "notFoundCta": "Return to root index"
+  }
+}

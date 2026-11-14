@@ -1,0 +1,112 @@
+---
+title: "436-Table Zero-Lag CDC Platform & 95% Snowflake Compute Reduction"
+shortTitle: "CDC Platform & -95% Cost Cut"
+slug: "cdc-snowflake-pipeline"
+index: "03"
+organization: "eParts Services · Data Platform"
+period: "2025 – 2026"
+role: "Senior ML & Data Platform Engineer (CDC Lead)"
+featured: true
+order: 3
+headlineMetric: "436 CDC Tables · -95% Snowflake Spend · Siemens Live"
+summary: "Led the production cutover streaming 436 SQL Server tables into a 493-table Snowflake Bronze layer via Debezium and Strimzi Kafka on AKS, eliminated multi-day restart sync gaps, slashed Snowflake compute spend by ~95%, and delivered a zero-leak 74-table enterprise CDC feed to Siemens."
+problem: "Analytical workloads, ML feature pipelines, and enterprise customer data shares depended on 436 production SQL Server tables. Always-on per-record Snowflake MERGE queries burned ~48 credits/day continuously, AKS or SQL Server maintenance windows triggered multi-day silent replication gaps, and onboarding Siemens required sharing 74 tables (~2.1M rows) while guaranteeing zero exposure of internal cost/pricing columns."
+constraints:
+  - "436 source SQL Server tables mapping into a 493-table Snowflake Bronze layer with schema evolution and transactional ordering guarantees."
+  - "Unacceptable cloud unit economics: per-record streaming MERGE operations kept Snowflake warehouses hot 24/7 (~48 credits/day)."
+  - "Operational resilience: AKS node rotations and SQL Server restarts previously wedged Debezium connectors for days without alerting."
+  - "Zero-trust enterprise data sharing: Siemens required a 2.1M-row baseline + twice-daily CDC updates across 74 tables with cryptographic certainty that internal pricing could never be queried or exported."
+approachSummary: "Provisioned Debezium + Strimzi Kafka on AKS with Terraform, Helm, and GitHub Actions; added connector auto-restart, a 15-minute lag/DLQ watchdog, and fail-closed prod deploys; replaced per-record MERGEs with scheduled batched micro-drain MERGEs on auto-suspending warehouses; and locked Siemens to a negative-tested read-only share stripping all pricing columns."
+metrics:
+  - value: "-95%"
+    label: "Snowflake Compute Spend"
+    detail: "Replaced ~48 credits/day always-on MERGEs with batched drains"
+  - value: "436→493"
+    label: "Tables in Production CDC"
+    detail: "SQL Server to Snowflake Bronze cutover (04/2026)"
+  - value: "500K+"
+    label: "Rows Merged per Run"
+    detail: "Batched micro-drains completing in ~1 hour with DLQ retries"
+  - value: "74 Tables"
+    label: "Siemens CDC Share"
+    detail: "~2.1M-row snapshot + 2x daily deltas with zero pricing exposure"
+stack:
+  - "Debezium (CDC)"
+  - "Apache Kafka (Strimzi)"
+  - "Snowflake"
+  - "Kubernetes (AKS)"
+  - "SQL Server"
+  - "Terraform & Helm"
+  - "GitHub Actions"
+diagramId: "cdc-snowflake"
+diagramTitle: "Fig 3.1 — Debezium + Strimzi Kafka CDC on AKS to Batched Snowflake Bronze & Siemens Clean Share"
+diagramCaption: "SQL Server transaction logs stream through Strimzi Kafka on AKS into staged micro-batch MERGE drains, cutting warehouse credits by ~95%."
+retrospective:
+  - title: "Enforce fail-closed deployment gates before the first cluster upgrade"
+    detail: "After leading recovery from an AKS cluster incident where connector state drifted, we made production CI/CD deployments fail closed whenever Kafka consumer lag or Debezium task health checks report degraded status."
+  - title: "Test external data shares with adversarial negative SQL suites from day one"
+    detail: "For the Siemens 74-table cutover, writing automated negative integration tests that actively attempt `SELECT` on withheld pricing columns, schema introspection, and unauthorized data exports proved essential for security sign-off."
+  - title: "Co-design source table partitioning alongside CDC watermarks"
+    detail: "Pairing our v5 PostgreSQL/SQL Server schema standards (partitioned tenant-pricing tables built for billions of rows with deterministic delta timestamps) directly with CDC ingestion patterns simplified downstream Bronze-to-Silver compaction."
+links:
+  - label: "Read Essay: Cutting Snowflake CDC Spend by 95%"
+    href: "/writing/cutting-snowflake-cdc-cost-95-percent"
+  - label: "GitHub Profile"
+    href: "https://github.com/harsha6107"
+embedding:
+  x: 18
+  y: 73
+  cluster: "data"
+  vector: [0.30, 0.16, 0.96, 0.20]
+---
+
+## Context & The Cost/Reliability Crisis
+
+Real-time data replication is deceptively easy to prototype and notoriously expensive to operate at scale. Our data platform needed to stream **436 production SQL Server tables** into a **493-table Snowflake Bronze layer** to power analytics, ML lead-time models, and enterprise B2B customer feeds.
+
+Two critical bottlenecks stood in the way of a sustainable production cutover:
+
+1. **Runaway Snowflake Compute (~48 Credits/Day)**: The legacy ingestion pattern executed continuous, near-per-record `MERGE INTO` statements as Kafka messages arrived. Because Snowflake bills virtual warehouses per active second (with a 60-second minimum), trickle writes prevented the warehouse from ever suspending—burning **~48 credits every single day** even during low-traffic hours.
+2. **Silent Multi-Day Sync Gaps**: Whenever SQL Server underwent maintenance or AKS rotated worker nodes, Debezium tasks entered `FAILED` states without auto-healing, creating multi-day data blind spots.
+
+## Architectural Approach
+
+### 1. Debezium + Strimzi Kafka on AKS with Fail-Closed Watchdogs
+
+I led the infrastructure provisioning and April 2026 production cutover using **Debezium**, **Strimzi Kafka on Azure Kubernetes Service (AKS)**, **Terraform**, **Helm**, and **GitHub Actions**:
+
+- **Self-Healing Connectors & 15-Minute Lag Watchdog**: Enabled automatic Debezium task restart policies with exponential backoff and built a **15-minute replication lag and dead-letter queue (DLQ) watchdog** that pages on-call before transaction log retention windows expire.
+- **Fail-Closed CI/CD**: Hardened Helm and GitHub Actions deployment pipelines to verify connector task status and partition offset advancement before marking any release healthy.
+
+### 2. Cutting Snowflake Spend ~95% via Batched Micro-Drain MERGEs
+
+Instead of trickling row-by-row `MERGE` queries against an always-on warehouse, we decoupled Kafka topic landing from Snowflake compute:
+
+```sql
+-- Idempotent batched MERGE deduplicating LSN ordering per scheduled drain window
+MERGE INTO bronze.orders AS target
+USING (
+  SELECT *
+  FROM staging.orders_cdc_stream
+  QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY order_id
+    ORDER BY __source_lsn DESC, __seqval DESC
+  ) = 1
+) AS src
+ON target.order_id = src.order_id
+WHEN MATCHED AND src.__op = 'd' THEN DELETE
+WHEN MATCHED THEN UPDATE SET
+  target.status = src.status,
+  target.updated_at = src.updated_at,
+  target.__cdc_lsn = src.__source_lsn
+WHEN NOT MATCHED AND src.__op != 'd' THEN INSERT (order_id, status, updated_at, __cdc_lsn)
+  VALUES (src.order_id, src.status, src.updated_at, src.__source_lsn);
+```
+
+- **Scheduled Drain Windows + Auto-Suspend**: Kafka buffers incoming CDC events into staging at zero warehouse compute cost. Scheduled drain workers spin up the warehouse, deduplicate multiple updates to the same primary key by highest Log Sequence Number (`__source_lsn`), merge **500K+ rows per run in ~1 hour**, route malformed records to a retry/dead-letter queue, and immediately auto-suspend the warehouse—**cutting Snowflake ingestion spend by ~95%**.
+
+### 3. Taking Siemens Live on a Zero-Leak 74-Table CDC Feed
+
+Enterprise customer **Siemens** required a direct **Snowflake-to-Snowflake CDC data share** covering **74 tables (~2.1M-row initial snapshot, with incremental changes applied twice daily)**.
+
+- **Column-Level Pricing Redaction & Negative Testing**: Because internal distributor cost and margin columns reside in the same source operational tables, we constructed a projection boundary that physically withholds all internal pricing and multiplier attributes prior to the share view layer, locked Siemens to a dedicated read-only role with zero export escalation paths, and validated the boundary with an automated **negative-test suite** before leading the production cutover.
