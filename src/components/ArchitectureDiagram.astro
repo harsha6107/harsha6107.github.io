@@ -248,16 +248,16 @@ const { diagramId, title, caption } = Astro.props;
       <path d="M 212 95 L 248 95" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-rag)" />
 
       <rect x="252" y="60" width="196" height="70" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
-      <text x="264" y="82" fill="var(--accent)" font-size="11" font-weight="700">SHA-256 Deduplication</text>
-      <text x="264" y="100" fill="var(--text-secondary)" font-size="9">~29K Canonical Blobs (28 GB)</text>
+      <text x="264" y="82" fill="var(--accent)" font-size="11" font-weight="700">File Deduplication</text>
+      <text x="264" y="100" fill="var(--text-secondary)" font-size="9">~29K Unique Files (28 GB)</text>
       <text x="264" y="114" fill="var(--text-muted)" font-size="9">Parallel Azure Blob Workers</text>
 
       <path d="M 448 95 L 484 95" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-rag)" />
 
       <rect x="488" y="60" width="356" height="70" rx="4" fill="var(--bg-surface)" stroke="var(--border-strong)" />
-      <text x="502" y="82" fill="var(--text-primary)" font-size="11" font-weight="700">Azure AI Search Hybrid Index + SKU Linker</text>
-      <text x="502" y="100" fill="var(--text-secondary)" font-size="10">Dense Vectors + BM25 + M:N SKU Join Graph</text>
-      <text x="502" y="116" fill="var(--text-muted)" font-size="9">Every cited datasheet answer links directly to orderable SKUs</text>
+      <text x="502" y="82" fill="var(--text-primary)" font-size="11" font-weight="700">Azure AI Search Index + Product Search Link</text>
+      <text x="502" y="100" fill="var(--text-secondary)" font-size="10">~35K Spec &amp; Installation Docs Indexed (~98% Success)</text>
+      <text x="502" y="116" fill="var(--text-muted)" font-size="9">Answers linked directly back to product search</text>
 
       <!-- Track B: ETIM Classification -->
       <rect x="16" y="164" width="848" height="118" rx="6" fill="var(--bg-subtle)" stroke="var(--accent)" stroke-width="1.75" />
@@ -266,21 +266,21 @@ const { diagramId, title, caption } = Astro.props;
       <rect x="32" y="200" width="180" height="66" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
       <text x="44" y="222" fill="var(--text-primary)" font-size="11" font-weight="600">OCR Extraction</text>
       <text x="44" y="240" fill="var(--text-secondary)" font-size="10">~95% OCR Accuracy</text>
-      <text x="44" y="254" fill="var(--text-muted)" font-size="9">Spec sheet text + tables</text>
+      <text x="44" y="254" fill="var(--text-muted)" font-size="9">Spec sheet extraction</text>
 
       <path d="M 212 233 L 248 233" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-rag)" />
 
       <rect x="252" y="200" width="196" height="66" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
       <text x="264" y="222" fill="var(--text-primary)" font-size="11" font-weight="600">382-Class Classifier</text>
       <text x="264" y="240" fill="var(--accent)" font-size="10" font-weight="700">~92% Class Match · 21 ms</text>
-      <text x="264" y="254" fill="var(--text-muted)" font-size="9">+ Attribute value heads</text>
+      <text x="264" y="254" fill="var(--text-muted)" font-size="9">+ Attribute prediction</text>
 
       <path d="M 448 233 L 484 233" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-rag)" />
 
       <rect x="488" y="200" width="356" height="66" rx="4" fill="var(--bg-surface)" stroke="var(--border-strong)" />
-      <text x="502" y="222" fill="var(--text-primary)" font-size="11" font-weight="700">Calibrated Confidence Routing → PIMS Writeback</text>
-      <text x="502" y="240" fill="var(--text-secondary)" font-size="10">• p ≥ 0.85: Auto-Accept to PIMS</text>
-      <text x="502" y="255" fill="var(--text-secondary)" font-size="10">• 0.50 ≤ p &lt; 0.85: Human Review Queue · p &lt; 0.50: Triage</text>
+      <text x="502" y="222" fill="var(--text-primary)" font-size="11" font-weight="700">Confidence Routing → PIMS Writeback</text>
+      <text x="502" y="240" fill="var(--text-secondary)" font-size="10">• Above 0.85: Auto-Accept to PIMS</text>
+      <text x="502" y="255" fill="var(--text-secondary)" font-size="10">• 0.50 – 0.85: Human Review before writeback</text>
     </svg>
   )}
 
@@ -303,37 +303,37 @@ const { diagramId, title, caption } = Astro.props;
       <rect x="16" y="24" width="416" height="242" rx="6" fill="var(--bg-subtle)" stroke="var(--border-strong)" stroke-width="1.5" />
       <text x="32" y="48" fill="var(--accent)" font-size="10" font-weight="700">SYSTEM A / ADRICH 250x EMBEDDED IoT AI PLATFORM</text>
       <rect x="32" y="64" width="176" height="82" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
-      <text x="44" y="86" fill="var(--text-primary)" font-size="11" font-weight="700">5,000,000 Smart Chips</text>
+      <text x="44" y="86" fill="var(--text-primary)" font-size="11" font-weight="700">5,000,000 Embedded Chips</text>
       <text x="44" y="104" fill="var(--text-secondary)" font-size="9">• Scaled 250x from 20K</text>
-      <text x="44" y="118" fill="var(--text-secondary)" font-size="9">• 5x Sensor Data Density</text>
+      <text x="44" y="118" fill="var(--text-secondary)" font-size="9">• 5x Sensor Data Volume</text>
       <text x="44" y="132" fill="var(--accent)" font-size="9" font-weight="700">• -60% Assembly Cost</text>
 
       <path d="M 208 105 L 236 105" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow-iot)" />
 
       <rect x="240" y="64" width="176" height="82" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
-      <text x="252" y="86" fill="var(--text-primary)" font-size="11" font-weight="700">Streamlined Ingestion</text>
-      <text x="252" y="104" fill="var(--text-secondary)" font-size="9">• Compact binary frames</text>
-      <text x="252" y="118" fill="var(--text-secondary)" font-size="9">• Decoupled burst queues</text>
-      <text x="252" y="132" fill="var(--text-secondary)" font-size="9">• Real-time brand analytics</text>
+      <text x="252" y="86" fill="var(--text-primary)" font-size="11" font-weight="700">Streamlined Stack</text>
+      <text x="252" y="104" fill="var(--text-secondary)" font-size="9">• System scaling (Team Lead)</text>
+      <text x="252" y="118" fill="var(--text-secondary)" font-size="9">• 5x sensor data handling</text>
+      <text x="252" y="132" fill="var(--text-secondary)" font-size="9">• Consumer-goods AI insights</text>
 
       <rect x="32" y="164" width="384" height="84" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
       <text x="44" y="186" fill="var(--text-primary)" font-size="11" font-weight="700">Kafka Streaming Recommender (99% Uptime)</text>
-      <text x="44" y="204" fill="var(--text-secondary)" font-size="10">• Continuous gradient-boosting retraining (+40% update cadence)</text>
-      <text x="44" y="220" fill="var(--text-muted)" font-size="9">• Automated fairness, drift &amp; SHAP explainability release gates</text>
+      <text x="44" y="204" fill="var(--text-secondary)" font-size="10">• End-to-end boosting recommender (+40% update frequency)</text>
+      <text x="44" y="220" fill="var(--text-muted)" font-size="9">• Continuous retraining + fairness and explainability checks</text>
 
       <!-- Right: Whisper Accented ASR -->
       <rect x="448" y="24" width="416" height="242" rx="6" fill="var(--bg-subtle)" stroke="var(--accent)" stroke-width="1.75" />
       <text x="464" y="48" fill="var(--accent)" font-size="10" font-weight="700">SYSTEM B / WHISPER ACCENTED SPEECH RECOGNITION</text>
 
       <rect x="464" y="64" width="384" height="82" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
-      <text x="478" y="86" fill="var(--text-primary)" font-size="11" font-weight="700">1,000,000 Accented Voice Samples</text>
-      <text x="478" y="104" fill="var(--text-secondary)" font-size="10">• Stratified phonetic &amp; regional L1 accent partitions</text>
-      <text x="478" y="120" fill="var(--text-secondary)" font-size="10">• Log-Mel spectrogram extraction + SpecAugment</text>
+      <text x="478" y="86" fill="var(--text-primary)" font-size="11" font-weight="700">1,000,000 Voice Samples</text>
+      <text x="478" y="104" fill="var(--text-secondary)" font-size="10">• Accented speech corpus evaluation &amp; training</text>
+      <text x="478" y="120" fill="var(--text-secondary)" font-size="10">• Whisper-based ASR architecture</text>
 
       <rect x="464" y="164" width="384" height="84" rx="4" fill="var(--bg-surface)" stroke="var(--border-strong)" />
-      <text x="478" y="186" fill="var(--accent)" font-size="11" font-weight="700">Fine-Tuned Whisper Encoder-Decoder</text>
-      <text x="478" y="206" fill="var(--text-primary)" font-size="10" font-weight="600">+30% Accented Recognition Accuracy · -25% Word Error Rate</text>
-      <text x="478" y="224" fill="var(--text-muted)" font-size="9">Layer-selective acoustic adaptation preserving zero-shot lexical breadth</text>
+      <text x="478" y="186" fill="var(--accent)" font-size="11" font-weight="700">Whisper-Based ASR System</text>
+      <text x="478" y="206" fill="var(--text-primary)" font-size="10" font-weight="600">+30% Accented Speech Accuracy · -25% Error Rate</text>
+      <text x="478" y="224" fill="var(--text-muted)" font-size="9">Measured against traditional baseline models across 1M voice samples</text>
     </svg>
   )}
 

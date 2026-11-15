@@ -3,51 +3,50 @@ title: "28 GB Industrial Spec RAG & 21 ms ETIM Parts Classification"
 shortTitle: "Industrial RAG & ETIM ML"
 slug: "industrial-rag-etim-classification"
 index: "04"
-organization: "eParts Services · Applied ML"
-period: "2025 – Present"
+organization: "eParts Services · Peregrin"
+period: "03/2025 – Present"
 role: "Senior ML Engineer"
 featured: true
 order: 4
-headlineMetric: "35K Spec Docs (98% Ingest) · 92% ETIM Match · 21 ms Latency"
-summary: "Made ~35,000 industrial spec and installation PDFs (28 GB) answerable by AI agents at 98% ingestion success via content-hash deduplication and Azure AI Search, and delivered a 382-class ETIM parts classification pipeline achieving 95% OCR accuracy, 92% class match, and 21 ms inference latency."
-problem: "Technical buyers ask specification questions ('What is the max operating pressure and NEMA rating for valve X?') buried inside ~400,000 redundant database attachment rows totaling 28 GB of PDFs, while unstructured supplier catalog uploads lacked standardized ETIM classification classes and technical attributes."
+headlineMetric: "~35K Docs (98% Ingest) · ~92% ETIM Match · 21 ms Latency"
+summary: "Made ~35K product spec and installation documents (28 GB) answerable by an AI agent at ~98% ingestion success by deduplicating ~400K source rows to ~29K unique files in Azure Blob and Azure AI Search. Scoped and directed a CMU team to deliver 382-class ETIM parts classification (~95% OCR, ~92% class match, 21 ms latency) and framed shipping lead-time prediction in MLflow and Snowflake."
+problem: "~400K product attachment rows pointed to ~35K duplicated spec and installation documents (28 GB) that were unindexed for AI search, while catalog onboarding required classifying parts across 382 ETIM classes with high OCR accuracy and low latency."
 constraints:
-  - "~400,000 raw attachment database rows pointed to heavily duplicated, multi-megabyte datasheet and installation PDFs (~35K logical documents, 28 GB total)."
-  - "Answers generated from datasheets must link directly back to orderable SKUs in the 26M-item catalog search index without hallucinating operating tolerances."
-  - "ETIM classification spans 382 industrial classes with noisy scanned spec sheets; low-confidence predictions cannot silently corrupt the master PIMS catalog."
-  - "Inference latency had to remain under 50 ms per part to support interactive catalog onboarding and bulk backfills."
-approachSummary: "Deduplicated ~400K source records to ~29K canonical files via content hashing, migrated 28 GB to Azure Blob Storage with parallel workers, indexed chunks in Azure AI Search linked to SKU IDs, and directed a CMU ML engineering team to ship an OCR + 382-class ETIM classifier with confidence-tiered human routing (auto-accept >0.85, review 0.50–0.85)."
+  - "Deduplicate ~400K source attachment rows (~35K documents, 28 GB) and index them in Azure AI Search with links back to product search."
+  - "Classify parts across 382 ETIM classes at low latency while routing low-confidence predictions to human review before PIMS writeback."
+  - "Catch SOW IP-term changes, unsupported accuracy targets, and missing deliverables across external academic delivery teams."
+  - "Frame shipping lead-time prediction with actionable error metrics (MAE and P90) for production deployment."
+approachSummary: "Deduplicated ~400K source rows to ~29K unique files, migrated 28 GB to Azure Blob with parallel workers, indexed them in Azure AI Search (~98% ingestion success), and linked answers to product search. Negotiated the SOW and directed a CMU team to ship 382-class ETIM classification (~95% OCR, ~92% class match, 21 ms latency, confidence routing >0.85 auto-accept / 0.5–0.85 review), and built Random Forest / GBM lead-time baselines in MLflow."
 metrics:
-  - value: "98%"
+  - value: "~98%"
     label: "RAG Ingestion Success"
-    detail: "35K spec/install docs (28 GB) indexed in Azure AI Search"
+    detail: "~35K spec/install docs (28 GB) in Azure AI Search"
   - value: "400K→29K"
     label: "Deduplicated Files"
-    detail: "Eliminated ~92.7% redundant attachment storage & embedding cost"
-  - value: "92%"
-    label: "ETIM Class Accuracy"
-    detail: "Across 382 industrial ETIM classes (with 95% OCR accuracy)"
+    detail: "Migrated to Azure Blob with parallel workers"
+  - value: "~92%"
+    label: "ETIM Class Match"
+    detail: "Across 382 ETIM classes with ~95% OCR accuracy"
   - value: "21 ms"
     label: "Classification Latency"
-    detail: "Confidence-routed (>0.85 auto-accept, 0.5–0.85 review)"
+    detail: "Auto-accept >0.85, human review 0.5–0.85"
 stack:
   - "Azure AI Search"
   - "Azure Blob Storage"
   - "Python"
-  - "OCR & Vision ML"
-  - "Hybrid Vector + BM25"
+  - "OCR & Classification"
   - "MLflow"
-  - "Snowflake ML"
+  - "Snowflake"
 diagramId: "rag-etim"
-diagramTitle: "Fig 4.1 — Content-Addressed 28 GB RAG Pipeline & Confidence-Routed 382-Class ETIM Classifier"
-diagramCaption: "400K raw attachment rows deduplicate to 29K canonical blobs indexed in Azure AI Search, while ETIM classification routes 0.50–0.85 confidence predictions to human review."
+diagramTitle: "Fig 4.1 — 28 GB RAG Ingestion Pipeline & Confidence-Routed 382-Class ETIM Classifier"
+diagramCaption: "~400K source rows deduplicate to ~29K files in Azure Blob + Azure AI Search; ETIM predictions route by confidence (>0.85 auto-accept, 0.5–0.85 review)."
 retrospective:
-  - title: "Content-addressable SHA-256 deduplication saved 10x in embedding and vector index spend"
-    detail: "In industrial catalogs, a single manufacturer PDF manual is often linked to 15–50 variant SKUs. Deduplicating ~400K source rows down to ~29K canonical files before OCR and chunking avoided paying to embed the same datasheet 14 times."
-  - title: "Confidence calibration and held-out test sets matter more than raw F1 on synthetic splits"
-    detail: "When scoping and directing the CMU engineering team on the 382-class ETIM pipeline, pushing early for a strict held-out evaluation split and calibrated probability thresholds (auto-accept > 0.85, human review 0.50–0.85, reject < 0.50) made PIMS writeback safe from day one."
-  - title: "Frame operational predictions around tail metrics (P90) alongside MAE"
-    detail: "When framing our shipping lead-time prediction baseline (Random Forest / GBM in MLflow, productionized as a Snowflake Days-to-Ship API), tracking P90 error alongside MAE proved essential because buyers care about worst-case delivery slip."
+  - title: "Deduplicate before migrating and indexing"
+    detail: "Collapsing ~400K source rows to ~29K unique files before parallel Azure Blob migration cut storage and indexing work by over 90% while achieving ~98% ingestion success across ~35K documents (28 GB)."
+  - title: "Enforce SOW rigor, held-out evaluation, and confidence routing"
+    detail: "When negotiating the SOW and directing the CMU engineering team on the 382-class ETIM pipeline, catching IP-term changes, unsupported accuracy targets, and missing deliverables—and enforcing held-out evaluation with confidence routing (auto-accept >0.85, review 0.5–0.85)—kept PIMS writeback reliable."
+  - title: "Track P90 tail error alongside MAE for lead-time models"
+    detail: "Framed shipping lead-time prediction as a measurable ML problem (MAE and P90) with features, labels, and Random Forest / GBM baselines tracked in MLflow, which a CMU practicum team later productionized as a Snowflake model behind a Days-to-Ship API."
 links:
   - label: "Read Case Study: Agentic AI & MCP Platform"
     href: "/projects/agentic-ai-mcp-platform"
@@ -60,41 +59,38 @@ embedding:
   vector: [0.58, 0.42, 0.25, 0.88]
 ---
 
-## Context & Dual Unstructured Data Challenges
+## Problem
 
-Industrial parts catalogs suffer from two complementary unstructured data bottlenecks:
-
-1. **Unindexed Technical Manuals (28 GB across ~35K Documents)**: Buyers need exact answers from installation guides and spec sheets (*torque ratings, wiring pinouts, chemical compatibility*), but the source database held **~400,000 attachment rows** with massive duplication, broken links, and zero full-text or semantic indexing.
-2. **Unclassified Catalog Additions (382 ETIM Classes)**: Incoming supplier parts arrive as scanned PDFs or sparse descriptions that must be mapped into **382 standardized ETIM technical classes** with structured attribute key-value pairs before they can power faceted search in PIMS.
+1. **Unindexed Spec & Installation Corpus (28 GB)**: Product specifications and installation guides were stored across **~400K database rows** (~35K documents totaling **28 GB**) with heavy duplication and no retrieval layer.
+2. **Parts Classification & Lead-Time Estimation**: Catalog parts needed automated classification across **382 ETIM classes** with PIMS writeback, and buyers needed reliable shipping lead-time predictions.
 
 ## Architectural Approach
 
-### 1. Deduplicating 400K Rows into a 28 GB Production RAG Corpus
+### 1. 28 GB Production RAG Pipeline (~98% Ingestion Success)
 
-Rather than naively embedding all 400,000 attachment records, we designed a content-addressed ingestion pipeline:
+I made **~35K product spec and installation documents (28 GB)** answerable by our AI agent at **~98% ingestion success**:
 
-- **400K → 29K Canonical File Deduplication**: Fingerprinted source URLs and binary streams to collapse **~400,000 source database rows into ~29,000 unique files** while preserving a many-to-many join table mapping every document chunk back to all associated SKU IDs.
-- **Parallel Azure Blob Migration & Azure AI Search Indexing**: Migrated **28 GB (~35K spec and installation documents)** into Azure Blob Storage using bounded parallel Python workers, achieving a **~98% end-to-end ingestion success rate**.
-- **SKU-Linked Hybrid Retrieval**: Indexed extracted sections in **Azure AI Search** (combining dense vector embeddings with BM25 keyword scoring for exact model numbers) and wired retrieval tools so agent answers cite both the source datasheet page and direct links to the purchasable SKUs in Peregrin's product search.
+- **Deduplication (~400K → ~29K Files)**: Deduplicated **~400K source rows down to ~29K unique files**.
+- **Parallel Migration & Indexing**: Migrated the deduplicated files to **Azure Blob** using parallel workers, indexed them in **Azure AI Search**, and linked agent answers directly to product search.
 
-### 2. 382-Class ETIM Classification at 21 ms Latency
+### 2. 382-Class ETIM Classification Pipeline (21 ms Latency)
 
-I scoped and directed a Carnegie Mellon University engineering team—and owned post-handover production tuning—to build an end-to-end **ML parts classification pipeline**:
+I delivered parts classification at **~95% OCR accuracy**, **~92% class-match accuracy across 382 ETIM classes**, and **21 ms latency** by negotiating the SOW with a CMU engineering team (catching IP-term changes, unsupported accuracy targets, and missing deliverables), scoping and directing delivery (OCR, attribute prediction, human review, PIMS writeback), and owning post-handover tuning:
 
 ```python
-# Confidence-tiered routing policy for 382-class ETIM PIMS writeback
+# Representative pattern: confidence routing for 382-class ETIM PIMS writeback
 def route_etim_prediction(part_id: str, class_id: str, confidence: float, attrs: dict) -> str:
-    if confidence >= 0.85:
-        pims_client.writeback_classification(part_id, class_id, attrs, status="AUTO_VERIFIED")
+    if confidence > 0.85:
+        pims.writeback(part_id, class_id, attrs)
         return "AUTO_ACCEPT"
-    elif confidence >= 0.50:
-        review_queue.enqueue(part_id, class_id, confidence, attrs, priority="STANDARD")
+    if confidence >= 0.50:
+        review_queue.enqueue(part_id, class_id, confidence, attrs)
         return "HUMAN_REVIEW"
-    else:
-        review_queue.enqueue(part_id, class_id, confidence, attrs, priority="LOW_CONFIDENCE")
-        return "REJECT_TO_TRIAGE"
+    return "REJECT"
 ```
 
-- **95% OCR Accuracy & 92% Class Match**: Combined high-speed OCR extraction with a multi-head attribute and class predictor across **382 ETIM classes**, achieving **~95% OCR accuracy**, **~92% class-match accuracy**, and **21 ms inference latency**.
-- **Calibrated Confidence Routing**: Enforced held-out evaluation discipline and a three-band routing policy: predictions above `0.85` confidence write back automatically to PIMS, predictions in `0.50–0.85` route to a human-in-the-loop review queue, and sub-`0.50` predictions are quarantined.
-- **Shipping Lead-Time Prediction (Days-to-Ship API)**: Applied the same discipline to frame supplier lead-time prediction as a measurable ML problem (**MAE and P90**), designing feature pipelines and Random Forest / GBM baselines tracked in **MLflow** that were subsequently productionized in **Snowflake** behind a real-time **Days-to-Ship API**.
+- **Held-Out Evaluation & Confidence Routing**: Pushed for strict held-out evaluation and confidence routing (**auto-accept above 0.85**, **human review 0.5–0.85**).
+
+### 3. Shipping Lead-Time Prediction (MLflow → Snowflake Days-to-Ship API)
+
+- Framed shipping lead-time prediction as a measurable ML problem (**MAE and P90**) by designing features, labels, and **Random Forest / GBM baselines** tracked in **MLflow**; later productionized by a CMU practicum team as a **Snowflake** model behind a **Days-to-Ship API**.

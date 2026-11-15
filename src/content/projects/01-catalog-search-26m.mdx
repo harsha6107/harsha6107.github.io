@@ -3,52 +3,52 @@ title: "26M-SKU Catalog Search & Zero-Loss Sync Architecture"
 shortTitle: "26M-SKU Catalog Search"
 slug: "catalog-search-26m"
 index: "01"
-organization: "eParts Services · Peregrin SaaS"
-period: "2025 – Present"
-role: "Senior ML Engineer (Search & Data Platform Lead)"
+organization: "eParts Services · Peregrin"
+period: "03/2025 – Present"
+role: "Senior ML Engineer"
 featured: true
 order: 1
 headlineMetric: "26M SKUs · 0 Record Loss · 500-Bucket Aggs"
-summary: "Rebuilt the ingestion pipeline and multi-stage relevance ranking for a 26-million-document industrial parts Elasticsearch cluster—eliminating silent bulk-indexing drops, handling slash-heavy part numbers (~77% of catalog), and cutting aggregation footprint by 99.5%."
-problem: "Peregrin's multi-tenant procurement catalog indexes 26 million industrial SKUs. Six compounding pipeline defects—including unpaginated 70K-SKU bulk payloads—caused silent document drops during index rebuilds, while standard tokenization split part numbers on slashes (present in ~77% of SKUs) and 100,000-bucket facet aggregations saturated heap memory."
+summary: "Fixed record loss in the product sync for a 26M-document Elasticsearch index by root-causing 6 defects and rebuilding ingestion with keyset pagination, ~1,000-doc / 5 MB chunks, count-checked alias swaps, 15-minute deltas, and 2x write concurrency. Shipped tiered part-number matching for the ~77% of SKUs with slashes and cut aggregations from 100,000 to 500 buckets."
+problem: "Product sync for a 26M-document Elasticsearch index suffered from silent record loss across 6 pipeline defects (including 70K+ SKUs sent in a single bulk call). In search, ~77% of SKUs contained slashes that standard tokenizers split, while 100,000-bucket aggregations created heavy query overhead."
 constraints:
-  - "26M active SKU documents across multi-tenant distributor catalogs requiring zero-downtime index rebuilds and 15-minute incremental delta freshness."
-  - "~77% of industrial part numbers contain forward slashes, hyphens, or dimensional punctuation (e.g., 1/4-20x3/4) that standard analyzers tokenize into noisy fragments."
-  - "High-cardinality facet aggregations previously requested 100,000 buckets per query, causing GC pauses and tail-latency spikes under concurrent buyer traffic."
-  - "Multi-writer updates from ERP/PIMS feeds and pricing microservices risked out-of-order overwrites without field-level ownership."
-approachSummary: "Replaced offset batching with deterministic keyset pagination, bounded ~1,000-doc / 5 MB bulk chunks at 2x write concurrency, gated blue/green alias swaps on strict document-count verification, and deployed a 4-tier exact/normalized/prefix/fuzzy analyzer cascade with popularity tie-breaking."
+  - "26M product documents requiring zero record loss on full rebuilds and 15-minute incremental delta syncs."
+  - "~77% of catalog SKUs contain slashes, requiring punctuation- and typo-tolerant part-number search."
+  - "Facet queries requested 100,000 buckets per search, inflating memory and response latency."
+  - "Concurrent catalog writers risked write backpressure and multi-writer overwrites without field-level ownership."
+approachSummary: "Root-caused 6 sync defects and rebuilt ingestion with keyset pagination, ~1,000-doc / 5 MB chunks, alias swaps with count checks, 15-minute deltas, and 2x write concurrency. Shipped tiered exact / normalized / prefix / fuzzy matching with part-number-first ranking and popularity tie-breaks, cut aggregations from 100,000 to 500 buckets, and designed the target Service Bus + outbox sync architecture."
 metrics:
   - value: "26M"
     label: "Documents Indexed"
-    detail: "Zero-loss full rebuilds + 15-minute delta syncs"
-  - value: "77%"
+    detail: "Zero-loss rebuilds + 15-minute delta syncs"
+  - value: "~77%"
     label: "Slash-SKU Coverage"
     detail: "Tiered exact / normalized / prefix / fuzzy matching"
-  - value: "99.5%"
-    label: "Bucket Reduction"
-    detail: "Cut facet aggregations from 100,000 to 500 buckets"
+  - value: "100K→500"
+    label: "Aggregation Buckets"
+    detail: "99.5% reduction in per-query bucket count"
   - value: "2x"
     label: "Write Concurrency"
-    detail: "Keyset-paginated ~1,000-doc / 5 MB bulk chunks"
+    detail: "Keyset pagination + ~1,000-doc / 5 MB chunks"
 stack:
   - "Elasticsearch"
   - "C# / .NET"
   - "PostgreSQL"
   - "Azure Service Bus"
-  - "Transactional Outbox"
+  - "Outbox Pattern"
   - "Keyset Pagination"
 diagramId: "catalog-search"
-diagramTitle: "Fig 1.1 — Keyset-Paginated Blue/Green Sync & 4-Tier Part-Number Ranking Pipeline"
-diagramCaption: "Source PostgreSQL/PIMS feeds stream through bounded 1,000-doc / 5 MB bulk workers with count-verified alias swaps and a 4-tier analyzer cascade."
+diagramTitle: "Fig 1.1 — Keyset-Paginated Sync & Tiered Part-Number Ranking Pipeline"
+diagramCaption: "Source updates flow through bounded ~1,000-doc / 5 MB chunks with count-checked alias swaps and tiered exact / normalized / prefix / fuzzy matching."
 retrospective:
-  - title: "Introduce per-field version vectors in the initial schema"
-    detail: "We initially solved bulk record loss at the document level, then designed the target catalog-sync architecture with field-level ownership and partial updates on Azure Service Bus so pricing workers and catalog-enrichment workers never clobber each other."
-  - title: "Automate shadow-query relevance replay earlier"
-    detail: "Capturing anonymized zero-result and reformulated part-number queries into a nightly shadow replay harness earlier would have surfaced punctuation edge cases before manual buyer bug reports."
-  - title: "Dynamic adaptive chunk sizing by payload byte weight"
-    detail: "While a dual cap of ~1,000 docs or 5 MB eliminated HTTP 413 and bulk queue rejections, an adaptive byte-budgeter that inspects average specification attachment size per batch further smooths ES thread-pool utilization."
+  - title: "Field-level ownership prevents multi-writer overwrites"
+    detail: "After fixing bulk record loss, I designed the target catalog-sync architecture using Azure Service Bus, the outbox pattern, bounded-concurrency workers, and field-level ownership with partial updates so pricing and catalog services never overwrite each other."
+  - title: "Bound bulk requests by both document count and byte size"
+    detail: "Enforcing a dual ceiling of ~1,000 documents or 5 MB per bulk call eliminated oversized payload failures (previously 70K+ SKUs in a single call) and stabilized indexing throughput at 2x write concurrency."
+  - title: "Never swap production read aliases without count verification"
+    detail: "Gating blue/green index alias swaps on automated document-count checks prevented incomplete rebuilds from reaching production traffic."
 links:
-  - label: "Read Essay: Why Part-Number Search Breaks Tokenizers"
+  - label: "Read Note: Part-Number Search at 26M Scale"
     href: "/writing/part-number-search-at-26m-scale"
   - label: "GitHub Profile"
     href: "https://github.com/harsha6107"
@@ -59,36 +59,34 @@ embedding:
   vector: [0.96, 0.24, 0.38, 0.16]
 ---
 
-## Context & Failure Modes
+## Problem & Failure Modes
 
-Industrial procurement Buyers do not search like consumer e-commerce shoppers. When an maintenance engineer or distributor buyer searches a **26-million-SKU catalog**, they paste partial manufacturer part numbers (`6204-2RS/C3`), slash-delimited fractional dimensions (`3/8"-16 UNC`), or OCR-scanned strings with missing delimiters (`62042RSC3`).
+Peregrin is a multi-tenant procurement and product-catalog SaaS platform for industrial parts distributors. Across a **26M-document Elasticsearch index**, two issues degraded search quality:
 
-When I took ownership of the Peregrin search data platform and relevance engine, two systemic problems threatened customer trust:
-
-1. **Silent Record Loss in the 26M-Document Sync Pipeline**: Full index rebuilds and incremental syncs periodically dropped thousands of SKUs without alerting. Root-causing the pipeline exposed **6 distinct defects**, including a single bulk indexing call attempting to push **70,000+ SKUs in one payload**, deep `OFFSET` pagination timeouts on source tables, silent partial failures inside Elasticsearch `_bulk` responses, and unverified index alias swaps.
-2. **Punctuation Blindness & 100K-Bucket Heap Pressure**: Roughly **77% of SKUs in the catalog contain forward slashes (`/`)**. Standard tokenization split part numbers across slash boundaries, causing exact part lookups to rank behind generic description matches. Simultaneously, category and manufacturer facet queries requested `size: 100000` buckets on every search, saturating coordinator node heap memory.
+1. **Record Loss in Product Sync**: Full rebuilds and incremental syncs dropped products silently. Root-causing the pipeline uncovered **6 defects**, including batch jobs pushing **70K+ SKUs in a single bulk call**, offset pagination bottlenecks, unhandled bulk item errors, and unverified alias switches.
+2. **Slash Tokenization & 100K-Bucket Aggregations**: Roughly **77% of SKUs contain slashes**. Standard tokenization split part numbers across punctuation, while facet aggregations requested **100,000 buckets** per query.
 
 ## Architectural Approach
 
-### 1. Rebuilding the 26M-Document Ingestion Pipeline
+### 1. Zero-Loss 26M-Document Sync Pipeline
 
-We tore down offset-based batching and rebuilt the synchronization engine around deterministic boundaries:
+I rebuilt the Elasticsearch ingestion pipeline around deterministic batching and verification:
 
 ```csharp
-// Keyset pagination + dual-threshold bulk chunker (~1,000 docs or 5 MB max)
+// Representative pattern: keyset pagination + ~1,000-doc / 5 MB chunking
 public async Task SyncCatalogPartitionAsync(Guid? lastSkuId, DateTimeOffset watermark, CancellationToken ct)
 {
     const int MaxDocsPerChunk = 1000;
-    const int MaxBytesPerChunk = 5 * 1024 * 1024; // 5 MB safety ceiling
+    const int MaxBytesPerChunk = 5 * 1024 * 1024; // 5 MB ceiling
 
     while (!ct.IsCancellationRequested)
     {
         var batch = await _catalogRepo.FetchKeysetBatchAsync(lastSkuId, watermark, MaxDocsPerChunk, ct);
         if (batch.Count == 0) break;
 
-        foreach (var payloadChunk in ChunkByByteBudget(batch, MaxBytesPerChunk))
+        foreach (var chunk in ChunkByByteBudget(batch, MaxBytesPerChunk))
         {
-            var response = await _elasticClient.BulkAsync(payloadChunk, ct);
+            var response = await _elasticClient.BulkAsync(chunk, ct);
             if (response.Errors)
             {
                 await _deadLetterQueue.PublishFailedItemsAsync(response.ItemsWithErrors, ct);
@@ -99,20 +97,19 @@ public async Task SyncCatalogPartitionAsync(Guid? lastSkuId, DateTimeOffset wate
 }
 ```
 
-- **Keyset Pagination & 15-Minute Deltas**: Replaced `OFFSET/LIMIT` scans with indexed `(updated_at, sku_id)` keyset cursors, running incremental delta sweeps every 15 minutes at **2x write concurrency**.
-- **Count-Gated Blue/Green Alias Swaps**: Full index rebuilds write to a staging index (`catalog_v_next`) with refresh intervals relaxed during bulk load. Before switching the live read alias, a gate verifies `count(staging) >= expected_floor` and zero dead-letter threshold breaches.
-- **Target Distributed Catalog-Sync Architecture**: Designed the next-generation event-driven sync using **Azure Service Bus**, the **transactional outbox pattern**, bounded-concurrency workers, and **field-level ownership with partial updates**—eliminating write backpressure and multi-writer overwrites between PIMS catalog feeds and real-time tenant pricing.
+- **Keyset Pagination & Bounded Chunks**: Replaced offset scans with keyset pagination and bounded every bulk request to **~1,000 documents / 5 MB** at **2x write concurrency**.
+- **15-Minute Deltas & Count-Checked Alias Swaps**: Scheduled incremental delta syncs every **15 minutes** and required document-count checks before swapping blue/green index aliases.
+- **Target Distributed Sync Architecture**: Designed the target catalog-sync architecture using **Azure Service Bus**, the **outbox pattern**, **bounded-concurrency workers**, and **field-level ownership with partial updates** to eliminate write backpressure and multi-writer overwrites.
 
-### 2. Four-Tier Part-Number Relevance & 500-Bucket Aggregations
+### 2. Tiered Part-Number Relevance & 500-Bucket Aggregations
 
-To make search resilient to slashes, hyphens, and buyer typos across 26M items, we engineered a multi-field index mapping and a **4-tier bool/dis_max query cascade**:
+To handle punctuation and typos across the **~77% of SKUs containing slashes**, I shipped a four-tier matching strategy with **part-number-first ranking** and **popularity tie-breaks**:
 
-| Tier | Field Analyzer | Query Strategy | Boost Weight | Target Failure Mode |
-| :--- | :--- | :--- | :--- | :--- |
-| **Tier 1 — Exact Raw** | `keyword` (case-folded) | `term` match | `12.0x` | Exact copy-pasted SKU with slashes (`6204-2RS/C3`) |
-| **Tier 2 — Normalized Alphanumeric** | `pattern_replace` (`[^a-zA-Z0-9] -> ""`) | `term` + `prefix` | `8.5x` | Missing or altered slashes/dashes (`62042RSC3` or `6204 2RS C3`) |
-| **Tier 3 — Structural Token Prefix** | Custom `char_filter` preserving `/` splits + `edge_ngram` | `match_phrase_prefix` | `4.0x` | Partial catalog lookup while typing (`6204-2RS`) |
-| **Tier 4 — Typo-Tolerant Fuzzy + Spec** | `standard` + `fuzziness: AUTO:4,7` | `multi_match` (`best_fields`) | `1.5x` | Transposed digits or OCR noise + popularity tie-breaker |
+| Tier | Matching Strategy | Target Query Pattern |
+| :--- | :--- | :--- |
+| **Tier 1 — Exact** | Case-folded exact part-number match | Verbatim SKU lookups preserving slashes and hyphens |
+| **Tier 2 — Normalized** | Delimiter-stripped alphanumeric match | Queries omitting or altering slashes, dashes, or spaces |
+| **Tier 3 — Prefix** | Token and structural prefix matching | Partial part numbers entered during search-as-you-type |
+| **Tier 4 — Fuzzy** | Edit-distance fallback + popularity tie-breaks | Typo recovery ranked by part-number priority and order popularity |
 
-- **Part-Number-First Ranking with Popularity Tie-Breaks**: By combining Tier 1–4 scores inside a `function_score` query weighted by historical tenant order frequency (`log1p(order_count)`), common replacement parts surface above obscure sub-assemblies when prefixes collide.
-- **Cutting Aggregations from 100,000 to 500 Buckets**: Replaced unbounded 100K-bucket terms aggregations with scoped top-500 bucket aggregations plus targeted filter-context facets, reducing coordinator heap allocation per query by **99.5%** while preserving 100% of visible UI filter utility.
+- **Cutting Aggregations from 100,000 to 500 Buckets**: Reduced facet aggregation size from **100,000 to 500 buckets**, cutting per-query bucket overhead by **99.5%** without losing relevant filter options.

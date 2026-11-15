@@ -1,13 +1,13 @@
 ---
-title: "Why Part-Number Search Breaks Standard Tokenizers (and How We Fixed It for 26M SKUs)"
+title: "Part-Number Search & Zero-Loss Sync at 26M-SKU Scale"
 slug: "part-number-search-at-26m-scale"
-pubDate: 2026-09-18
-readingTime: "7 min read"
+pubDate: 2026-03-15
+readingTime: "4 min read"
 category: "Search & Retrieval"
-summary: "Roughly 77% of industrial SKUs in our 26-million-document catalog contain forward slashes, hyphens, or fractional dimensions. Here is how we designed a 4-tier analyzer cascade, eliminated silent bulk-sync record loss, and cut facet aggregations from 100,000 to 500 buckets."
+summary: "How we fixed record loss across a 26M-document Elasticsearch index, made part-number search tolerant of slashes (~77% of SKUs) and typos, and cut aggregations from 100,000 to 500 buckets."
 tags:
   - "Elasticsearch"
-  - "Information Retrieval"
+  - "Search Relevance"
   - "Distributed Systems"
   - "C# / .NET"
 featured: true
@@ -19,21 +19,25 @@ embedding:
   vector: [0.94, 0.20, 0.35, 0.14]
 ---
 
-Standard full-text search engines are tuned for natural language prose. Their default analyzers split on whitespace and punctuation, strip symbols, lowercase stems, and rank documents by BM25 term frequency.
+Default full-text analyzers split on punctuation and rank by prose term frequency. In a **26M-document industrial product catalog** where **~77% of SKUs contain slashes**, default tokenization breaks exact and partial part-number lookups.
 
-In an industrial procurement catalog of **26 million SKUs**, that default behavior fails on almost every query.
+Here is how we rebuilt both the sync pipeline and relevance ranking for Peregrin's Elasticsearch index.
 
-When we audited search logs and SKU patterns across Peregrin's multi-tenant catalog, we found a startling distribution: **roughly 77% of all SKUs contain at least one forward slash (`/`)**, alongside hyphens, decimal points, and fractional thread callouts (`3/8-16x1-1/2`, `SKF-6204-2RS1/C3`).
+## 1. Fixing Silent Record Loss in the 26M-Document Sync
 
-## Failure Mode 1: The Slash Tokenization Trap
+Before tuning ranking, every SKU in the catalog had to reach the index reliably. Root-causing missing products exposed **6 defects** in the legacy sync—including batch jobs sending **70K+ SKUs in a single bulk call**, offset pagination bottlenecks, unhandled bulk item errors, and unverified alias swaps.
 
-Under Elasticsearch's `standard` analyzer, a buyer searching for `6204-2RS/C3` emits the token stream `["6204", "2rs", "c3"]`. Meanwhile, a query for `62042RSC3` (typed from a worn packing slip or barcode scanner that strips delimiters) emits `["62042rsc3"]`—producing **zero token overlap** with the indexed part number.
+We rebuilt the pipeline with five guarantees:
 
-Conversely, when a buyer searches a fractional fastener like `1/4-20`, splitting on `/` and `-` produces single-digit tokens `"1"`, `"4"`, and `"20"`, matching millions of unrelated parts and blowing up postings list traversal latency.
+- **Keyset Pagination**: Replaced offset scans with deterministic keyset cursors.
+- **Bounded Bulk Chunks**: Capped bulk requests at **~1,000 documents / 5 MB**.
+- **2x Write Concurrency & 15-Minute Deltas**: Doubled write concurrency and scheduled incremental delta syncs every **15 minutes**.
+- **Alias Swaps with Count Checks**: Verified document counts on staging indices before switching production read aliases.
+- **Target Catalog-Sync Architecture**: Designed the target architecture to eliminate write backpressure and multi-writer overwrites using **Azure Service Bus**, the **outbox pattern**, **bounded-concurrency workers**, and **field-level ownership with partial updates**.
 
-### Designing a 4-Tier Analyzer Cascade
+## 2. Tiered Matching for the ~77% of SKUs with Slashes
 
-Instead of forcing one analyzer to solve exact lookup, delimiter-insensitive matching, prefix autocomplete, and OCR typo recovery simultaneously, we indexed every part number across four specialized sub-fields:
+To make part-number search tolerant of punctuation and typos across the **~77% of SKUs containing slashes**, we shipped **tiered exact / normalized / prefix / fuzzy matching** paired with **part-number-first ranking and popularity tie-breaks**:
 
 ```json
 {
@@ -47,20 +51,16 @@ Instead of forcing one analyzer to solve exact lookup, delimiter-insensitive mat
         }
       },
       "normalizer": {
-        "sku_exact_folded": {
+        "sku_exact": {
           "type": "custom",
           "filter": ["lowercase", "asciifolding"]
         }
       },
       "analyzer": {
-        "sku_alnum_compact": {
+        "sku_normalized": {
           "tokenizer": "keyword",
           "char_filter": ["strip_delimiters"],
           "filter": ["lowercase"]
-        },
-        "sku_structural_prefix": {
-          "tokenizer": "whitespace",
-          "filter": ["lowercase", "edge_ngram_2_20"]
         }
       }
     }
@@ -68,21 +68,11 @@ Instead of forcing one analyzer to solve exact lookup, delimiter-insensitive mat
 }
 ```
 
-At query time, a `dis_max` + `function_score` query evaluates all four representations in parallel:
+1. **Exact Match**: Matches the case-folded part number with slashes and hyphens intact.
+2. **Normalized Match**: Strips slashes and delimiters so queries with or without punctuation resolve to the same SKU.
+3. **Prefix Match**: Supports incremental part-number lookup as buyers type.
+4. **Fuzzy Match + Popularity Tie-Breaks**: Recovers from typos while ranking part-number matches first and breaking ties by popularity.
 
-1. **Exact Folded Keyword (`boost: 12.0`)**: Preserves slashes and hyphens verbatim (`1/4-20` matches `1/4-20` before anything else).
-2. **Alphanumeric Normalized (`boost: 8.5`)**: Collapses `6204-2RS/C3` and `62042RSC3` to the same canonical token `62042rsc3`.
-3. **Structural Edge N-Gram (`boost: 4.0`)**: Handles progressive prefix typing without costly leading wildcards.
-4. **Bounded Fuzzy Fallback (`boost: 1.5`)**: Applies `fuzziness: AUTO:4,7` only on tokens of length ≥ 4, tied-broken by `log1p(tenant_popularity)`.
+## 3. Cutting Aggregations from 100,000 to 500 Buckets
 
-## Failure Mode 2: 100,000-Bucket Aggregations
-
-Relevance was only half the equation. Every search request also computed sidebar facet counts across manufacturers and categories—requesting `size: 100000` buckets per aggregation. On broad prefix queries matching 500K+ documents, coordinator nodes allocated massive priority queues just to serialize buckets the UI never rendered.
-
-By capping facet aggregations at **500 buckets** and moving deep manufacturer lookup to a dedicated prefix-filtered endpoint, we cut per-query aggregation bucket footprint by **99.5%**.
-
-## Failure Mode 3: Silent Record Drops in 26M-Doc Syncs
-
-No ranking function can surface a document that was silently dropped during ingestion. Root-causing missing SKUs in our 26M-document index revealed **6 separate pipeline defects**—most notably a batch job attempting to send **70,000+ SKUs in a single `_bulk` HTTP payload** and uninspected item-level error arrays in bulk responses.
-
-Rebuilding the pipeline around **keyset pagination** (`WHERE (updated_at, sku_id) > (@lastTs, @lastId)`), dual-bounded chunks (**~1,000 documents or 5 MB max**), **2x write concurrency**, **15-minute incremental deltas**, and **count-verified blue/green alias swaps** eliminated silent record loss permanently.
+Search queries previously requested **100,000 buckets** per facet aggregation. Reducing aggregation size from **100,000 to 500 buckets** cut per-query bucket overhead by **99.5%** while preserving relevant facet filters.

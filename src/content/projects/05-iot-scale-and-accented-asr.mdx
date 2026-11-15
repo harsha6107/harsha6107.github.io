@@ -1,57 +1,55 @@
 ---
-title: "250x IoT AI Telemetry Scaling & Whisper Accented Speech Recognition"
+title: "250x IoT AI Platform Scaling, Whisper Accented ASR & Streaming Recommender"
 shortTitle: "250x IoT Scale & Whisper ASR"
 slug: "iot-scale-and-accented-asr"
 index: "05"
-organization: "Carnegie Mellon University · Adrich Capstone & Deep Learning"
-period: "2024"
-role: "Engineering Team Lead (Adrich) & ML Researcher"
+organization: "Carnegie Mellon University · Adrich Capstone & ML Systems"
+period: "01/2024 – 12/2024"
+role: "Team Lead (Adrich) & ML Engineer"
 featured: false
 order: 5
 headlineMetric: "250x Chip Scale (5M) · -60% Cost · +30% ASR Accuracy"
-summary: "Led the CMU engineering team that scaled Adrich's consumer-goods IoT AI platform 250x (from 20,000 to 5 million embedded chips) while cutting assembly costs 60%, and built a fine-tuned Whisper ASR pipeline improving accented speech accuracy by 30% across 1M voice samples."
-problem: "At Adrich, scaling smart-packaging IoT deployments from 20,000 pilot units to 5 million embedded consumer-goods chips broke ingestion throughput and unit economics as sensor payload density grew 5x. In parallel, standard speech recognition models exhibited high word-error rates on non-native accented English speech."
+summary: "Scaled Adrich's IoT AI platform for consumer-goods brands from 20,000 to 5 million embedded chips (250x) and cut assembly costs 60% while handling 5x more sensor data. Built a Whisper-based ASR system improving accented speech accuracy 30% (-25% error rate) across 1M voice samples, and a Kafka streaming recommender (+40% update frequency at 99% uptime)."
+problem: "Adrich needed to scale its consumer-goods IoT AI platform from 20,000 to 5 million embedded chips while handling 5x more sensor data and reducing assembly costs. Separate ML systems work targeted accented speech recognition errors across 1M samples and continuous retraining for streaming recommendations."
 constraints:
-  - "250x fleet expansion (20,000 to 5,000,000 embedded chips) under strict per-unit BOM/assembly cost ceilings."
-  - "5x increase in per-device sensor telemetry volume amidst evolving client hardware specifications."
-  - "1,000,000 diverse accented voice samples requiring low-WER transcription without catastrophic forgetting on standard dialects."
-  - "Streaming ML recommendation systems require continuous online retraining with fairness and explainability checks at 99% uptime."
-approachSummary: "Re-architected Adrich's edge-to-cloud telemetry framing, batch compaction, and manufacturing calibration workflow to handle 5M devices at 60% lower assembly cost; fine-tuned OpenAI Whisper on 1M accented audio samples (+30% accuracy, -25% WER); and shipped a Kafka-streamed boosting recommender (+40% update frequency at 99% uptime)."
+  - "Scale embedded IoT platform 250x (from 20,000 to 5 million chips) while cutting assembly costs 60%."
+  - "Handle 5x more sensor data amid changing client requirements."
+  - "Improve accented-speech recognition accuracy across 1M voice samples."
+  - "Increase recommendation model update frequency while maintaining 99% uptime and fairness/explainability checks."
+approachSummary: "Led system scaling and streamlined the Adrich stack to support 5 million chips (250x) and 5x sensor data at 60% lower assembly cost; built a Whisper-based ASR system across 1M voice samples (+30% accuracy, -25% error rate); and built an end-to-end boosting recommender with Kafka streaming, continuous retraining, and fairness and explainability checks (+40% update frequency at 99% uptime)."
 metrics:
   - value: "250x"
-    label: "IoT Fleet Scale"
-    detail: "Scaled from 20,000 to 5,000,000 embedded smart chips"
+    label: "IoT Platform Scale"
+    detail: "20,000 to 5,000,000 embedded chips"
   - value: "-60%"
-    label: "Assembly & Unit Cost"
-    detail: "While processing 5x more sensor telemetry per device"
+    label: "Assembly Cost"
+    detail: "Streamlined stack while handling 5x more sensor data"
   - value: "+30%"
     label: "Accented ASR Accuracy"
-    detail: "Whisper fine-tuning cutting error rates 25% across 1M samples"
-  - value: "99%"
-    label: "Recommender Uptime"
-    detail: "Kafka streaming + continuous retraining (+40% update cadence)"
+    detail: "Cut error rates 25% across 1M voice samples (Whisper)"
+  - value: "+40%"
+    label: "Model Update Frequency"
+    detail: "99% uptime with Kafka streaming & continuous retraining"
 stack:
   - "Python"
-  - "PyTorch"
   - "OpenAI Whisper"
   - "Apache Kafka"
-  - "IoT Edge Telemetry"
   - "Gradient Boosting"
-  - "Docker"
+  - "IoT Systems"
 diagramId: "iot-asr"
-diagramTitle: "Fig 5.1 — High-Density IoT Edge-to-Cloud Telemetry Pipeline (5M Chips) & Whisper Accented ASR Architecture"
-diagramCaption: "Compact binary sensor framing and streaming ingestion scale from 20K to 5M embedded chips alongside continuous ML retraining pipelines."
+diagramTitle: "Fig 5.1 — Adrich 250x IoT Telemetry Pipeline, Whisper ASR & Kafka Recommender"
+diagramCaption: "Streamlined IoT ingestion scales from 20K to 5M chips alongside Whisper ASR (1M samples) and Kafka streaming retraining."
 retrospective:
-  - title: "Hardware-software co-design is the fastest lever for unit economics at миллион-chip scale"
-    detail: "Cutting assembly costs by 60% while increasing sensor throughput 5x was only possible by simplifying factory flash/calibration handshakes alongside cloud ingestion schema compaction."
-  - title: "Accent-stratified validation prevents dominant-accent overfitting in Whisper fine-tuning"
-    detail: "Stratifying our 1M-sample evaluation harness by speaker L1 phonology ensured the 30% accuracy gain held across underrepresented accents rather than merely boosting the majority class."
-  - title: "Automate drift and fairness gates directly inside Kafka retraining loops"
-    detail: "In our streaming movie recommender, embedding automated telemetry checks (population stability, sub-group fairness, and SHAP explainability snapshots) before promoting retrained boosting models enabled 40% faster model updates without silent regressions."
+  - title: "Streamlining the stack unlocks both scale and unit-cost reductions"
+    detail: "Scaling Adrich from 20,000 to 5 million embedded chips (250x) while cutting assembly costs 60% required simplifying the end-to-end stack to absorb 5x more sensor data amid changing client requirements."
+  - title: "Fine-tuning Whisper on 1M samples cuts accented speech errors"
+    detail: "Building a Whisper-based ASR pipeline evaluated across 1M voice samples improved accented-speech recognition accuracy 30% over traditional models and cut error rates 25%."
+  - title: "Pair continuous Kafka retraining with fairness and explainability checks"
+    detail: "Building an end-to-end boosting recommender with Kafka streaming and automated fairness and explainability checks increased model update frequency 40% at 99% uptime."
 links:
   - label: "GitHub: Accented Speech Recognition (Whisper)"
     href: "https://github.com/harsha6107/idl-accented-asr"
-  - label: "GitHub: Streaming Movie Recommendation System"
+  - label: "GitHub: Movie Recommendation System"
     href: "https://github.com/harsha6107/group-project-s24-caped-crusaders"
 embedding:
   x: 58
@@ -60,22 +58,16 @@ embedding:
   vector: [0.18, 0.20, 0.34, 0.96]
 ---
 
-## 1. Scaling Adrich's IoT AI Platform 250x (20K → 5M Embedded Chips)
+## 1. Adrich IoT AI Platform (CMU Client Studio Project, 01/2024 – 12/2024)
 
-As Team Lead for Carnegie Mellon University's client studio engagement with **Adrich**, I led the architecture and systems engineering effort to transition their AI-powered smart-label consumer insights platform from pilot batches (**20,000 chips**) to mass consumer-goods manufacturing (**5,000,000 embedded chips — a 250x scale-up**).
+As **Team Lead**, I led system scaling for **Adrich's** IoT AI platform for consumer-goods brands:
 
-- **5x Sensor Data Density at 60% Lower Assembly Cost**: Mid-project, client sensor requirements expanded **5x** (capturing richer capacitive, motion, and usage telemetry per package). We streamlined the embedded-to-cloud serialization protocol, eliminated multi-step factory provisioning bottlenecks to cut assembly costs by **60%**, and decoupled bursty mobile-gateway sync uploads from downstream ML consumption analytics.
+- **250x Chip Scale & 60% Lower Assembly Cost**: Scaled the platform from **20,000 to 5 million embedded chips (250x)** and cut assembly costs **60%** by streamlining the stack to handle **5x more sensor data** amid changing client requirements.
 
-## 2. Whisper-Based Accented Speech Recognition (+30% Accuracy across 1M Samples)
+## 2. Whisper-Based Accented Speech Recognition
 
-Commercial Automatic Speech Recognition (ASR) models degrade sharply on regional and non-native English accents. We engineered an accented-speech recognition pipeline built on **OpenAI Whisper** (`github.com/harsha6107/idl-accented-asr`):
+- **+30% Accuracy & -25% Error Rate across 1M Samples**: Improved accented-speech recognition accuracy **30%** over traditional models and cut error rates **25%** across **1M voice samples** by building a Whisper-based ASR system ([`idl-accented-asr`](https://github.com/harsha6107/idl-accented-asr)).
 
-- **Curated 1M-Sample Training & Evaluation Pipeline**: Built an audio preprocessing, SpecAugment perturbation, and accent-stratified batching pipeline across **1,000,000 voice samples**.
-- **Adapter & Layer-Selective Fine-Tuning**: Fine-tuned encoder-decoder representations to adapt acoustic-phonetic mappings without degrading base lexical decoding—**improving accented-speech recognition accuracy by 30%** over baseline models and **cutting Word Error Rate (WER) by 25%**.
+## 3. Streaming Movie Recommendation System
 
-## 3. Streaming Kafka Movie Recommender (+40% Retraining Frequency at 99% Uptime)
-
-In parallel (`github.com/harsha6107/group-project-s24-caped-crusaders`), we built a production-grade **streaming movie recommendation platform**:
-
-- **Kafka Event Streaming + Continuous Boosting Retraining**: Consumed real-time watch and rating telemetry from **Apache Kafka**, automating feature store updates and shadow model promotion to increase model update frequency by **40%** while maintaining **99% service uptime**.
-- **Built-in Fairness & Explainability Gates**: Integrated automated demographic parity checks, telemetry drift alerts, and model explainability verification into the CI/CD retraining loop before zero-downtime blue/green model swaps.
+- **+40% Update Frequency at 99% Uptime**: Increased model update frequency **40%** at **99% uptime** by building an end-to-end boosting recommender with **Kafka streaming**, **continuous retraining**, and **fairness and explainability checks** ([`group-project-s24-caped-crusaders`](https://github.com/harsha6107/group-project-s24-caped-crusaders)).
