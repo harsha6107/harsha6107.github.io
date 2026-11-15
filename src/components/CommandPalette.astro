@@ -9,6 +9,8 @@ interface Props {
   linkedinUrl: string;
   resumePdfUrl: string;
   placeholder: string;
+  extras: { id: string; label: string; sub: string; action: string; payload: string }[];
+  shortcutsLabel: string;
 }
 
 const {
@@ -19,9 +21,22 @@ const {
   linkedinUrl,
   resumePdfUrl,
   placeholder,
+  extras,
+  shortcutsLabel,
 } = Astro.props;
 
-const items = [
+type Item = {
+  id: string;
+  group: string;
+  label: string;
+  sub: string;
+  action?: string;
+  payload?: string;
+  href?: string;
+  kbd?: string;
+};
+
+const items: Item[] = [
   {
     id: 'act-theme',
     group: 'Quick Actions',
@@ -45,8 +60,23 @@ const items = [
     label: 'Download Résumé PDF',
     sub: 'Harsha_Tummala.pdf',
     href: resumePdfUrl,
-    kbd: 'R',
   },
+  {
+    id: 'act-shortcuts',
+    group: 'Quick Actions',
+    label: shortcutsLabel,
+    sub: 'G H · G W · G N · G A · G R · T · C · /',
+    action: 'shortcuts',
+    kbd: '?',
+  },
+  ...extras.map((x) => ({
+    id: x.id,
+    group: 'Just for fun',
+    label: x.label,
+    sub: x.sub,
+    action: x.action,
+    payload: x.payload,
+  })),
   {
     id: 'nav-home',
     group: 'Navigation',

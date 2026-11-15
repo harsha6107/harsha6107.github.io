@@ -2,7 +2,7 @@
 import { type CollectionEntry, render } from 'astro:content';
 import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getSortedProjects } from '../../utils/content';
+import { getSiteData, getSortedProjects } from '../../utils/content';
 
 export async function getStaticPaths() {
   const projects = await getSortedProjects();
@@ -25,6 +25,7 @@ interface Props {
 const { project, prevProject, nextProject } = Astro.props;
 const { data } = project;
 const { Content } = await render(project);
+const site = await getSiteData();
 ---
 
 <BaseLayout
@@ -35,14 +36,28 @@ const { Content } = await render(project);
 >
   <article class="section" style="border-bottom: none;">
     <div class="container">
-      <!-- Breadcrumb -->
-      <nav aria-label="Breadcrumb" class="mono" style="font-size: var(--text-xs); color: var(--text-muted); margin-bottom: var(--space-5);">
-        <a href="/">Home</a>
-        <span aria-hidden="true"> / </span>
-        <a href="/projects">Work</a>
-        <span aria-hidden="true"> / </span>
-        <span style="color: var(--accent);">SYS.{data.index}</span>
-      </nav>
+      <div class="case-topbar">
+        <!-- Breadcrumb -->
+        <nav aria-label="Breadcrumb" class="mono" style="font-size: var(--text-xs); color: var(--text-muted);">
+          <a href="/">Home</a>
+          <span aria-hidden="true"> / </span>
+          <a href="/projects">Work</a>
+          <span aria-hidden="true"> / </span>
+          <span style="color: var(--accent);">SYS.{data.index}</span>
+        </nav>
+
+        <div class="audience-toggle mono" role="group" aria-label={site.ui.audienceLabel}>
+          <span class="audience-label" aria-hidden="true">{site.ui.audienceLabel}</span>
+          <div class="audience-seg">
+            <button type="button" data-audience-set="recruiter" aria-pressed="false">
+              {site.ui.audienceRecruiter}
+            </button>
+            <button type="button" data-audience-set="engineer" aria-pressed="true">
+              {site.ui.audienceEngineer}
+            </button>
+          </div>
+        </div>
+      </div>
 
       <!-- Case Study Header (Morphs from ProjectCard via shared view-transition-name) -->
       <header
@@ -139,58 +154,71 @@ const { Content } = await render(project);
         </section>
       </div>
 
-      <section class="spec-box" style="margin-top: var(--space-5);" aria-labelledby="spec-constraints">
-        <span class="section-index">03 / SYSTEM CONSTRAINTS &amp; INVARIANTS</span>
-        <h2 id="spec-constraints" style="font-size: var(--text-lg); margin-top: var(--space-2);">
-          Non-Negotiable Production Constraints
-        </h2>
-        <ul style="margin-top: var(--space-3); padding-left: var(--space-5); display: grid; gap: var(--space-2);">
-          {data.constraints.map((c) => (
-            <li style="font-size: var(--text-sm); max-width: 75ch;">{c}</li>
-          ))}
-        </ul>
-      </section>
-
-      <!-- 04 / SVG Architecture Schematic -->
-      <section style="margin-top: var(--space-7);" aria-labelledby="spec-diagram">
-        <span class="section-index">04 / SYSTEM SCHEMATIC</span>
-        <h2 id="spec-diagram" style="font-size: var(--text-xl); margin-top: var(--space-2);">
-          Architecture &amp; Data Flow
-        </h2>
-        <ArchitectureDiagram
-          diagramId={data.diagramId}
-          title={data.diagramTitle}
-          caption={data.diagramCaption}
-        />
-      </section>
-
-      <!-- 05 / Deep Technical Walkthrough (MDX Content) -->
-      <div class="prose" style="margin-top: var(--space-7);">
-        <Content />
+      <div class="deep-dive-gate spec-box" style="margin-top: var(--space-5);">
+        <div>
+          <p class="deep-dive-title">{site.ui.deepDiveTitle}</p>
+          <p style="font-size: var(--text-sm); margin-top: var(--space-1);">{site.ui.deepDiveBody}</p>
+        </div>
+        <button type="button" class="btn btn-primary" data-deep-dive-open>
+          <span>{site.ui.deepDiveCta}</span>
+          <span aria-hidden="true" class="mono">↓</span>
+        </button>
       </div>
 
-      <!-- 06 / What I'd Do Differently (Retrospective) -->
-      <section class="spec-box" style="margin-top: var(--space-8);" aria-labelledby="spec-retro">
-        <span class="section-index">06 / RETROSPECTIVE</span>
-        <h2 id="spec-retro" style="font-size: var(--text-xl); margin-top: var(--space-2);">
-          What I Would Do Differently
-        </h2>
-        <div class="retro-grid" style="margin-top: var(--space-4);">
-          {data.retrospective.map((item, idx) => (
-            <div class="retro-card">
-              <span class="mono" style="font-size: var(--text-xs); color: var(--accent); font-weight: 700;">
-                LESSON 0{idx + 1}
-              </span>
-              <h3 style="font-size: var(--text-base); margin-top: var(--space-1);">
-                {item.title}
-              </h3>
-              <p style="font-size: var(--text-sm); margin-top: var(--space-2);">
-                {item.detail}
-              </p>
-            </div>
-          ))}
+      <div id="deep-dive" class="deep-dive" tabindex="-1">
+        <section class="spec-box" style="margin-top: var(--space-5);" aria-labelledby="spec-constraints">
+          <span class="section-index">03 / SYSTEM CONSTRAINTS &amp; INVARIANTS</span>
+          <h2 id="spec-constraints" style="font-size: var(--text-lg); margin-top: var(--space-2);">
+            Non-Negotiable Production Constraints
+          </h2>
+          <ul style="margin-top: var(--space-3); padding-left: var(--space-5); display: grid; gap: var(--space-2);">
+            {data.constraints.map((c) => (
+              <li style="font-size: var(--text-sm); max-width: 75ch;">{c}</li>
+            ))}
+          </ul>
+        </section>
+
+        <!-- 04 / SVG Architecture Schematic -->
+        <section style="margin-top: var(--space-7);" aria-labelledby="spec-diagram">
+          <span class="section-index">04 / SYSTEM SCHEMATIC</span>
+          <h2 id="spec-diagram" style="font-size: var(--text-xl); margin-top: var(--space-2);">
+            Architecture &amp; Data Flow
+          </h2>
+          <ArchitectureDiagram
+            diagramId={data.diagramId}
+            title={data.diagramTitle}
+            caption={data.diagramCaption}
+          />
+        </section>
+
+        <!-- 05 / Deep Technical Walkthrough (MDX Content) -->
+        <div class="prose" style="margin-top: var(--space-7);">
+          <Content />
         </div>
-      </section>
+
+        <!-- 06 / What I'd Do Differently (Retrospective) -->
+        <section class="spec-box" style="margin-top: var(--space-8);" aria-labelledby="spec-retro">
+          <span class="section-index">06 / RETROSPECTIVE</span>
+          <h2 id="spec-retro" style="font-size: var(--text-xl); margin-top: var(--space-2);">
+            What I Would Do Differently
+          </h2>
+          <div class="retro-grid" style="margin-top: var(--space-4);">
+            {data.retrospective.map((item, idx) => (
+              <div class="retro-card">
+                <span class="mono" style="font-size: var(--text-xs); color: var(--accent); font-weight: 700;">
+                  LESSON 0{idx + 1}
+                </span>
+                <h3 style="font-size: var(--text-base); margin-top: var(--space-1);">
+                  {item.title}
+                </h3>
+                <p style="font-size: var(--text-sm); margin-top: var(--space-2);">
+                  {item.detail}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
 
       <!-- Prev / Next Case Study Navigation -->
       <nav
@@ -221,6 +249,81 @@ const { Content } = await render(project);
 </BaseLayout>
 
 <style>
+  .case-topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+  }
+
+  .audience-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+  }
+
+  .audience-label {
+    color: var(--text-muted);
+  }
+
+  .audience-seg {
+    display: inline-flex;
+    padding: 2px;
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .audience-seg button {
+    min-height: 26px;
+    padding: 0.2rem 0.65rem;
+    border: none;
+    border-radius: var(--radius-xs);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out);
+  }
+
+  .audience-seg button:hover {
+    color: var(--text-primary);
+  }
+
+  .audience-seg button[aria-pressed="true"] {
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    font-weight: 600;
+    box-shadow: var(--shadow-xs);
+  }
+
+  .deep-dive-gate {
+    display: none;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    border-style: dashed;
+    border-color: var(--border-strong);
+  }
+
+  .deep-dive-title {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  :global(html[data-audience="recruiter"]) .deep-dive {
+    display: none;
+  }
+
+  :global(html[data-audience="recruiter"]) .deep-dive-gate {
+    display: flex;
+  }
+
   .spec-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
@@ -249,3 +352,4 @@ const { Content } = await render(project);
     min-width: 0;
   }
 </style>
+

@@ -92,4 +92,41 @@ test.describe('Interactive Features: Theme Toggle, Command Palette & Embedding M
     await expect(page.locator('#emb-title')).toContainText('Agentic AI');
     await expect(page.locator('#emb-neighbors')).toContainText('cos θ =');
   });
+
+  test('Search demo matches typos via the Fuzzy tier and updates live status', async ({ page }) => {
+    await page.goto('/');
+    const demo = page.locator('[data-search-demo]');
+    await demo.scrollIntoViewIfNeeded();
+    await expect(demo).toHaveAttribute('data-initialized', 'true');
+
+    const input = page.locator('[data-sd-input]');
+    await input.fill('6240-2rs');
+    const firstRow = page.locator('[data-sd-results] .sd-row').first();
+    await expect(firstRow).toHaveAttribute('data-tier', 'fuzzy');
+    await expect(firstRow).toContainText('6204-2RS/C3');
+  });
+
+  test('Recruiter / Engineer toggle folds and unfolds the case-study deep dive', async ({
+    page,
+  }) => {
+    await page.goto('/projects/catalog-search-26m');
+    const deepDive = page.locator('#deep-dive');
+    await expect(deepDive).toBeVisible();
+
+    await page.locator('[data-audience-set="recruiter"]').click();
+    await expect(page.locator('html')).toHaveAttribute('data-audience', 'recruiter');
+    await expect(deepDive).toBeHidden();
+
+    await page.locator('[data-deep-dive-open]').click();
+    await expect(page.locator('html')).toHaveAttribute('data-audience', 'engineer');
+    await expect(deepDive).toBeVisible();
+  });
+
+  test('Pressing ? opens the keyboard shortcuts sheet', async ({ page }) => {
+    await page.goto('/');
+    const dialog = page.locator('#shortcuts-dialog');
+    await expect(dialog).toBeHidden();
+    await page.keyboard.press('?');
+    await expect(dialog).toBeVisible();
+  });
 });

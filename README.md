@@ -34,18 +34,22 @@ Live production site: **[https://harsha6107.github.io](https://harsha6107.github
 
 ---
 
-## Signature ML Moment & Interactions
+## Signature ML Moments & Interactions
 
-1. **Interactive 2D UMAP Embedding Map (`< 5 KB` lazy-loaded island)**
+1. **Live Part-Number Search Demo (`src/components/SearchDemo.astro` + `src/utils/sku-search.ts`)**
+   - Rebuilds the tiered matching shipped for the 26M-SKU catalog (`Exact` → `Normalized` → `Prefix` → `Fuzzy` with edit distance → `Keyword`, breaking ties on popularity) in miniature over 24 illustrative SKUs right below the hero.
+   - Server-renders the first query (`62042rsc3` → `#1 6204-2RS/C3` via `Normalized`) so the console is populated at first paint with zero layout shift (`CLS = 0`), then lazy-loads the 3.68 KB matcher on approach.
+2. **Interactive 2D UMAP Embedding Map (`< 5 KB` lazy-loaded island)**
    - Projects, technical essays, and core ML/data capabilities are projected onto a 2D latent manifold (`src/components/EmbeddingMap.astro` + `public/scripts/embedding-map.js`).
    - Hovering or keyboard-focusing any vector node computes **live cosine similarity** ($\cos\theta = \frac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{u}\|\|\mathbf{v}\|}$) across all 4D capability embeddings (`[search, agents, data, ml]`) and renders SVG nearest-neighbor tethers (`k=3`).
    - Clicking any project or essay node navigates directly to its specification. Includes a collapsible static HTML `<table>` matrix fallback for screen readers and no-JS environments.
-2. **Cross-Document View Transitions**
-   - Native CSS `@view-transition { navigation: auto; }` morphs project card titles (`view-transition-name: title-<slug>`) and headline metric badges (`view-transition-name: metric-<slug>`) seamlessly into the Case Study header.
-3. **Scroll-Driven Animations (`@supports`)**
-   - Reading progress bar (`animation-timeline: scroll(root)`) and card reveals (`animation-timeline: view()`) are progressively enhanced inside `@supports (animation-timeline: view())` and `@media (prefers-reduced-motion: no-preference)`. All content remains `opacity: 1` without support.
-4. **`⌘K` / `Ctrl+K` Command Palette**
-   - Built on native `<dialog>` (`src/components/CommandPalette.astro`) with full keyboard navigation (`↑`/`↓`/`Enter`/`Esc`), instant fuzzy filtering across sections, case studies, and essays, one-keystroke theme toggling, and email copying.
+3. **Recruiter / Engineer Reading Lens**
+   - Every case study header includes a `Reading as: Recruiter | Engineer` toggle persisted in `localStorage` and restored before first paint. Recruiter mode keeps the 60-second summary (metrics, problem, approach) and folds constraints, schematics, prose, and retrospectives behind a single button.
+4. **Proof-Linked Telemetry Strip & Linear-Style Keyboard Shortcuts**
+   - Each hero metric (`26M`, `25/25`, `-95%`, `35K`) links directly to the case study that proves it.
+   - Single-key and two-key sequences (`?` help dialog, `/` focus search demo, `G H` / `G W` / `G N` / `G A` / `G R` navigation, `T` theme, `C` copy email) work alongside the `⌘K` / `Ctrl+K` native `<dialog>` command palette (`src/components/CommandPalette.astro`).
+5. **Cross-Document View Transitions & Scroll-Driven Animations (`@supports`)**
+   - Native CSS `@view-transition { navigation: auto; }` morphs project cards into the Case Study header. Reading progress (`animation-timeline: scroll(root)`) and section reveals (`animation-timeline: view()`) are guarded by `@supports` and `@media (prefers-reduced-motion: no-preference)`.
 
 ---
 
@@ -60,33 +64,36 @@ Live production site: **[https://harsha6107.github.io](https://harsha6107.github
 │   ├── images/                     # Portfolio preview screenshots
 │   ├── resume/Harsha_Tummala.pdf   # Printable 1-page engineering résumé PDF
 │   ├── robots.txt                  # Crawler directives + sitemap pointer
-│   └── scripts/embedding-map.js    # Lazy-loaded 4.32 KB UMAP k-NN island
+│   └── scripts/embedding-map.js    # Lazy-loaded 4.49 KB UMAP k-NN island
 ├── src/
 │   ├── assets/profile.jpg          # Source portrait optimized to AVIF/WebP via astro:assets
 │   ├── components/
 │   │   ├── ArchitectureDiagram.astro # 5 bespoke accessible SVG system schematics
 │   │   ├── CommandPalette.astro    # ⌘K native <dialog> command palette
 │   │   ├── EmbeddingMap.astro      # 2D UMAP Latent Space Explorer + static table fallback
-│   │   └── ProjectCard.astro       # Container-queried spotlight card with View Transition tags
+│   │   ├── ProjectCard.astro       # Container-queried spotlight card with View Transition tags
+│   │   └── SearchDemo.astro        # SSR + lazy-hydrated tiered part-number search console
 │   ├── content/
-│   │   ├── site/main.json          # All bio, hero telemetry, timeline, skills & UI copy
+│   │   ├── site/main.json          # All bio, hero telemetry, search demo index, shortcuts & UI copy
 │   │   ├── projects/*.mdx          # 5 production engineering case studies
 │   │   └── writing/*.mdx           # 4 technical architecture essays
 │   ├── content.config.ts           # Strict Zod schemas for projects, writing & site collections
-│   ├── layouts/BaseLayout.astro    # Semantic shell, SEO/JSON-LD, theme init, reading progress
+│   ├── layouts/BaseLayout.astro    # Semantic shell, SEO/JSON-LD, theme/audience init, shortcuts
 │   ├── pages/
-│   │   ├── index.astro             # Home: positioning, telemetry, projects, UMAP map, writing, contact
+│   │   ├── index.astro             # Home: positioning, telemetry, search demo, projects, UMAP map
 │   │   ├── about.astro             # Philosophy, portrait, experience timeline, capability matrix
 │   │   ├── resume.astro            # Print-styled HTML specification + PDF download
 │   │   ├── 404.astro               # Telemetry fault page with recovery routes
 │   │   ├── rss.xml.ts              # RSS 2.0 feed for technical writing
 │   │   ├── og/[...slug].png.ts     # Build-time Satori + Resvg OpenGraph PNG generator
-│   │   ├── projects/               # Index + [slug].astro case study layout
+│   │   ├── projects/               # Index + [slug].astro case study layout (Recruiter/Engineer lens)
 │   │   └── writing/                # Index + [slug].astro essay layout
-│   └── styles/global.css           # Cascade layers, OKLCH tokens, fluid type, print & motion rules
+│   ├── scripts/search-demo.ts      # Lazy-loaded browser controller for the SKU search demo
+│   ├── styles/global.css           # Cascade layers, OKLCH tokens, fluid type, print & motion rules
+│   └── utils/sku-search.ts         # Pure Exact/Normalized/Prefix/Fuzzy/Keyword matcher
 └── tests/
     ├── check-bundle-size.mjs       # Enforces <50 KB home JS & <30 KB signature island
-    ├── portfolio.spec.ts           # 26 Playwright + Axe WCAG 2.2 AA & viewport tests
+    ├── portfolio.spec.ts           # 29 Playwright + Axe WCAG 2.2 AA, viewport & interaction tests
     └── serve-dist.mjs              # Zero-dependency static server for CI testing
 ```
 

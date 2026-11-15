@@ -13,7 +13,8 @@
     "github": "https://github.com/harsha6107",
     "linkedin": "https://linkedin.com/in/harsha-tummala",
     "website": "https://harsha6107.github.io",
-    "resumePdf": "/resume/Harsha_Tummala.pdf"
+    "resumePdf": "/resume/Harsha_Tummala.pdf",
+    "source": "https://github.com/harsha6107/harsha6107.github.io"
   },
   "nav": [
     { "label": "Work", "href": "/projects" },
@@ -25,24 +26,119 @@
     {
       "value": "26M",
       "label": "Catalog SKUs Indexed",
-      "context": "Zero-loss Elasticsearch sync & slash-tolerant ranking across ~77% of SKUs"
+      "context": "Zero-loss Elasticsearch sync & slash-tolerant ranking across ~77% of SKUs",
+      "href": "/projects/catalog-search-26m"
     },
     {
       "value": "25/25",
       "label": "Golden Eval Score",
-      "context": "42-tool Azure AI Foundry assistant & 36-tool OAuth 2.1 MCP server (156 tests)"
+      "context": "42-tool Azure AI Foundry assistant & 36-tool OAuth 2.1 MCP server (156 tests)",
+      "href": "/projects/agentic-ai-mcp-platform"
     },
     {
       "value": "-95%",
       "label": "Snowflake Compute Spend",
-      "context": "436 SQL Server tables streamed to 493 Bronze tables via Debezium + Kafka on AKS"
+      "context": "436 SQL Server tables streamed to 493 Bronze tables via Debezium + Kafka on AKS",
+      "href": "/projects/cdc-snowflake-pipeline"
     },
     {
       "value": "35K",
       "label": "Spec Docs in Production RAG",
-      "context": "28 GB corpus (~400K rows deduplicated to ~29K files) at ~98% ingestion success"
+      "context": "28 GB corpus (~400K rows deduplicated to ~29K files) at ~98% ingestion success",
+      "href": "/projects/industrial-rag-etim-classification"
     }
   ],
+  "searchDemo": {
+    "index": "01 / TRY THE RANKING",
+    "title": "Part-number search, in miniature",
+    "sub": "The tiered matching I shipped for a 26M-SKU catalog, rebuilt here on 24 illustrative SKUs. Type with or without punctuation, a partial number, or a typo.",
+    "inputLabel": "Search the demo index by part number or keyword",
+    "placeholder": "Try 62042rsc3",
+    "samplesLabel": "Try",
+    "samples": ["6204-2RS/C3", "62042rsc3", "6204", "6240-2rs", "lc1d09bd", "bearing sealed"],
+    "disclaimer": "Illustrative index · 24 sample SKUs · runs in your browser · not production data",
+    "emptyText": "No match. Part-number tiers and keyword fallback both came up empty.",
+    "idleText": "Type a part number to see which tier catches it.",
+    "noscriptText": "This demo needs JavaScript. The full write-up is in the catalog search case study.",
+    "caseStudyLabel": "How it works at 26M scale",
+    "caseStudyHref": "/projects/catalog-search-26m",
+    "queryLabel": "query",
+    "normalizedLabel": "normalized",
+    "hitsLabel": "hits",
+    "scannedLabel": "docs scanned",
+    "popLabel": "pop",
+    "funnelLabel": "Matches per tier",
+    "resultsLabel": "Ranked results",
+    "tiers": {
+      "exact": "Exact",
+      "normalized": "Normalized",
+      "prefix": "Prefix",
+      "fuzzy": "Fuzzy",
+      "text": "Keyword"
+    },
+    "items": [
+      { "sku": "6204-2RS/C3", "name": "Deep groove ball bearing, 20×47×14 mm, sealed, C3", "pop": 98 },
+      { "sku": "6204-2RS", "name": "Deep groove ball bearing, 20×47×14 mm, sealed", "pop": 91 },
+      { "sku": "6204-ZZ", "name": "Deep groove ball bearing, 20×47×14 mm, shielded", "pop": 80 },
+      { "sku": "6204-ZZ/C3", "name": "Deep groove ball bearing, 20×47×14 mm, shielded, C3", "pop": 74 },
+      { "sku": "62042RS-NR", "name": "Deep groove ball bearing, sealed, snap ring", "pop": 22 },
+      { "sku": "6205-2RS/C3", "name": "Deep groove ball bearing, 25×52×15 mm, sealed, C3", "pop": 88 },
+      { "sku": "6203-2RS/C3", "name": "Deep groove ball bearing, 17×40×12 mm, sealed, C3", "pop": 69 },
+      { "sku": "6304-2RS/C3", "name": "Deep groove ball bearing, 20×52×15 mm, sealed, C3", "pop": 57 },
+      { "sku": "22213-E1/C3", "name": "Spherical roller bearing, 65 mm bore, C3", "pop": 47 },
+      { "sku": "NJ-206/E", "name": "Cylindrical roller bearing, 30 mm bore", "pop": 40 },
+      { "sku": "UCP205-16", "name": "Pillow block bearing, 1 in bore", "pop": 70 },
+      { "sku": "LC1D09/BD", "name": "Contactor, 9 A, 24 V DC coil", "pop": 85 },
+      { "sku": "LC1D12/BD", "name": "Contactor, 12 A, 24 V DC coil", "pop": 77 },
+      { "sku": "LC1D18/P7", "name": "Contactor, 18 A, 230 V AC coil", "pop": 63 },
+      { "sku": "M8X1.25X30/A2", "name": "Hex bolt, M8×1.25×30, stainless A2", "pop": 72 },
+      { "sku": "M8X1.25X25/A2", "name": "Hex bolt, M8×1.25×25, stainless A2", "pop": 66 },
+      { "sku": "M10X1.5X40/8.8", "name": "Hex bolt, M10×1.5×40, grade 8.8", "pop": 58 },
+      { "sku": "1/2-13X2/GR5", "name": "Hex cap screw, 1/2-13 × 2 in, grade 5", "pop": 61 },
+      { "sku": "3/8-16X1/GR8", "name": "Hex cap screw, 3/8-16 × 1 in, grade 8", "pop": 54 },
+      { "sku": "B-48/V", "name": "Classical V-belt, B section, 48 in", "pop": 45 },
+      { "sku": "2-214/V75", "name": "O-ring, size 2-214, Viton 75A", "pop": 50 },
+      { "sku": "PT-1/4/NPT", "name": "Pipe tee, 1/4 in NPT, brass", "pop": 39 },
+      { "sku": "EL90-1/2/SS", "name": "90° elbow, 1/2 in, stainless", "pop": 33 },
+      { "sku": "HF-1/4/NPTF", "name": "Hydraulic fitting, 1/4 in NPT female", "pop": 28 }
+    ]
+  },
+  "shortcuts": [
+    { "keys": ["⌘", "K"], "label": "Open the command palette" },
+    { "keys": ["/"], "label": "Search the demo index (home)" },
+    { "keys": ["G", "H"], "label": "Go home" },
+    { "keys": ["G", "W"], "label": "Go to case studies" },
+    { "keys": ["G", "N"], "label": "Go to writing" },
+    { "keys": ["G", "A"], "label": "Go to about" },
+    { "keys": ["G", "R"], "label": "Go to résumé" },
+    { "keys": ["T"], "label": "Toggle light / dark theme" },
+    { "keys": ["C"], "label": "Copy email address" },
+    { "keys": ["?"], "label": "Show this list" }
+  ],
+  "paletteExtras": [
+    {
+      "id": "fun-evals",
+      "label": "Run golden evals",
+      "sub": "Agentic assistant · 42 tools",
+      "action": "toast",
+      "payload": "25/25 golden cases passing (production result, replayed)"
+    },
+    {
+      "id": "fun-lag",
+      "label": "Check CDC lag watchdog",
+      "sub": "436 tables → Snowflake Bronze",
+      "action": "toast",
+      "payload": "Watchdog alerts if lag exceeds 15 min · 436 tables streaming"
+    },
+    {
+      "id": "fun-hire",
+      "label": "Hire Harsha",
+      "sub": "Copies email to clipboard",
+      "action": "copy-email",
+      "payload": "harsha6107@gmail.com"
+    }
+  ],
+  "consoleGreeting": "Reading the source? It's all here: https://github.com/harsha6107/harsha6107.github.io · Press ? on the page for keyboard shortcuts.",
   "aboutShort": [
     "Senior ML and software engineer with 5+ years of experience building search, retrieval, agentic AI, and distributed backend systems end to end across Python, TypeScript, C# / .NET, Java, and SQL.",
     "At eParts Services, I own search relevance, RAG, MCP servers, and CDC data pipelines for Peregrin—a multi-tenant industrial procurement SaaS platform. Previously, I spent three years at BlackRock engineering Cassandra and Hadoop platforms for Aladdin, and earned my Master of Software Engineering (3.87 GPA) at Carnegie Mellon University."
@@ -370,27 +466,38 @@
     "themeToggleLabel": "Toggle color theme",
     "copyEmailLabel": "Copy email address",
     "copiedEmailFeedback": "Copied harsha6107@gmail.com",
-    "selectedWorkIndex": "01 / SELECTED SYSTEMS",
+    "selectedWorkIndex": "02 / SELECTED SYSTEMS",
     "selectedWorkTitle": "Production Case Studies",
     "selectedWorkSub": "Problem, constraints, architecture schematics, and measured outcomes from production systems.",
     "viewAllProjects": "All 5 case studies",
     "readCaseStudy": "Read case study",
-    "latentSpaceIndex": "02 / LATENT SPACE PROJECTION",
+    "latentSpaceIndex": "03 / LATENT SPACE PROJECTION",
     "latentSpaceTitle": "2D Embedding Map of Systems & Capabilities",
     "latentSpaceSub": "Interactive projection of projects, essays, and core capabilities. Hover or focus any node to inspect k=3 cosine similarity links; click a node to open it.",
-    "writingIndex": "03 / TECHNICAL WRITING",
+    "writingIndex": "04 / TECHNICAL WRITING",
     "writingTitle": "Engineering Notes",
     "writingSub": "Concise notes on Elasticsearch part-number ranking, MCP write guards, Snowflake CDC cost reduction, and LLM eval loops.",
     "viewAllWriting": "All articles & RSS",
-    "aboutIndex": "04 / BACKGROUND & PRINCIPLES",
+    "aboutIndex": "05 / BACKGROUND & PRINCIPLES",
     "aboutTitle": "Engineering Trajectory",
-    "contactIndex": "05 / CONTACT",
+    "contactIndex": "06 / CONTACT",
     "contactTitle": "Get in Touch",
     "contactSub": "Reach out regarding Senior/Staff ML, Search, Agentic AI, or Backend Engineering roles.",
     "footerColophon": "Typeset in self-hosted Inter Variable & JetBrains Mono Variable. Built with Astro, strict TypeScript, and OKLCH design tokens.",
     "notFoundCode": "ERR_404_NOT_FOUND",
     "notFoundTitle": "Page not found.",
     "notFoundBody": "The requested URL does not exist. Use the command palette (⌘K) or return to the home page.",
-    "notFoundCta": "Return home"
+    "notFoundCta": "Return home",
+    "telemetryProofLabel": "Proof",
+    "sourceLabel": "Source",
+    "audienceLabel": "Reading as",
+    "audienceRecruiter": "Recruiter",
+    "audienceEngineer": "Engineer",
+    "deepDiveTitle": "That's the 60-second version.",
+    "deepDiveBody": "Constraints, the architecture schematic, implementation notes and the retrospective are folded away in recruiter view.",
+    "deepDiveCta": "Read the engineering deep dive",
+    "shortcutsTitle": "Keyboard shortcuts",
+    "shortcutsHint": "Press ? for shortcuts",
+    "shortcutsClose": "Close"
   }
 }

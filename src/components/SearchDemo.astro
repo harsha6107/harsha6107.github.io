@@ -1,0 +1,447 @@
+---
+import { searchSkus, TIERS } from '../utils/sku-search';
+
+interface Props {
+  demo: {
+    index: string;
+    title: string;
+    sub: string;
+    inputLabel: string;
+    placeholder: string;
+    samplesLabel: string;
+    samples: string[];
+    disclaimer: string;
+    emptyText: string;
+    idleText: string;
+    noscriptText: string;
+    caseStudyLabel: string;
+    caseStudyHref: string;
+    queryLabel: string;
+    normalizedLabel: string;
+    hitsLabel: string;
+    scannedLabel: string;
+    popLabel: string;
+    funnelLabel: string;
+    resultsLabel: string;
+    tiers: Record<'exact' | 'normalized' | 'prefix' | 'fuzzy' | 'text', string>;
+    items: { sku: string; name: string; pop: number }[];
+  };
+}
+
+const { demo } = Astro.props;
+const initialQuery = demo.samples[1] ?? demo.samples[0] ?? '';
+const initial = searchSkus(demo.items, initialQuery);
+const top = initial.hits[0];
+const initialStatus = top
+  ? `${initial.total} ${demo.hitsLabel}. #1 ${top.item.sku} (${demo.tiers[top.tier]})`
+  : demo.idleText;
+
+const config = JSON.stringify({
+  items: demo.items,
+  tiers: demo.tiers,
+  idleText: demo.idleText,
+  emptyText: demo.emptyText,
+  hitsLabel: demo.hitsLabel,
+  scannedLabel: demo.scannedLabel,
+  popLabel: demo.popLabel,
+});
+---
+
+<section id="search-demo" class="section" aria-labelledby="sd-heading">
+  <div class="container sd-layout">
+    <div class="sd-intro">
+      <span class="section-index">{demo.index}</span>
+      <h2 id="sd-heading" style="margin-top: var(--space-2);">{demo.title}</h2>
+      <p style="margin-top: var(--space-3);">{demo.sub}</p>
+      <p class="sd-disclaimer mono">{demo.disclaimer}</p>
+      <a href={demo.caseStudyHref} class="btn" style="margin-top: var(--space-5);">
+        <span>{demo.caseStudyLabel}</span>
+        <span aria-hidden="true" class="mono">→</span>
+      </a>
+    </div>
+
+    <div class="sd-console" data-search-demo data-config={config}>
+      <div class="sd-inputrow">
+        <label for="sd-input" class="sr-only">{demo.inputLabel}</label>
+        <span class="sd-prompt mono" aria-hidden="true">&gt;</span>
+        <input
+          id="sd-input"
+          data-sd-input
+          class="sd-input mono"
+          type="search"
+          value={initialQuery}
+          placeholder={demo.placeholder}
+          maxlength="48"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          enterkeyhint="search"
+        />
+        <kbd class="kbd-badge sd-slash" aria-hidden="true">/</kbd>
+      </div>
+
+      <div class="sd-samples">
+        <span class="mono sd-samples-label">{demo.samplesLabel}</span>
+        {demo.samples.map((sample) => (
+          <button type="button" class="sd-chip mono" data-sd-sample={sample}>
+            {sample}
+          </button>
+        ))}
+      </div>
+
+      <dl class="sd-meta mono">
+        <div>
+          <dt>{demo.normalizedLabel}</dt>
+          <dd data-sd-normalized>{initial.normalized ? `"${initial.normalized}"` : '—'}</dd>
+        </div>
+        <div>
+          <dt class="sr-only">{demo.hitsLabel}</dt>
+          <dd data-sd-total>{initial.total} {demo.hitsLabel} · {initial.scanned} {demo.scannedLabel}</dd>
+        </div>
+      <div class="sd-meta-latency">
+          <dt class="sr-only">latency</dt>
+          <dd data-sd-latency>&lt; 0.1 ms</dd>
+        </div>
+      </dl>
+
+      <ol class="sd-funnel mono" aria-label={demo.funnelLabel}>
+        {TIERS.map((tier) => (
+          <li data-sd-funnel={tier} data-active={initial.counts[tier] > 0 ? '' : undefined}>
+            <span>{demo.tiers[tier]}</span>
+            <span class="sd-count" data-sd-count>{initial.counts[tier]}</span>
+          </li>
+        ))}
+      </ol>
+
+      <ol class="sd-results" data-sd-results aria-label={demo.resultsLabel}>
+        {initial.hits.map((hit, idx) => (
+          <li class="sd-row" data-tier={hit.tier}>
+            <span class="sd-rank">{String(idx + 1).padStart(2, '0')}</span>
+            <span class="sd-tier">{demo.tiers[hit.tier]}</span>
+            <span class="sd-sku">
+              {hit.segments.map((seg) => (seg.hit ? <mark>{seg.text}</mark> : seg.text))}
+            </span>
+            <span class="sd-pop">{demo.popLabel} {hit.item.pop}</span>
+            <span class="sd-name">{hit.item.name}</span>
+          </li>
+        ))}
+      </ol>
+
+      <p class="sd-status mono" role="status" aria-live="polite" data-sd-status>{initialStatus}</p>
+      <noscript><p class="sd-status mono">{demo.noscriptText}</p></noscript>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initSearchDemo } from '../scripts/search-demo';
+
+  const root = document.querySelector<HTMLElement>('[data-search-demo]');
+  if (root) {
+    initSearchDemo(root);
+  }
+</script>
+
+<style>
+  .sd-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-7);
+  }
+
+  @media (min-width: 60rem) {
+    .sd-layout {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.5fr);
+      align-items: start;
+    }
+  }
+
+  .sd-disclaimer {
+    margin-top: var(--space-4);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    padding-left: var(--space-3);
+    border-left: 2px solid var(--border-strong);
+  }
+
+  .sd-console {
+    min-width: 0;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-surface);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .sd-inputrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .sd-inputrow:focus-within {
+    box-shadow: inset 0 -2px 0 var(--accent);
+  }
+
+  .sd-prompt {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .sd-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    font-size: var(--text-lg);
+    color: var(--text-primary);
+    outline: none;
+  }
+
+  .sd-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .sd-input::-webkit-search-cancel-button {
+    display: none;
+  }
+
+  .sd-slash {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .sd-slash {
+      display: inline-flex;
+    }
+  }
+
+  .sd-samples {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .sd-samples-label {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  .sd-chip {
+    min-height: 26px;
+    padding: 0.15rem 0.55rem;
+    font-size: var(--text-xs);
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-subtle);
+    background-color: var(--bg-subtle);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out);
+  }
+
+  .sd-chip:hover {
+    border-color: var(--accent);
+    color: var(--text-primary);
+  }
+
+  .sd-chip:active {
+    transform: scale(0.96);
+  }
+
+  .sd-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    padding: var(--space-3) var(--space-4) 0;
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  .sd-meta div {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .sd-meta dd {
+    color: var(--text-primary);
+  }
+
+  .sd-meta-latency {
+    margin-left: auto;
+  }
+
+  .sd-meta-latency dd {
+    min-width: 8ch;
+    text-align: right;
+    color: var(--status-ok);
+  }
+
+  .sd-funnel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-xs);
+  }
+
+  .sd-funnel li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-xs);
+    border: 1px dashed var(--border-strong);
+    color: var(--text-muted);
+    max-width: none;
+  }
+
+  .sd-funnel li[data-active] {
+    border-style: solid;
+    border-color: var(--accent);
+    color: var(--text-primary);
+  }
+
+  .sd-count {
+    font-weight: 700;
+  }
+
+  .sd-funnel li[data-active] .sd-count {
+    color: var(--accent);
+  }
+
+  .sd-results {
+    list-style: none;
+    min-height: calc(6 * 3.5rem);
+    padding: 0 var(--space-2);
+  }
+
+  .sd-row {
+    display: grid;
+    grid-template-columns: 2.5ch 6.75rem minmax(0, 1fr);
+    grid-template-areas:
+      "rank tier sku"
+      "rank tier name";
+    column-gap: var(--space-3);
+    align-items: center;
+    block-size: 3.5rem;
+    padding: var(--space-1) var(--space-2);
+    border-top: 1px solid var(--border-subtle);
+    max-width: none;
+  }
+
+  @media (min-width: 36rem) {
+    .sd-row {
+      grid-template-columns: 2.5ch 6.75rem minmax(0, 1fr) auto;
+      grid-template-areas:
+        "rank tier sku pop"
+        "rank tier name name";
+    }
+  }
+
+  .sd-rank {
+    grid-area: rank;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  .sd-tier {
+    grid-area: tier;
+    justify-self: start;
+    padding: 0.1rem 0.45rem;
+    border-radius: var(--radius-xs);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    background-color: var(--bg-subtle);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .sd-row[data-tier="exact"] .sd-tier,
+  .sd-row[data-tier="normalized"] .sd-tier {
+    background-color: var(--accent-subtle);
+    color: var(--accent-ink);
+    border-color: transparent;
+  }
+
+  .sd-row[data-tier="fuzzy"] .sd-tier {
+    border-style: dashed;
+    border-color: var(--border-strong);
+  }
+
+  .sd-sku {
+    grid-area: sku;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sd-sku mark {
+    background-color: var(--accent-subtle);
+    color: var(--accent-ink);
+    border-radius: 2px;
+  }
+
+  .sd-pop {
+    grid-area: pop;
+    display: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 36rem) {
+    .sd-pop {
+      display: inline;
+    }
+  }
+
+  .sd-name {
+    grid-area: name;
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sd-status {
+    padding: var(--space-3) var(--space-4);
+    border-top: 1px solid var(--border-subtle);
+    background-color: var(--bg-subtle);
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    max-width: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    [data-search-demo][data-interacted] .sd-row {
+      animation: sd-in 180ms var(--ease-out) both;
+    }
+
+    @keyframes sd-in {
+      from {
+        opacity: 0;
+        transform: translateY(3px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+</style>

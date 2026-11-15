@@ -1,0 +1,118 @@
+import { type SearchResult, type SkuItem, searchSkus, TIERS, type Tier } from '../utils/sku-search';
+
+interface DemoConfig {
+  items: SkuItem[];
+  tiers: Record<Tier, string>;
+  idleText: string;
+  emptyText: string;
+  hitsLabel: string;
+  scannedLabel: string;
+  popLabel: string;
+}
+
+const pad = (n: number): string => String(n).padStart(2, '0');
+
+/** Wire up the server-rendered demo markup. Rendering mirrors SearchDemo.astro. */
+export function initSearchDemo(root: HTMLElement): void {
+  const input = root.querySelector<HTMLInputElement>('[data-sd-input]');
+  const list = root.querySelector<HTMLOListElement>('[data-sd-results]');
+  const status = root.querySelector<HTMLElement>('[data-sd-status]');
+  const latency = root.querySelector<HTMLElement>('[data-sd-latency]');
+  const normalized = root.querySelector<HTMLElement>('[data-sd-normalized]');
+  const total = root.querySelector<HTMLElement>('[data-sd-total]');
+  if (!input || !list || !status || !latency || !normalized || !total) return;
+
+  let cached: DemoConfig | null = null;
+  const getConfig = (): DemoConfig => {
+    if (!cached) cached = JSON.parse(root.dataset.config ?? '{}') as DemoConfig;
+    return cached;
+  };
+
+  const renderRows = (result: SearchResult, config: DemoConfig): void => {
+    const frag = document.createDocumentFragment();
+    result.hits.forEach((hit, idx) => {
+      const li = document.createElement('li');
+      li.className = 'sd-row';
+      li.dataset.tier = hit.tier;
+
+      const rank = document.createElement('span');
+      rank.className = 'sd-rank';
+      rank.textContent = pad(idx + 1);
+
+      const tier = document.createElement('span');
+      tier.className = 'sd-tier';
+      tier.textContent = config.tiers[hit.tier];
+
+      const sku = document.createElement('span');
+      sku.className = 'sd-sku';
+      for (const seg of hit.segments) {
+        if (seg.hit) {
+          const mark = document.createElement('mark');
+          mark.textContent = seg.text;
+          sku.append(mark);
+        } else {
+          sku.append(seg.text);
+        }
+      }
+
+      const pop = document.createElement('span');
+      pop.className = 'sd-pop';
+      pop.textContent = `${config.popLabel} ${hit.item.pop}`;
+
+      const name = document.createElement('span');
+      name.className = 'sd-name';
+      name.textContent = hit.item.name;
+
+      li.append(rank, tier, sku, pop, name);
+      frag.append(li);
+    });
+    list.replaceChildren(frag);
+  };
+
+  const renderFunnel = (result: SearchResult): void => {
+    for (const tier of TIERS) {
+      const cell = root.querySelector<HTMLElement>(`[data-sd-funnel="${tier}"]`);
+      const count = cell?.querySelector<HTMLElement>('[data-sd-count]');
+      if (!cell || !count) continue;
+      const n = result.counts[tier];
+      count.textContent = String(n);
+      cell.toggleAttribute('data-active', n > 0);
+    }
+  };
+
+  const run = (): void => {
+    const config = getConfig();
+    const t0 = performance.now();
+    const result = searchSkus(config.items, input.value);
+    const ms = performance.now() - t0;
+
+    renderRows(result, config);
+    renderFunnel(result);
+    latency.textContent = `${ms < 0.1 ? ms.toFixed(3) : ms.toFixed(2)} ms`;
+    normalized.textContent = result.normalized ? `"${result.normalized}"` : '—';
+    total.textContent = `${result.total} ${config.hitsLabel} · ${result.scanned} ${config.scannedLabel}`;
+
+    const top = result.hits[0];
+    if (!result.normalized) status.textContent = config.idleText;
+    else if (!top) status.textContent = config.emptyText;
+    else
+      status.textContent = `${result.total} ${config.hitsLabel}. #1 ${top.item.sku} (${config.tiers[top.tier]})`;
+    root.toggleAttribute('data-empty', !!result.normalized && !top);
+  };
+
+  const onInteract = (): void => {
+    root.setAttribute('data-interacted', '');
+    run();
+  };
+
+  input.addEventListener('input', onInteract);
+  root.querySelectorAll<HTMLButtonElement>('[data-sd-sample]').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      input.value = chip.dataset.sdSample ?? '';
+      onInteract();
+      input.focus();
+    });
+  });
+
+  root.setAttribute('data-initialized', 'true');
+}

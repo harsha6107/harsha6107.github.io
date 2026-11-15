@@ -67,20 +67,20 @@ const { diagramId, title, caption } = Astro.props;
       <text x="510" y="74" fill="var(--text-primary)" font-size="12" font-weight="600">Elasticsearch 26M-Doc Cluster</text>
 
       <rect x="510" y="90" width="168" height="48" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
-      <text x="520" y="109" fill="var(--accent)" font-size="10" font-weight="700">T1: Exact Keyword (12x)</text>
-      <text x="520" y="125" fill="var(--text-secondary)" font-size="9">6204-2RS/C3 verbatim</text>
+      <text x="520" y="109" fill="var(--accent)" font-size="10" font-weight="700">T1: Exact Match</text>
+      <text x="520" y="125" fill="var(--text-secondary)" font-size="9">Verbatim part number</text>
 
       <rect x="688" y="90" width="160" height="48" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
-      <text x="698" y="109" fill="var(--accent)" font-size="10" font-weight="700">T2: Alnum Fold (8.5x)</text>
-      <text x="698" y="125" fill="var(--text-secondary)" font-size="9">Strips / - . → 62042rsc3</text>
+      <text x="698" y="109" fill="var(--accent)" font-size="10" font-weight="700">T2: Normalized</text>
+      <text x="698" y="125" fill="var(--text-secondary)" font-size="9">Punctuation stripped</text>
 
       <rect x="510" y="148" width="168" height="48" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
-      <text x="520" y="167" fill="var(--text-primary)" font-size="10" font-weight="600">T3: Edge Prefix (4.0x)</text>
-      <text x="520" y="183" fill="var(--text-secondary)" font-size="9">Slash-aware n-gram</text>
+      <text x="520" y="167" fill="var(--text-primary)" font-size="10" font-weight="600">T3: Prefix</text>
+      <text x="520" y="183" fill="var(--text-secondary)" font-size="9">Slash-aware prefix</text>
 
       <rect x="688" y="148" width="160" height="48" rx="4" fill="var(--bg-surface)" stroke="var(--border-subtle)" />
-      <text x="698" y="167" fill="var(--text-primary)" font-size="10" font-weight="600">T4: Fuzzy + Pop (1.5x)</text>
-      <text x="698" y="183" fill="var(--text-secondary)" font-size="9">AUTO:4,7 + Order Tie-Break</text>
+      <text x="698" y="167" fill="var(--text-primary)" font-size="10" font-weight="600">T4: Fuzzy + Popularity</text>
+      <text x="698" y="183" fill="var(--text-secondary)" font-size="9">Typo-tolerant + tie-break</text>
 
       <rect x="510" y="210" width="338" height="52" rx="4" fill="var(--bg-surface)" stroke="var(--border-strong)" />
       <text x="524" y="232" fill="var(--text-primary)" font-size="10" font-weight="700">Scoped Facet Aggregations: 100,000 → 500 Buckets (-99.5%)</text>
@@ -342,3 +342,14 @@ const { diagramId, title, caption } = Astro.props;
     <span>{caption}</span>
   </figcaption>
 </figure>
+
+<style>
+  .arch-frame rect {
+    transition: stroke var(--duration-fast) var(--ease-out);
+  }
+
+  .arch-frame rect:hover {
+    stroke: var(--accent);
+  }
+</style>
+
