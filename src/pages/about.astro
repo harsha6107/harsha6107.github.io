@@ -78,7 +78,7 @@ const site = await getSiteData();
 
       <div class="timeline" style="margin-top: var(--space-7);">
         {site.experience.map((exp) => (
-          <article class="timeline-item spotlight-card">
+          <article class="timeline-item spotlight-card scroll-reveal">
             <div class="timeline-meta">
               <span class="mono" style="font-size: var(--text-xs); color: var(--accent); font-weight: 700;">
                 {exp.period}
@@ -142,7 +142,7 @@ const site = await getSiteData();
 
       <div class="domains-grid" style="margin-top: var(--space-6);">
         {site.skillGroups.map((group) => (
-          <div class="spotlight-card">
+          <div class="spotlight-card scroll-reveal">
             <span class="mono" style="font-size: var(--text-xs); color: var(--accent); font-weight: 700;">
               {group.code}
             </span>
@@ -160,7 +160,7 @@ const site = await getSiteData();
 
       <div class="domains-grid" style="margin-top: var(--space-6);">
         {site.education.map((edu) => (
-          <div class="spotlight-card">
+          <div class="spotlight-card scroll-reveal">
             <span class="mono" style="font-size: var(--text-xs); color: var(--accent); font-weight: 700;">
               EDUCATION // {edu.period}
             </span>
@@ -207,6 +207,11 @@ const site = await getSiteData();
     height: 100%;
     object-fit: cover;
     filter: contrast(1.03);
+    transition: transform var(--duration-slow) var(--ease-out);
+  }
+
+  .profile-card:hover .portrait-img {
+    transform: scale(1.03);
   }
 
   .timeline {
@@ -238,6 +243,14 @@ const site = await getSiteData();
     border-radius: var(--radius-sm);
     background-color: var(--bg-subtle);
     border: 1px solid var(--border-subtle);
+    transition:
+      transform var(--duration-base) var(--ease-spring),
+      border-color var(--duration-base) var(--ease-out);
+  }
+
+  .highlight-row:hover {
+    transform: translateX(4px);
+    border-color: var(--accent);
   }
 
   .domains-grid {

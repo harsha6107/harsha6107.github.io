@@ -319,18 +319,62 @@ const personJsonLd = {
             });
           });
 
-          // Pointer-tracked spotlight cards
-          document.querySelectorAll('.spotlight-card').forEach((card) => {
-            card.addEventListener(
-              'pointermove',
-              (e) => {
-                const rect = card.getBoundingClientRect();
-                card.style.setProperty('--spot-x', `${e.clientX - rect.left}px`);
-                card.style.setProperty('--spot-y', `${e.clientY - rect.top}px`);
-              },
-              { passive: true },
-            );
+          // Pointer-tracked spotlight & specular border surfaces
+          document
+            .querySelectorAll('.spotlight-card, .telemetry-cell, .principle-item, .spec-box')
+            .forEach((card) => {
+              card.addEventListener(
+                'pointermove',
+                (e) => {
+                  const rect = card.getBoundingClientRect();
+                  card.style.setProperty('--spot-x', `${e.clientX - rect.left}px`);
+                  card.style.setProperty('--spot-y', `${e.clientY - rect.top}px`);
+                },
+                { passive: true },
+              );
+            });
+
+          // Interactive tabular-nums telemetry counter scrub on hover & first scroll
+          const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          function scrubCounter(el) {
+            if (reducedMotion || el.dataset.animating === '1') return;
+            const raw = el.getAttribute('data-count-value') || el.textContent || '';
+            const m = raw.match(/^([^0-9]*)(\d+)(.*)$/);
+            if (!m) return;
+            const prefix = m[1] || '';
+            const target = Number.parseInt(m[2], 10);
+            const suffix = m[3] || '';
+            if (!Number.isFinite(target) || target <= 0) return;
+            el.dataset.animating = '1';
+            const t0 = performance.now();
+            const dur = 320;
+            const step = (now) => {
+              const p = Math.min(1, (now - t0) / dur);
+              const eased = 1 - (1 - p) ** 3;
+              const val = Math.round(target * eased);
+              el.textContent = `${prefix}${val}${suffix}`;
+              if (p < 1) requestAnimationFrame(step);
+              else {
+                el.textContent = raw;
+                el.dataset.animating = '0';
+              }
+            };
+            requestAnimationFrame(step);
+          }
+
+          document.querySelectorAll('.telemetry-cell').forEach((cell) => {
+            const valEl = cell.querySelector('[data-count-value]');
+            if (valEl) {
+              cell.addEventListener('pointerenter', () => scrubCounter(valEl), { passive: true });
+            }
           });
+          window.addEventListener(
+            'scroll',
+            () => {
+              document.querySelectorAll('[data-count-value]').forEach((el) => scrubCounter(el));
+            },
+            { once: true, passive: true },
+          );
 
           // Command Palette (⌘K / Ctrl+K)
           const dialog = document.getElementById('cmd-palette');
@@ -572,11 +616,17 @@ const personJsonLd = {
           }
         };
 
-        if ('requestIdleCallback' in window) {
-          window.requestIdleCallback(init);
-        } else {
-          setTimeout(init, 1);
-        }
+        let initialized = false;
+        const runInit = () => {
+          if (initialized) return;
+          initialized = true;
+          init();
+        };
+        window.addEventListener('keydown', runInit, { once: true, capture: true });
+        window.addEventListener('pointerdown', runInit, { once: true, capture: true, passive: true });
+        window.addEventListener('pointermove', runInit, { once: true, capture: true, passive: true });
+        window.addEventListener('focusin', runInit, { once: true, capture: true, passive: true });
+        window.addEventListener('scroll', runInit, { once: true, capture: true, passive: true });
       })();
     </script>
 

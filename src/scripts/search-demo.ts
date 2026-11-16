@@ -34,6 +34,7 @@ export function initSearchDemo(root: HTMLElement): void {
       const li = document.createElement('li');
       li.className = 'sd-row';
       li.dataset.tier = hit.tier;
+      li.dataset.sku = hit.item.sku;
 
       const rank = document.createElement('span');
       rank.className = 'sd-rank';
@@ -112,6 +113,26 @@ export function initSearchDemo(root: HTMLElement): void {
       onInteract();
       input.focus();
     });
+  });
+
+  const highlightFunnel = (tier: string | null): void => {
+    for (const t of TIERS) {
+      const cell = root.querySelector<HTMLElement>(`[data-sd-funnel="${t}"]`);
+      cell?.toggleAttribute('data-highlight', t === tier);
+    }
+  };
+
+  list.addEventListener('pointerover', (e) => {
+    const row = (e.target as HTMLElement | null)?.closest<HTMLElement>('.sd-row');
+    highlightFunnel(row?.dataset.tier ?? null);
+  });
+  list.addEventListener('pointerleave', () => highlightFunnel(null));
+  list.addEventListener('click', (e) => {
+    const row = (e.target as HTMLElement | null)?.closest<HTMLElement>('.sd-row');
+    if (row?.dataset.sku) {
+      input.value = row.dataset.sku;
+      onInteract();
+    }
   });
 
   root.setAttribute('data-initialized', 'true');

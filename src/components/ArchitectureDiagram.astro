@@ -8,7 +8,7 @@ interface Props {
 const { diagramId, title, caption } = Astro.props;
 ---
 
-<figure class="arch-frame">
+<figure class="arch-frame scroll-reveal">
   {diagramId === 'catalog-search' && (
     <svg
       viewBox="0 0 880 310"
@@ -344,12 +344,23 @@ const { diagramId, title, caption } = Astro.props;
 </figure>
 
 <style>
+  .arch-frame {
+    transition: border-color var(--duration-base) var(--ease-out);
+  }
+
+  .arch-frame:hover {
+    border-color: var(--border-strong);
+  }
+
   .arch-frame rect {
-    transition: stroke var(--duration-fast) var(--ease-out);
+    transition:
+      transform var(--duration-fast) var(--ease-spring),
+      stroke var(--duration-fast) var(--ease-out);
   }
 
   .arch-frame rect:hover {
     stroke: var(--accent);
+    transform: translateY(-1.5px);
   }
 </style>
 

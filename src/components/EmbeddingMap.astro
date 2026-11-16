@@ -295,7 +295,7 @@ const initialNeighbors = initialSource
           </p>
           <ul id="emb-neighbors" class="neighbor-list mono">
             {initialNeighbors.map((nb) => (
-              <li>
+              <li data-neighbor-id={nb.point.id}>
                 <span>{nb.point.label}</span>
                 <span style="color: var(--accent); font-weight: 600;">cos θ = {nb.score.toFixed(3)}</span>
               </li>
@@ -397,9 +397,26 @@ const initialNeighbors = initialSource
     opacity: 0.2;
   }
 
+  .embedding-svg[data-hovering="true"] .umap-node-group[data-unrelated="true"] {
+    opacity: 0.35;
+  }
+
   .umap-node-link {
     cursor: pointer;
     outline: none;
+  }
+
+  .umap-node-link circle {
+    transition: transform var(--duration-base) var(--ease-spring);
+  }
+
+  .umap-node-link:hover circle,
+  .umap-node-link:focus-visible circle,
+  .umap-node-group[data-selected="true"] circle,
+  .umap-node-group[data-highlighted="true"] circle {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(1.26);
   }
 
   .umap-node-link:focus-visible circle {
@@ -413,6 +430,11 @@ const initialNeighbors = initialSource
     stroke-width: 4px;
     stroke-linecap: round;
     stroke-linejoin: round;
+  }
+
+  .umap-node-group[data-selected="true"] .umap-label,
+  .umap-node-link:hover .umap-label {
+    fill: var(--accent);
   }
 
   .embedding-legend {
@@ -494,6 +516,14 @@ const initialNeighbors = initialSource
     background-color: var(--bg-subtle);
     border: 1px solid var(--border-subtle);
     color: var(--text-secondary);
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out);
+  }
+
+  .neighbor-list li:hover {
+    transform: translateX(3px);
+    border-color: var(--accent);
   }
 
   .static-fallback-details {

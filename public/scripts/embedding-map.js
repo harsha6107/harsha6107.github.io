@@ -13,6 +13,7 @@ export function initEmbeddingMap(root) {
   const points = JSON.parse(rawPoints);
   const byId = new Map(points.map((p) => [p.id, p]));
 
+  const svgEl = root.querySelector('.embedding-svg');
   const edgesLayer = root.querySelector('#knn-edges-layer');
   const titleEl = root.querySelector('#emb-title');
   const kindEl = root.querySelector('#emb-kind-badge');
@@ -22,6 +23,9 @@ export function initEmbeddingMap(root) {
   const neighborsEl = root.querySelector('#emb-neighbors');
   const ctaEl = root.querySelector('#emb-cta');
   const nodeGroups = Array.from(root.querySelectorAll('.umap-node-group'));
+  const groupById = new Map(
+    nodeGroups.map((g) => [g.getAttribute('data-node-id'), g]),
+  );
   const filterBtns = Array.from(
     document.querySelectorAll('[data-cluster-filter]'),
   );
@@ -52,6 +56,19 @@ export function initEmbeddingMap(root) {
       .sort((a, b) => b.sim - a.sim)
       .slice(0, 3);
 
+    const neighborIds = new Set(scored.map((s) => s.point.id));
+    for (const group of nodeGroups) {
+      const gid = group.getAttribute('data-node-id');
+      group.setAttribute(
+        'data-selected',
+        gid === active.id ? 'true' : 'false',
+      );
+      group.setAttribute(
+        'data-unrelated',
+        gid !== active.id && !neighborIds.has(gid) ? 'true' : 'false',
+      );
+    }
+
     if (titleEl) titleEl.textContent = active.label;
     if (kindEl) kindEl.textContent = active.kind.toUpperCase();
     if (metricEl) metricEl.textContent = active.metricBadge;
@@ -74,7 +91,7 @@ export function initEmbeddingMap(root) {
       neighborsEl.innerHTML = scored
         .map(
           ({ point, sim }) =>
-            `<li><a href="${point.href}" style="text-decoration:none;font-weight:600;">${point.label}</a><span style="color:var(--accent);">cos θ = ${sim.toFixed(3)}</span></li>`,
+            `<li data-neighbor-id="${point.id}"><a href="${point.href}" style="text-decoration:none;font-weight:600;">${point.label}</a><span style="color:var(--accent);">cos θ = ${sim.toFixed(3)}</span></li>`,
         )
         .join('');
     }
@@ -95,6 +112,41 @@ export function initEmbeddingMap(root) {
         })
         .join('');
     }
+  }
+
+  if (svgEl) {
+    svgEl.addEventListener(
+      'pointerenter',
+      () => svgEl.setAttribute('data-hovering', 'true'),
+      { passive: true },
+    );
+    svgEl.addEventListener(
+      'pointerleave',
+      () => svgEl.removeAttribute('data-hovering'),
+      { passive: true },
+    );
+  }
+
+  if (neighborsEl) {
+    neighborsEl.addEventListener(
+      'pointerover',
+      (e) => {
+        const li = e.target.closest('li[data-neighbor-id]');
+        for (const g of nodeGroups) g.removeAttribute('data-highlighted');
+        if (li) {
+          const g = groupById.get(li.getAttribute('data-neighbor-id'));
+          if (g) g.setAttribute('data-highlighted', 'true');
+        }
+      },
+      { passive: true },
+    );
+    neighborsEl.addEventListener(
+      'pointerleave',
+      () => {
+        for (const g of nodeGroups) g.removeAttribute('data-highlighted');
+      },
+      { passive: true },
+    );
   }
 
   for (const group of nodeGroups) {

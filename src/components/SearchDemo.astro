@@ -115,7 +115,7 @@ const config = JSON.stringify({
 
       <ol class="sd-results" data-sd-results aria-label={demo.resultsLabel}>
         {initial.hits.map((hit, idx) => (
-          <li class="sd-row" data-tier={hit.tier}>
+          <li class="sd-row" data-tier={hit.tier} data-sku={hit.item.sku}>
             <span class="sd-rank">{String(idx + 1).padStart(2, '0')}</span>
             <span class="sd-tier">{demo.tiers[hit.tier]}</span>
             <span class="sd-sku">
@@ -138,7 +138,16 @@ const config = JSON.stringify({
 
   const root = document.querySelector<HTMLElement>('[data-search-demo]');
   if (root) {
-    initSearchDemo(root);
+    let booted = false;
+    const boot = () => {
+      if (booted) return;
+      booted = true;
+      initSearchDemo(root);
+    };
+    root.addEventListener('focusin', boot, { once: true, capture: true });
+    root.addEventListener('pointerdown', boot, { once: true, capture: true, passive: true });
+    root.addEventListener('pointerover', boot, { once: true, capture: true, passive: true });
+    window.addEventListener('scroll', boot, { once: true, passive: true });
   }
 </script>
 
@@ -302,12 +311,25 @@ const config = JSON.stringify({
     border: 1px dashed var(--border-strong);
     color: var(--text-muted);
     max-width: none;
+    transition:
+      transform var(--duration-fast) var(--ease-spring),
+      background-color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out);
   }
 
   .sd-funnel li[data-active] {
     border-style: solid;
     border-color: var(--accent);
     color: var(--text-primary);
+  }
+
+  .sd-funnel li[data-highlight] {
+    transform: translateY(-2px) scale(1.04);
+    border-style: solid;
+    border-color: var(--accent);
+    background-color: var(--accent-subtle);
+    color: var(--accent-ink);
   }
 
   .sd-count {
@@ -335,7 +357,22 @@ const config = JSON.stringify({
     block-size: 3.5rem;
     padding: var(--space-1) var(--space-2);
     border-top: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xs);
     max-width: none;
+    cursor: pointer;
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .sd-row:hover {
+    transform: translateX(3px);
+    background-color: var(--bg-subtle);
+  }
+
+  .sd-row:hover .sd-rank {
+    color: var(--accent);
+    font-weight: 700;
   }
 
   @media (min-width: 36rem) {

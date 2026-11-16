@@ -62,7 +62,7 @@ const posts = await getSortedWriting();
               <span class="mono telemetry-index" aria-hidden="true">
                 0{idx + 1} // TELEMETRY
               </span>
-              <span class="telemetry-value mono">{stat.value}</span>
+              <span class="telemetry-value mono" data-count-value={stat.value}>{stat.value}</span>
               <span class="telemetry-label">{stat.label}</span>
               <span class="telemetry-context">{stat.context}</span>
               <span class="telemetry-proof mono" aria-hidden="true">
@@ -334,6 +334,8 @@ const posts = await getSortedWriting();
   }
 
   .telemetry-cell {
+    position: relative;
+    overflow: hidden;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -341,12 +343,54 @@ const posts = await getSortedWriting();
     padding: var(--space-4) var(--space-5);
     text-decoration: none;
     color: inherit;
-    transition: background-color var(--duration-fast) var(--ease-out);
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      transform var(--duration-base) var(--ease-spring);
+  }
+
+  @media (min-width: 48rem) {
+    .telemetry-cell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        280px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+        var(--spotlight-fill),
+        transparent 65%
+      );
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--duration-base) var(--ease-out);
+    }
+
+    .telemetry-cell::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2.5px;
+      background-color: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform var(--duration-base) var(--ease-spring);
+    }
+
+    .telemetry-cell:hover::before,
+    .telemetry-cell:focus-visible::before {
+      opacity: 1;
+    }
+
+    .telemetry-cell:hover::after,
+    .telemetry-cell:focus-visible::after {
+      transform: scaleX(1);
+    }
   }
 
   .telemetry-cell:hover {
     background-color: var(--bg-subtle);
     color: inherit;
+    transform: translateY(-2px);
   }
 
   .telemetry-cell:focus-visible {
@@ -364,6 +408,11 @@ const posts = await getSortedWriting();
     color: var(--text-primary);
     letter-spacing: -0.03em;
     margin-top: 2px;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .telemetry-cell:hover .telemetry-value {
+    color: var(--accent);
   }
 
   .telemetry-label {
@@ -437,9 +486,43 @@ const posts = await getSortedWriting();
   }
 
   .principle-item {
-    padding: var(--space-4);
+    position: relative;
+    overflow: hidden;
+    padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
     border-radius: var(--radius-sm);
     background-color: var(--bg-surface);
     border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--accent);
+    transition:
+      transform var(--duration-base) var(--ease-spring),
+      border-color var(--duration-base) var(--ease-out),
+      box-shadow var(--duration-base) var(--ease-out);
+  }
+
+  @media (min-width: 48rem) {
+    .principle-item::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        320px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+        var(--spotlight-fill),
+        transparent 65%
+      );
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--duration-base) var(--ease-out);
+    }
+
+    .principle-item:hover::before {
+      opacity: 1;
+    }
+  }
+
+  .principle-item:hover {
+    transform: translateX(4px);
+    border-color: var(--border-strong);
+    border-left-color: var(--accent);
+    box-shadow: var(--shadow-sm);
   }
 </style>

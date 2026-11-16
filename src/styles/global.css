@@ -106,7 +106,8 @@
     --border-strong: oklch(0.80 0.012 85);
 
     /* Spotlight & elevation */
-    --spotlight-fill: rgba(164, 62, 6, 0.06);
+    --spotlight-fill: rgba(164, 62, 6, 0.08);
+    --spotlight-border: rgba(164, 62, 6, 0.55);
     --shadow-xs: 0 1px 2px rgba(20, 21, 24, 0.04);
     --shadow-sm: 0 2px 8px -2px rgba(20, 21, 24, 0.06), 0 1px 3px rgba(20, 21, 24, 0.04);
     --shadow-md: 0 12px 32px -8px rgba(20, 21, 24, 0.10), 0 2px 6px rgba(20, 21, 24, 0.05);
@@ -153,7 +154,8 @@
     --border-strong: #383f4e;
     --border-strong: oklch(0.37 0.015 265);
 
-    --spotlight-fill: rgba(244, 140, 72, 0.08);
+    --spotlight-fill: rgba(244, 140, 72, 0.11);
+    --spotlight-border: rgba(244, 140, 72, 0.65);
     --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.35);
     --shadow-sm: 0 2px 10px -2px rgba(0, 0, 0, 0.45);
     --shadow-md: 0 14px 36px -8px rgba(0, 0, 0, 0.6);
@@ -470,6 +472,7 @@
   }
 
   .nav-link {
+    position: relative;
     display: inline-flex;
     align-items: center;
     min-height: 28px;
@@ -481,10 +484,29 @@
     font-weight: 500;
   }
 
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0.55rem;
+    right: 0.55rem;
+    bottom: 2px;
+    height: 1.5px;
+    border-radius: 2px;
+    background-color: var(--accent);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform var(--duration-base) var(--ease-spring);
+  }
+
   .nav-link:hover,
   .nav-link[aria-current="page"] {
     color: var(--text-primary);
     background-color: var(--bg-subtle);
+  }
+
+  .nav-link:hover::after,
+  .nav-link[aria-current="page"]::after {
+    transform: scaleX(1);
   }
 
   .nav-link[aria-current="page"] {
@@ -545,15 +567,25 @@
       color var(--duration-fast) var(--ease-out);
   }
 
+  .btn > span[aria-hidden="true"] {
+    display: inline-block;
+    transition: transform var(--duration-base) var(--ease-spring);
+  }
+
   .btn:hover {
     background-color: var(--bg-subtle);
-    border-color: var(--text-muted);
+    border-color: var(--accent);
     color: var(--text-primary);
-    transform: translateY(-1px);
+    transform: translateY(-1.5px);
+  }
+
+  .btn:hover > span[aria-hidden="true"],
+  .btn:focus-visible > span[aria-hidden="true"] {
+    transform: translateX(3px);
   }
 
   .btn:active {
-    transform: translateY(0) scale(0.985);
+    transform: translateY(0) scale(0.98);
   }
 
   .btn-primary {
@@ -593,7 +625,7 @@
     color: var(--text-muted);
   }
 
-  /* Pointer-tracked Spotlight Cards */
+  /* Pointer-tracked Spotlight Cards with Specular 1px Border Glow */
   .spotlight-card {
     position: relative;
     background-color: var(--bg-surface);
@@ -605,34 +637,75 @@
     min-width: 0;
     container-type: inline-size;
     transition:
-      transform var(--duration-base) var(--ease-out),
+      transform var(--duration-base) var(--ease-spring),
       border-color var(--duration-base) var(--ease-out),
       box-shadow var(--duration-base) var(--ease-out);
   }
 
-  .spotlight-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      520px circle at var(--spot-x, 50%) var(--spot-y, 50%),
-      var(--spotlight-fill),
-      transparent 45%
-    );
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--duration-base) var(--ease-out);
+  @media (min-width: 48rem) {
+    .spotlight-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        460px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+        var(--spotlight-fill),
+        transparent 55%
+      );
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--duration-base) var(--ease-out);
+    }
+
+    .spotlight-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: radial-gradient(
+        260px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+        var(--spotlight-border),
+        transparent 70%
+      );
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--duration-base) var(--ease-out);
+    }
+
+    .spotlight-card:hover::before,
+    .spotlight-card:focus-within::before,
+    .spotlight-card:hover::after,
+    .spotlight-card:focus-within::after {
+      opacity: 1;
+    }
   }
 
   .spotlight-card:hover {
     border-color: var(--border-strong);
-    box-shadow: var(--shadow-sm);
-    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
   }
 
-  .spotlight-card:hover::before,
-  .spotlight-card:focus-within::before {
-    opacity: 1;
+  .spotlight-card:hover h2 a,
+  .spotlight-card:hover h3 a {
+    color: var(--accent);
+  }
+
+  .spotlight-card:hover .btn {
+    border-color: var(--accent);
+  }
+
+  .spotlight-card:hover .btn > span[aria-hidden="true"] {
+    transform: translateX(3px);
   }
 
   /* Project Card Container Queries */
@@ -666,6 +739,7 @@
     letter-spacing: -0.01em;
     max-width: 100%;
     overflow-wrap: anywhere;
+    transition: transform var(--duration-fast) var(--ease-out);
   }
 
   .tag-list {
@@ -685,6 +759,18 @@
     color: var(--text-secondary);
     font-family: var(--font-mono);
     font-size: 0.75rem;
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out);
+  }
+
+  .tag:hover {
+    transform: translateY(-1.5px);
+    border-color: var(--accent);
+    background-color: var(--accent-subtle);
+    color: var(--accent-ink);
   }
 
   .metrics-panel {
@@ -702,6 +788,21 @@
     flex-direction: column;
     gap: 0.15rem;
     min-width: 0;
+    padding: var(--space-2);
+    margin: calc(-1 * var(--space-2));
+    border-radius: var(--radius-xs);
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .metric-item:hover {
+    transform: translateY(-2px);
+    background-color: var(--bg-surface);
+  }
+
+  .metric-item:hover .metric-value {
+    color: var(--accent);
   }
 
   .metric-value {
@@ -711,6 +812,7 @@
     color: var(--text-primary);
     letter-spacing: -0.03em;
     line-height: 1.15;
+    transition: color var(--duration-fast) var(--ease-out);
   }
 
   .metric-label {
@@ -908,7 +1010,7 @@
   }
 
   @supports (animation-timeline: scroll()) {
-    @media (prefers-reduced-motion: no-preference) {
+    @media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
       .reading-progress {
         animation: scale-progress linear both;
         animation-timeline: scroll(root);
@@ -932,21 +1034,21 @@
   }
 
   @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
+    @media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
       .scroll-reveal {
-        animation: view-reveal linear both;
+        animation: view-reveal var(--ease-out) both;
         animation-timeline: view();
-        animation-range: entry 5% cover 22%;
+        animation-range: entry 2% cover 24%;
       }
 
       @keyframes view-reveal {
         from {
-          opacity: 0.75;
-          transform: translateY(10px);
+          opacity: 0.92;
+          transform: translateY(24px) scale(0.985);
         }
         to {
           opacity: 1;
-          transform: translateY(0);
+          transform: translateY(0) scale(1);
         }
       }
     }

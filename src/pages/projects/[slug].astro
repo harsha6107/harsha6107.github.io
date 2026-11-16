@@ -133,7 +133,7 @@ const site = await getSiteData();
 
       <!-- Structured Problem, Constraints & Approach Summary -->
       <div class="spec-grid" style="margin-top: var(--space-7);">
-        <section class="spec-box" aria-labelledby="spec-problem">
+        <section class="spec-box scroll-reveal" aria-labelledby="spec-problem">
           <span class="section-index">01 / PROBLEM STATEMENT</span>
           <h2 id="spec-problem" style="font-size: var(--text-lg); margin-top: var(--space-2);">
             Why the Legacy System Failed
@@ -143,7 +143,7 @@ const site = await getSiteData();
           </p>
         </section>
 
-        <section class="spec-box" aria-labelledby="spec-approach">
+        <section class="spec-box scroll-reveal" aria-labelledby="spec-approach">
           <span class="section-index">02 / ARCHITECTURAL APPROACH</span>
           <h2 id="spec-approach" style="font-size: var(--text-lg); margin-top: var(--space-2);">
             Core Engineering Solution
@@ -166,7 +166,7 @@ const site = await getSiteData();
       </div>
 
       <div id="deep-dive" class="deep-dive" tabindex="-1">
-        <section class="spec-box" style="margin-top: var(--space-5);" aria-labelledby="spec-constraints">
+        <section class="spec-box scroll-reveal" style="margin-top: var(--space-5);" aria-labelledby="spec-constraints">
           <span class="section-index">03 / SYSTEM CONSTRAINTS &amp; INVARIANTS</span>
           <h2 id="spec-constraints" style="font-size: var(--text-lg); margin-top: var(--space-2);">
             Non-Negotiable Production Constraints
@@ -197,7 +197,7 @@ const site = await getSiteData();
         </div>
 
         <!-- 06 / What I'd Do Differently (Retrospective) -->
-        <section class="spec-box" style="margin-top: var(--space-8);" aria-labelledby="spec-retro">
+        <section class="spec-box scroll-reveal" style="margin-top: var(--space-8);" aria-labelledby="spec-retro">
           <span class="section-index">06 / RETROSPECTIVE</span>
           <h2 id="spec-retro" style="font-size: var(--text-xl); margin-top: var(--space-2);">
             What I Would Do Differently
@@ -331,11 +331,39 @@ const site = await getSiteData();
   }
 
   .spec-box {
+    position: relative;
+    overflow: hidden;
     padding: clamp(1rem, 3vw, 1.5rem);
     border-radius: var(--radius-md);
     background-color: var(--bg-surface);
     border: 1px solid var(--border-subtle);
     min-width: 0;
+    transition:
+      transform var(--duration-base) var(--ease-spring),
+      border-color var(--duration-base) var(--ease-out);
+  }
+
+  .spec-box::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      360px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+      var(--spotlight-fill),
+      transparent 45%
+    );
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-out);
+  }
+
+  .spec-box:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-strong);
+  }
+
+  .spec-box:hover::before {
+    opacity: 1;
   }
 
   .retro-grid {
@@ -350,6 +378,14 @@ const site = await getSiteData();
     background-color: var(--bg-subtle);
     border: 1px solid var(--border-subtle);
     min-width: 0;
+    transition:
+      transform var(--duration-base) var(--ease-spring),
+      border-color var(--duration-base) var(--ease-out);
+  }
+
+  .retro-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
   }
 </style>
 
