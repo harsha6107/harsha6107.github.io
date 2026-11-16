@@ -4,7 +4,7 @@ slug: "cutting-snowflake-cdc-cost-95-percent"
 pubDate: 2026-04-12
 readingTime: "4 min read"
 category: "Data Platforms & CDC"
-summary: "How we streamed 436 SQL Server tables into a 493-table Snowflake Bronze layer on AKS, stopped multi-day restart sync gaps, and cut Snowflake ingestion spend ~95%."
+summary: "How we streamed 436 SQL Server tables into 2 Snowflake instances via 2 consumers on shared Kafka, plus 74 tables from a second DB via a 3rd consumer, stopped multi-day restart gaps, and cut Snowflake spend ~95%."
 tags:
   - "Snowflake"
   - "Kafka"
@@ -20,9 +20,12 @@ embedding:
   vector: [0.25, 0.14, 0.95, 0.18]
 ---
 
-In April 2026, we cut over our production Change Data Capture (CDC) pipeline streaming **436 SQL Server tables** into a **493-table Snowflake Bronze layer** using **Debezium + Kafka (Strimzi on Kubernetes / AKS)** provisioned with **Terraform, Helm, and GitHub Actions**.
+In April 2026, we cut over our production Change Data Capture (CDC) platform on **Debezium + Kafka (Strimzi on Kubernetes / AKS)** provisioned with **Terraform, Helm, and GitHub Actions**:
 
-Here is how we cut Snowflake ingestion spend by **~95%**, eliminated multi-day restart gaps, and delivered a zero-leak enterprise CDC feed to **Siemens**.
+- **436 production SQL Server tables** streaming into **2 different Snowflake instances** through **2 independent consumers** reading from the same Kafka cluster.
+- **74 tables from a second database** streaming into **one of the 2 Snowflake instances** through a **separate (3rd) consumer**.
+
+Here is how we cut Snowflake ingestion spend by **~95%**, eliminated multi-day restart gaps across all three consumer pipelines, and delivered a zero-leak enterprise CDC feed to **Siemens**.
 
 ## 1. Replacing ~48-Credit/Day Per-Record MERGEs with Batched Drains
 
@@ -56,7 +59,7 @@ WHEN NOT MATCHED AND src.__op != 'd' THEN INSERT (id, record, last_lsn)
 Previously, AKS node restarts and SQL Server maintenance caused multi-day CDC sync gaps. After leading recovery from a cluster incident, we hardened pipeline reliability with three changes:
 
 - **Debezium Connector Auto-Restart**: Enabled automatic connector task restarts after transient infrastructure resets.
-- **15-Minute Lag & Dead-Letter Watchdog**: Added a watchdog alerting on replication lag or dead-letter queue accumulation within 15 minutes.
+- **15-Minute Lag & Dead-Letter Watchdog**: Added a watchdog alerting on replication lag or dead-letter queue accumulation within 15 minutes across the shared Kafka cluster and all 3 consumers.
 - **Fail-Closed Production Deploys**: Configured CI/CD deployments to fail closed when connector or offset checks fail.
 
 ## 3. Siemens 74-Table CDC Cutover & SQL Server Dynamic Data Masking

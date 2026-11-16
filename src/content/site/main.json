@@ -38,7 +38,7 @@
     {
       "value": "-95%",
       "label": "Snowflake Compute Spend",
-      "context": "436 SQL Server tables streamed to 493 Bronze tables via Debezium + Kafka on AKS",
+      "context": "436 tables → 2 Snowflakes (2 consumers) + 74 tables from 2nd DB (3rd consumer) on shared Kafka",
       "href": "/projects/cdc-snowflake-pipeline"
     },
     {
@@ -126,9 +126,9 @@
     {
       "id": "fun-lag",
       "label": "Check CDC lag watchdog",
-      "sub": "436 tables → Snowflake Bronze",
+      "sub": "436 + 74 tables → 2 Snowflakes (3 consumers)",
       "action": "toast",
-      "payload": "Watchdog alerts if lag exceeds 15 min · 436 tables streaming"
+      "payload": "Watchdog alerts if lag exceeds 15 min · 436 tables (2 consumers) + 74 tables (3rd consumer)"
     },
     {
       "id": "fun-hire",
@@ -189,7 +189,7 @@
       "category": "Data Platforms & Streaming CDC",
       "code": "SYS.03",
       "items": [
-        "Change Data Capture (436 SQL Server tables to 493 Snowflake Bronze tables via Debezium + Strimzi Kafka on AKS)",
+        "Change Data Capture (436 SQL Server tables to 2 Snowflakes via 2 consumers on shared Kafka + 74 tables from a 2nd DB via a 3rd consumer)",
         "Cloud Cost & Reliability (-95% Snowflake spend via batched MERGEs & auto-suspend; 15-min lag watchdog; fail-closed deploys)",
         "Enterprise Data Sharing & Security (74-table / ~2.1M-row Siemens CDC feed; SQL Server dynamic data masking across 18 tables)",
         "Big Data & NoSQL (Apache Cassandra 100+ source data model, 500 TB Hadoop/Spark modernization at BlackRock)"
@@ -264,7 +264,7 @@
       "x": 14,
       "y": 82,
       "vector": [0.28, 0.14, 0.96, 0.18],
-      "detail": "436 SQL Server tables streamed to 493 Snowflake Bronze tables with auto-restart & 15-min lag watchdog.",
+      "detail": "436 tables fanned out to 2 Snowflakes via 2 consumers on shared Kafka + 74 tables from a 2nd DB via a 3rd consumer.",
       "relatedProjectSlug": "cdc-snowflake-pipeline"
     },
     {
@@ -274,7 +274,7 @@
       "x": 24,
       "y": 90,
       "vector": [0.32, 0.19, 0.92, 0.22],
-      "detail": "Cut ingestion spend ~95% (from ~48 credits/day) and delivered 74-table (~2.1M-row) Siemens CDC share.",
+      "detail": "Cut ingestion spend ~95% (from ~48 credits/day) across 2 Snowflakes and delivered 74-table (~2.1M-row) Siemens CDC share.",
       "relatedProjectSlug": "cdc-snowflake-pipeline"
     },
     {
@@ -329,8 +329,8 @@
         },
         {
           "domain": "CDC Streaming, Snowflake Cost (-95%) & Enterprise Data Security",
-          "metric": "436→493 Tables · -95% Spend",
-          "text": "Streamed 436 production SQL Server tables into a 493-table Snowflake Bronze layer (cut over 04/2026) via Debezium + Strimzi Kafka on AKS (Terraform, Helm, GitHub Actions) with auto-restart, a 15-minute lag/DLQ watchdog, and fail-closed deploys. Cut Snowflake ingestion spend ~95% (from ~48 credits/day per-record MERGEs to batched MERGEs executing 500K+ rows/run in ~1 hour with auto-suspend). Took Siemens live on a 74-table (~2.1M-row) CDC feed with zero pricing exposure, and protected 18 sensitive SQL Server tables with dynamic data masking."
+          "metric": "436 + 74 Tables · 2 Snowflakes · -95% Spend",
+          "text": "Streamed 436 production SQL Server tables into 2 separate Snowflake instances through 2 consumers reading from the same Debezium + Strimzi Kafka cluster on AKS (Terraform, Helm, GitHub Actions), plus 74 tables from a second database into one of the 2 Snowflakes via a separate consumer (cut over 04/2026) with auto-restart, a 15-minute lag/DLQ watchdog, and fail-closed deploys. Cut Snowflake ingestion spend ~95% (from ~48 credits/day per-record MERGEs to batched MERGEs executing 500K+ rows/run in ~1 hour with auto-suspend). Took Siemens live on the 74-table (~2.1M-row) CDC feed with zero pricing exposure, and protected 18 sensitive SQL Server tables with dynamic data masking."
         },
         {
           "domain": "Backend Microservices, Schema Migration & Workflow Engine",

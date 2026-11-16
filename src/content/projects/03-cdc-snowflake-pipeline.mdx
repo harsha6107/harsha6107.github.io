@@ -1,5 +1,5 @@
 ---
-title: "436-Table Zero-Lag CDC Platform & 95% Snowflake Compute Reduction"
+title: "Multi-Consumer Kafka CDC Platform (436 + 74 Tables → 2 Snowflakes) & 95% Compute Reduction"
 shortTitle: "CDC Platform & -95% Cost Cut"
 slug: "cdc-snowflake-pipeline"
 index: "03"
@@ -8,42 +8,42 @@ period: "03/2025 – Present"
 role: "Senior ML Engineer"
 featured: true
 order: 3
-headlineMetric: "436→493 Tables · -95% Snowflake Spend · Siemens Live"
-summary: "Streamed 436 production SQL Server tables into a 493-table Snowflake Bronze layer (cut over 04/2026) via Debezium + Kafka (Strimzi on AKS) with Terraform, Helm, and GitHub Actions. Cut Snowflake ingestion spend ~95% (from ~48 credits/day), eliminated multi-day restart sync gaps, and took Siemens live on a 74-table (~2.1M-row) CDC feed with zero pricing exposure."
-problem: "Per-record Snowflake MERGEs burned ~48 credits/day of always-on compute across 436 SQL Server tables, AKS and SQL Server restarts caused multi-day CDC sync gaps, and onboarding Siemens required sharing 74 tables (~2.1M rows) without exposing internal pricing."
+headlineMetric: "436 + 74 Tables · 2 Snowflakes · -95% Spend"
+summary: "Streamed 436 production SQL Server tables into 2 separate Snowflake instances through 2 consumers reading from the same Debezium + Strimzi Kafka cluster on AKS, plus 74 tables from a second database into one of the 2 Snowflakes via a separate consumer (cut over 04/2026). Cut Snowflake ingestion spend ~95% (from ~48 credits/day), eliminated multi-day restart sync gaps, and took Siemens live on a 74-table (~2.1M-row) CDC feed with zero pricing exposure."
+problem: "Per-record Snowflake MERGEs burned ~48 credits/day of always-on compute across 436 SQL Server tables fanning out into 2 Snowflake instances, AKS and SQL Server restarts caused multi-day CDC sync gaps, and a second database's 74 tables (~2.1M rows) needed a separate consumer into one of the 2 Snowflakes plus a zero-pricing-leak CDC feed for Siemens."
 constraints:
-  - "Stream 436 production SQL Server tables into a 493-table Snowflake Bronze layer (production cutover in 04/2026)."
-  - "Replace ~48 credits/day of always-on per-record MERGE compute while loading 500K+ rows per run in ~1 hour."
-  - "Eliminate multi-day CDC sync gaps after AKS and SQL Server restarts and make production deploys fail closed."
+  - "Fan out 436 production SQL Server tables into 2 separate Snowflake instances through 2 independent consumers reading from the same Strimzi Kafka cluster on AKS (cut over in 04/2026)."
+  - "Stream an additional 74 tables from a second database into one of the 2 Snowflake instances using a separate (3rd) consumer."
+  - "Replace ~48 credits/day of always-on per-record MERGE compute while loading 500K+ rows per run in ~1 hour, and eliminate multi-day CDC sync gaps after AKS and SQL Server restarts."
   - "Deliver a 74-table (~2.1M-row initial snapshot, 2x daily deltas) Snowflake-to-Snowflake CDC feed to Siemens with no internal pricing exposure."
-approachSummary: "Led the Debezium + Strimzi Kafka pipeline on AKS (Terraform, Helm, GitHub Actions); added connector auto-restart, a 15-minute lag/DLQ watchdog, and fail-closed prod deploys; replaced per-record MERGEs with batched MERGEs on scheduled drain windows and an auto-suspending warehouse (-95% spend); and locked Siemens to a negative-tested read-only role withholding pricing columns."
+approachSummary: "Led the Debezium + Strimzi Kafka pipeline on AKS (Terraform, Helm, GitHub Actions) serving 2 consumers fanning 436 tables into 2 Snowflake instances plus a 3rd consumer streaming 74 tables from a second DB into one of the 2 Snowflakes; added connector auto-restart, a 15-minute lag/DLQ watchdog, and fail-closed prod deploys; replaced per-record MERGEs with batched MERGEs on scheduled drain windows and an auto-suspending warehouse (-95% spend); and locked Siemens to a negative-tested read-only role withholding pricing columns."
 metrics:
   - value: "-95%"
     label: "Snowflake Compute Spend"
     detail: "Replaced ~48 credits/day per-record MERGEs with batched drains"
-  - value: "436→493"
-    label: "Tables in Production CDC"
-    detail: "SQL Server to Snowflake Bronze cutover (04/2026)"
+  - value: "436 → 2"
+    label: "Tables to 2 Snowflakes"
+    detail: "2 independent consumers on the same Strimzi Kafka cluster"
+  - value: "+74 Tables"
+    label: "2nd DB + Siemens CDC"
+    detail: "Separate 3rd consumer into 1 of the 2 Snowflakes (~2.1M rows)"
   - value: "500K+"
     label: "Rows Loaded per Run"
     detail: "Batched MERGEs in ~1 hour with retries & dead-letter queue"
-  - value: "74 Tables"
-    label: "Siemens CDC Feed"
-    detail: "~2.1M-row snapshot + 2x daily deltas with zero pricing leak"
 stack:
   - "Debezium (CDC)"
   - "Apache Kafka (Strimzi)"
-  - "Snowflake"
+  - "Snowflake (2x Instances)"
   - "Kubernetes (AKS)"
-  - "SQL Server"
+  - "SQL Server (2x DBs)"
   - "Terraform & Helm"
   - "GitHub Actions"
 diagramId: "cdc-snowflake"
-diagramTitle: "Fig 3.1 — Debezium + Strimzi Kafka CDC on AKS to Batched Snowflake Bronze & Siemens Share"
-diagramCaption: "436 SQL Server tables stream through Strimzi Kafka on AKS into scheduled batched MERGE windows, cutting compute spend ~95%."
+diagramTitle: "Fig 3.1 — Shared Strimzi Kafka CDC on AKS: 436 Tables (2 Consumers → 2 Snowflakes) + 74 Tables (2nd DB → 3rd Consumer)"
+diagramCaption: "436 tables fan out to 2 Snowflake instances via 2 consumers on shared Kafka, while 74 tables from a second DB stream into one of the 2 Snowflakes via a separate consumer."
 retrospective:
   - title: "Auto-restart, 15-minute watchdogs, and fail-closed deploys stop silent sync gaps"
-    detail: "Stopped multi-day CDC sync gaps after AKS and SQL Server restarts by enabling Debezium connector auto-restart, adding a 15-minute lag and dead-letter watchdog, making prod deploys fail closed, and leading recovery from a cluster incident."
+    detail: "Stopped multi-day CDC sync gaps after AKS and SQL Server restarts by enabling Debezium connector auto-restart, adding a 15-minute lag and dead-letter watchdog across all 3 consumer pipelines, making prod deploys fail closed, and leading recovery from a cluster incident."
   - title: "Negative-test external data shares before production cutover"
     detail: "Took Siemens live on 74 tables (~2.1M rows) without exposing internal pricing by withholding pricing columns and locking Siemens to a negative-tested read-only role with no export path."
   - title: "Enforce defense-in-depth at the source database layer"
@@ -62,21 +62,21 @@ embedding:
 
 ## Problem & Operational Bottlenecks
 
-Streaming **436 production SQL Server tables** into a **493-table Snowflake Bronze layer** faced three challenges prior to our **04/2026 production cutover**:
+Prior to our **04/2026 production cutover**, our multi-destination CDC architecture—streaming **436 production SQL Server tables** into **2 different Snowflake instances** via **2 consumers** on the same Kafka cluster, plus **74 tables from a second database** into one of those 2 Snowflakes via a **separate 3rd consumer**—faced three bottlenecks:
 
-1. **High Compute Cost (~48 Credits/Day)**: Per-record `MERGE` queries kept the Snowflake warehouse running continuously.
+1. **High Compute Cost (~48 Credits/Day)**: Per-record `MERGE` queries kept the Snowflake warehouses running continuously.
 2. **Multi-Day Sync Gaps**: AKS and SQL Server restarts left Debezium connectors wedged for days without automated recovery.
 3. **Enterprise Data Isolation**: Onboarding **Siemens** required a Snowflake-to-Snowflake CDC feed of **74 tables (~2.1M-row initial snapshot, updated twice daily)** without exposing internal pricing.
 
 ## Architectural Approach
 
-### 1. Debezium + Kafka (Strimzi on AKS) & Reliability Guards
+### 1. Shared Strimzi Kafka on AKS + 3 Independent Consumers
 
 I led the **Debezium + Kafka (Strimzi on Kubernetes / AKS)** pipeline provisioned with **Terraform, Helm, and GitHub Actions**, and led recovery from a subsequent cluster incident:
 
-- **Connector Auto-Restart**: Enabled Debezium connector auto-restart to recover automatically after AKS and SQL Server restarts.
-- **15-Minute Lag & Dead-Letter Watchdog**: Added a 15-minute lag and dead-letter queue (DLQ) watchdog to catch stalled tasks early.
-- **Fail-Closed Deploys**: Configured production deployments to fail closed if health or offset checks fail.
+- **Dual-Snowflake Fan-Out (436 Tables → 2 Consumers → 2 Snowflakes)**: Streamed **436 tables** from the primary SQL Server database into a single shared Strimzi Kafka cluster, where **2 independent consumers** read from the same topics to replicate into **2 separate Snowflake instances**.
+- **Dedicated 3rd Consumer for Second DB (74 Tables → 1 of the 2 Snowflakes)**: Streamed **74 tables** from a **second database** through a **separate consumer** into one of the 2 Snowflake instances.
+- **Connector Auto-Restart & 15-Minute Watchdog**: Enabled Debezium connector auto-restart after AKS and SQL Server restarts, added a **15-minute lag and dead-letter queue (DLQ) watchdog**, and made production deploys **fail closed** if health or offset checks fail.
 
 ### 2. Cutting Snowflake Ingestion Spend ~95%
 
