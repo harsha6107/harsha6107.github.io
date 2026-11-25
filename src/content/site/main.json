@@ -6,7 +6,7 @@
   "positioningHeadline": "I build ML, search, and backend systems that ship: 26M-SKU catalog search, tool-calling LLM agents, and high-throughput data platforms.",
   "positioningSubhead": "Senior ML Engineer & Chatbot Lead at eParts Services. Previously Software Engineer II at BlackRock (Aladdin) and Master of Software Engineering at Carnegie Mellon University.",
   "location": "United States",
-  "availability": "Senior ML Engineer at eParts Services · Open to Staff/Senior ML, Search, AI & Backend roles",
+  "availability": "Senior ML Engineer & Chatbot Lead at eParts Services · Search, Agentic AI & Data Platforms",
   "email": "harsha6107@gmail.com",
   "phone": "+1 412-586-8800",
   "links": {
@@ -131,9 +131,9 @@
       "payload": "Watchdog alerts if lag exceeds 15 min · 436 tables (2 consumers) + 74 tables (3rd consumer)"
     },
     {
-      "id": "fun-hire",
-      "label": "Hire Harsha",
-      "sub": "Copies email to clipboard",
+      "id": "fun-email",
+      "label": "Copy email address",
+      "sub": "Copies harsha6107@gmail.com to clipboard",
       "action": "copy-email",
       "payload": "harsha6107@gmail.com"
     }
@@ -141,7 +141,7 @@
   "consoleGreeting": "★ SECRET ROOM FOUND! Source code: https://github.com/harsha6107/harsha6107.github.io · Press ? for shortcuts or key in ↑↑↓↓←→←→BA on the page.",
   "aboutShort": [
     "Senior ML and software engineer with 5+ years of experience building search, retrieval, agentic AI, and distributed backend systems end to end across Python, TypeScript, C# / .NET, Java, and SQL.",
-    "At eParts Services, I own search relevance, RAG, MCP servers, and CDC data pipelines for Peregrin—a multi-tenant industrial procurement SaaS platform. Previously, I spent three years at BlackRock engineering Cassandra and Hadoop platforms for Aladdin, and earned my Master of Software Engineering (3.87 GPA) at Carnegie Mellon University."
+    "At eParts Services, I own search relevance, RAG, MCP servers, and CDC data pipelines for Peregrin—a multi-tenant industrial procurement SaaS platform. Previously, I spent three years at BlackRock engineering Cassandra and Hadoop platforms for Aladdin, and earned my Master of Software Engineering at Carnegie Mellon University."
   ],
   "aboutExtended": [
     "Across search, AI agents, and data platforms, my focus is making production systems reliable and cost-effective: fixing 6 silent record-loss defects in a 26M-document Elasticsearch sync, replacing ~48-credit/day per-record Snowflake MERGEs with batched drains (-95% spend), and building a native transactional-outbox workflow engine at ~$40/month instead of a ~$50K/year third-party license.",
@@ -434,7 +434,6 @@
       "degree": "Master of Software Engineering",
       "period": "12/2024",
       "location": "Pittsburgh, US",
-      "gpa": "3.87",
       "notes": "Team Lead for Adrich client studio project (01/2024 – 12/2024); Teaching Assistant for Prompt Engineering & Requirements for Software Engineering."
     },
     {
@@ -481,8 +480,8 @@
     "aboutIndex": "STAGE 06 / LORE & TRIFORCE",
     "aboutTitle": "Engineering Trajectory",
     "contactIndex": "CONTINUE / DIRECT COMMS",
-    "contactTitle": "Start a Co-Op Run",
-    "contactSub": "Reach out regarding Senior/Staff ML, Search, Agentic AI, or Backend Engineering roles.",
+    "contactTitle": "Open a Comm Channel",
+    "contactSub": "Always happy to connect and talk shop on large-scale search, agentic AI, MCP servers, and distributed data systems.",
     "footerColophon": "Typeset in self-hosted Space Grotesk, Silkscreen & JetBrains Mono. Crafted with Astro, strict TypeScript, and tactile 16-bit design tokens.",
     "notFoundCode": "ERR_404_LOST_WOODS",
     "notFoundTitle": "Stage not found.",
@@ -491,10 +490,10 @@
     "telemetryProofLabel": "Enter stage",
     "sourceLabel": "Source",
     "audienceLabel": "Quest mode",
-    "audienceRecruiter": "Recruiter (60s)",
+    "audienceRecruiter": "Summary (60s)",
     "audienceEngineer": "Engineer (Full)",
     "deepDiveTitle": "That's the 60-second quest summary.",
-    "deepDiveBody": "Dungeon constraints, the architecture schematic, implementation notes, and retrospective relics are behind the Boss Door in Recruiter mode.",
+    "deepDiveBody": "Dungeon constraints, the architecture schematic, implementation notes, and retrospective relics are behind the Boss Door in Summary mode.",
     "deepDiveCta": "Unlock full engineering deep dive",
     "shortcutsTitle": "Arcade & keyboard controls",
     "shortcutsHint": "Press ? for controls",

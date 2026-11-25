@@ -43,7 +43,7 @@ Live production site: **[https://harsha6107.github.io](https://harsha6107.github
 3. **Tetris — Interlocking Capability Well (`src/components/TetrisStack.astro`)**
    - Packs 7 production engineering domains (`I`, `T`, `L`, `J`, `S`, `Z`, `O` Tetrominoes) into a 10×6 matrix well with interactive domain inspection and a playable **Hard Drop `I`-Piece** line-clear action.
 4. **The Legend of Zelda — Triforce Principles, Boss Key Reading Lens & 5-Relic Quest Log**
-   - Frames the 3 core architectural principles as the **Triforce of Wisdom, Courage & Power**, styles the Recruiter/Engineer deep-dive fold as a **Boss Key Door**, turns `/404.html` into the iconic `"IT'S A SECRET TO EVERYBODY."` cave room, and tracks **5 collectible retro relics** + optional WebAudio 8-bit chiptune SFX (`M`) and the Konami Code (`↑↑↓↓←→←→BA`).
+   - Frames the 3 core architectural principles as the **Triforce of Wisdom, Courage & Power**, styles the Summary/Engineer deep-dive fold as a **Boss Key Door**, turns `/404.html` into the iconic `"IT'S A SECRET TO EVERYBODY."` cave room, and tracks **5 collectible retro relics** + optional WebAudio 8-bit chiptune SFX (`M`) and the Konami Code (`↑↑↓↓←→←→BA`).
 
 ---
 
