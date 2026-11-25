@@ -5,7 +5,7 @@ slug: "agentic-ai-mcp-platform"
 index: "02"
 organization: "eParts Services · Peregrin"
 period: "03/2025 – Present"
-role: "Senior ML Engineer (Chatbot Lead)"
+role: "Senior ML Engineer · Agentic AI & MCP"
 featured: true
 order: 2
 headlineMetric: "25/25 Golden Eval · 42 Foundry Tools · 36 MCP Tools"
@@ -47,7 +47,7 @@ retrospective:
   - title: "Keep spreadsheet attachments behind a read-only row-search tool"
     detail: "Added read-only CSV/XLSX attachment support via a row-search tool that treats file content as untrusted data rather than injecting raw rows into the prompt."
   - title: "Pair golden evals with redacted production trace analysis"
-    detail: "Designed the step past the 25-case golden set: redacted export of ~100 real conversations per cycle, a failure-mode taxonomy mapped to golden cases, an LLM rubric judge checked against human labels, and a weekly CI eval gate on chatbot PRs."
+    detail: "Designed the step past the 25-case golden set: redacted export of ~100 real conversations per cycle, a failure-mode taxonomy mapped to golden cases, an LLM rubric judge checked against human labels, and a weekly CI eval gate on agent PRs."
 links:
   - label: "Read Note: Human-in-the-Loop Write Guards for MCP"
     href: "/writing/mcp-oauth-human-in-the-loop-guards"
@@ -72,7 +72,7 @@ I shipped the agentic AI assistant to production users and a customer beta—sco
 
 - **Relationship-Based Access Control (ReBAC)**: Configured ReBAC with **Permit** and closed a cross-workspace authorization gap among ~15 production bugs fixed in one release cycle.
 - **Signed 5-Minute Action Tokens**: Write tools stage changes and return a **signed 5-minute action token** requiring explicit human-in-the-loop confirmation before execution, paired with query logging and user feedback.
-- **Assistant Grounding (Chatbot Lead)**: Removed a chat BOM import that never reached the model and caused a High-priority production bug (items added to the wrong project); scoped *"my orders"* to the user's own POs; made the open page outrank conversation memory; and added read-only CSV/XLSX attachments with a row-search tool that treats file content as untrusted.
+- **Production Grounding & Context Precedence**: Removed a chat BOM import that never reached the model and caused a High-priority production bug (items added to the wrong project); scoped *"my orders"* to the user's own POs; made the open page outrank conversation memory; and added read-only CSV/XLSX attachments with a row-search tool that treats file content as untrusted.
 
 ```typescript
 // Representative pattern: ReBAC check + signed 5-minute action token for user-confirmed writes
@@ -104,4 +104,4 @@ export async function stageWriteAction<T>(
 ### 3. Company Knowledge Layer (eParts Brain) & Continuous Eval Loop
 
 - **eParts Brain**: Designed one search layer so engineers and Claude agents can find past decisions across **Granola, Linear, GitHub, and Confluence**: hash-merged incremental ingestion into Snowflake, **Cortex Search hybrid retrieval** behind Snowflake's managed MCP server, role-tiered access, secret scanning on ingest, and a weekly top-5 retrieval eval for **~$15–30/month**.
-- **Eval & Error-Discovery Loop**: Built the post-launch evaluation pipeline exporting **~100 redacted conversations per cycle** for error analysis, mapping a failure-mode taxonomy to golden cases, checking an **LLM rubric judge** against human labels, and enforcing a **weekly CI eval gate** on chatbot PRs.
+- **Eval & Error-Discovery Loop**: Built the post-launch evaluation pipeline exporting **~100 redacted conversations per cycle** for error analysis, mapping a failure-mode taxonomy to golden cases, checking an **LLM rubric judge** against human labels, and enforcing a **weekly CI eval gate** on agent PRs.

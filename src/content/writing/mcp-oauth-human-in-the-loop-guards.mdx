@@ -57,7 +57,7 @@ Neither the Azure AI Foundry assistant nor the MCP server executes unconfirmed w
 
 ## 3. Grounding: Open Page Context & Untrusted File Attachments
 
-As chatbot lead, I resolved three grounding failure modes found in production:
+Leading the production agent platform, I resolved three grounding failure modes found in production:
 
 - **Removed Ungrounded Chat BOM Import**: Removed a chat BOM import path that never reached the model and caused a High-priority production bug where items were added to the wrong project.
 - **Open Page Outranks Conversation Memory**: Made the user's currently open page outrank prior conversation memory when resolving target entities.

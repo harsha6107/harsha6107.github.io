@@ -42,6 +42,6 @@ Rather than relying on generic quality scores, we categorized real errors into a
 
 To scale evaluation without manual grading bottlenecks, we built an **LLM rubric judge** and validated its grading alignment directly against **human labels** before relying on it for automated gating.
 
-## 4. Weekly CI Eval Gate on Chatbot PRs
+## 4. Weekly CI Eval Gate on Agent PRs
 
-We wired the expanded golden set and calibrated rubric judge into a **weekly CI eval gate on chatbot pull requests**—alongside a separate **weekly top-5 retrieval eval** for **eParts Brain** (our Snowflake Cortex Search knowledge layer across Granola, Linear, GitHub, and Confluence).
+We wired the expanded golden set and calibrated rubric judge into a **weekly CI eval gate on agent pull requests**—alongside a separate **weekly top-5 retrieval eval** for **eParts Brain** (our Snowflake Cortex Search knowledge layer across Granola, Linear, GitHub, and Confluence).
