@@ -97,17 +97,30 @@ test.describe('Interactive Features: Theme Toggle, Command Palette & Embedding M
     );
   });
 
-  test('Search demo matches typos via the Fuzzy tier and updates live status', async ({ page }) => {
+  test('Search demo matches typos via the Fuzzy tier and preserves row grid styling', async ({
+    page,
+  }) => {
     await page.goto('/');
     const demo = page.locator('[data-search-demo]');
     await demo.scrollIntoViewIfNeeded();
     await expect(demo).toHaveAttribute('data-initialized', 'true');
+
+    await page.locator('[data-sd-sample="6204-2RS/C3"]').click();
+    const exactRow = page.locator('[data-sd-results] .sd-row').first();
+    await expect(exactRow).toHaveAttribute('data-tier', 'exact');
+    await expect(exactRow).toHaveCSS('display', 'grid');
 
     const input = page.locator('[data-sd-input]');
     await input.fill('6240-2rs');
     const firstRow = page.locator('[data-sd-results] .sd-row').first();
     await expect(firstRow).toHaveAttribute('data-tier', 'fuzzy');
     await expect(firstRow).toContainText('6204-2RS/C3');
+    await expect(firstRow).toHaveCSS('display', 'grid');
+    const markBg = await firstRow
+      .locator('mark')
+      .first()
+      .evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(markBg).not.toBe('rgb(255, 255, 0)');
     await expect(page.locator('[data-sd-corridor]')).toHaveAttribute('style', /--pac-pct:\s*70%/);
   });
 

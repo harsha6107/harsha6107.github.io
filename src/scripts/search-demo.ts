@@ -122,6 +122,9 @@ export function initSearchDemo(root: HTMLElement): void {
     if (ptsBadge) {
       ptsBadge.textContent = top ? TIER_PTS[top.tier] : 'MISS';
     }
+    root.querySelectorAll<HTMLButtonElement>('[data-sd-sample]').forEach((chip) => {
+      chip.toggleAttribute('data-active', chip.dataset.sdSample === input.value.trim());
+    });
 
     if (!result.normalized) status.textContent = config.idleText;
     else if (!top) status.textContent = config.emptyText;

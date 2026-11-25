@@ -592,7 +592,7 @@ const initialNeighbors = initialSource
     stroke-width: 3px;
   }
 
-  .umap-label {
+  .embedding-svg :global(.umap-label) {
     paint-order: stroke;
     stroke: var(--bg-surface);
     stroke-width: 4px;
@@ -600,8 +600,8 @@ const initialNeighbors = initialSource
     stroke-linejoin: round;
   }
 
-  .umap-node-group[data-selected="true"] .umap-label,
-  .umap-node-link:hover .umap-label {
+  .umap-node-group[data-selected="true"] :global(.umap-label),
+  .umap-node-link:hover :global(.umap-label) {
     fill: var(--accent);
   }
 
@@ -669,7 +669,7 @@ const initialNeighbors = initialSource
     font-size: var(--text-xs);
   }
 
-  .neighbor-list li {
+  .neighbor-list :global(li) {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -684,7 +684,7 @@ const initialNeighbors = initialSource
       border-color var(--duration-fast) var(--ease-out);
   }
 
-  .neighbor-list li:hover {
+  .neighbor-list :global(li:hover) {
     transform: translateX(3px);
     border-color: var(--accent);
   }

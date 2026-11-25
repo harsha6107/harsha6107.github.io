@@ -12,7 +12,7 @@ module.exports = {
         'http://localhost/index.html',
         'http://localhost/projects/catalog-search-26m/index.html',
       ],
-      numberOfRuns: 2,
+      numberOfRuns: 3,
       chromePath: process.env.CHROME_PATH || systemChromium,
       settings: {
         chromeFlags:
