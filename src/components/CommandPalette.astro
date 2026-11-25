@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import RetroSprite from './RetroSprite.astro';
 
 interface Props {
   projects: CollectionEntry<'projects'>[];
@@ -38,40 +39,55 @@ type Item = {
 
 const items: Item[] = [
   {
+    id: 'act-quest',
+    group: 'Arcade Controls',
+    label: 'Open Explorer Quest Log (5 Retro Relics)',
+    sub: 'Track discovered artifacts & warp to stages',
+    action: 'open-quest',
+  },
+  {
+    id: 'act-sfx',
+    group: 'Arcade Controls',
+    label: 'Toggle 8-Bit Chiptune SFX',
+    sub: 'WebAudio square-wave coin, pellet & secret chimes',
+    action: 'toggle-sfx',
+    kbd: 'M',
+  },
+  {
     id: 'act-theme',
-    group: 'Quick Actions',
-    label: 'Toggle Light / Dark Theme',
-    sub: 'Switch color scheme preference',
+    group: 'Arcade Controls',
+    label: 'Switch World Theme (Midnight Arcade / Famicom Manual)',
+    sub: 'Toggle dark CRT cabinet vs. warm parchment guide',
     action: 'toggle-theme',
     kbd: 'T',
   },
   {
     id: 'act-email',
-    group: 'Quick Actions',
+    group: 'Arcade Controls',
     label: `Copy Email (${email})`,
-    sub: 'Copy address to clipboard',
+    sub: 'Copy direct address to clipboard',
     action: 'copy-email',
     payload: email,
     kbd: 'C',
   },
   {
     id: 'act-resume',
-    group: 'Quick Actions',
-    label: 'Download Résumé PDF',
+    group: 'Arcade Controls',
+    label: 'Download Save File (Résumé PDF)',
     sub: 'Harsha_Tummala.pdf',
     href: resumePdfUrl,
   },
   {
     id: 'act-shortcuts',
-    group: 'Quick Actions',
+    group: 'Arcade Controls',
     label: shortcutsLabel,
-    sub: 'G H · G W · G N · G A · G R · T · C · /',
+    sub: 'G H · G W · G N · G A · G R · T · M · C · / · ↑↑↓↓←→←→BA',
     action: 'shortcuts',
     kbd: '?',
   },
   ...extras.map((x) => ({
     id: x.id,
-    group: 'Just for fun',
+    group: 'Secret Codes',
     label: x.label,
     sub: x.sub,
     action: x.action,
@@ -79,63 +95,63 @@ const items: Item[] = [
   })),
   {
     id: 'nav-home',
-    group: 'Navigation',
-    label: 'Home — Overview & Latent Space',
+    group: 'Warp Zones',
+    label: 'Home — World Select, Pac-Search, Overworld & Tetris Stack',
     sub: '/',
     href: '/',
   },
   {
     id: 'nav-projects',
-    group: 'Navigation',
-    label: 'Work — All 5 Production Case Studies',
+    group: 'Warp Zones',
+    label: 'Work — All 5 Production World Stages (Case Studies)',
     sub: '/projects',
     href: '/projects',
   },
   {
     id: 'nav-writing',
-    group: 'Navigation',
-    label: 'Writing — Technical Architecture Essays',
+    group: 'Warp Zones',
+    label: 'Writing — Strategy Scrolls & Architecture Notes',
     sub: '/writing',
     href: '/writing',
   },
   {
     id: 'nav-about',
-    group: 'Navigation',
-    label: 'About — Experience Timeline & Philosophy',
+    group: 'Warp Zones',
+    label: 'About — Player 1 Character Sheet & Quest Timeline',
     sub: '/about',
     href: '/about',
   },
   {
     id: 'nav-resume-page',
-    group: 'Navigation',
-    label: 'Résumé — Interactive & Print Specification',
+    group: 'Warp Zones',
+    label: 'Résumé — Official Cartridge Specification',
     sub: '/resume',
     href: '/resume',
   },
   ...projects.map((p) => ({
     id: `proj-${p.data.slug}`,
-    group: 'Case Studies',
+    group: 'World Stages (Case Studies)',
     label: `${p.data.index}. ${p.data.title}`,
     sub: p.data.headlineMetric,
     href: `/projects/${p.data.slug}`,
   })),
   ...posts.map((post) => ({
     id: `post-${post.data.slug}`,
-    group: 'Technical Writing',
+    group: 'Field Manuals (Technical Writing)',
     label: post.data.title,
     sub: `${post.data.category} · ${post.data.readingTime}`,
     href: `/writing/${post.data.slug}`,
   })),
   {
     id: 'ext-github',
-    group: 'External Channels',
+    group: 'External Guilds',
     label: 'GitHub — @harsha6107',
     sub: githubUrl,
     href: githubUrl,
   },
   {
     id: 'ext-linkedin',
-    group: 'External Channels',
+    group: 'External Guilds',
     label: 'LinkedIn — Harsha Tummala',
     sub: linkedinUrl,
     href: linkedinUrl,
@@ -146,12 +162,17 @@ const items: Item[] = [
 <dialog
   id="cmd-palette"
   class="cmd-dialog"
-  aria-label="Command Palette"
+  aria-label="Warp Whistle Command Palette"
 >
   <div class="cmd-surface">
+    <div class="cmd-banner pixel">
+      <span><RetroSprite name="super-star" size={14} /> WARP WHISTLE // SELECT DESTINATION</span>
+      <span>⌘K</span>
+    </div>
+
     <div class="cmd-header">
       <label for="cmd-input" class="sr-only">{placeholder}</label>
-      <span class="mono" style="color: var(--accent); font-size: var(--text-sm); font-weight: 700;" aria-hidden="true">⌘K</span>
+      <span class="pixel" style="color: var(--accent); font-size: var(--text-sm);" aria-hidden="true">▶</span>
       <input
         id="cmd-input"
         type="text"
@@ -178,7 +199,7 @@ const items: Item[] = [
       id="cmd-listbox"
       class="cmd-list"
       role="listbox"
-      aria-label="Command results"
+      aria-label="Warp destinations and arcade commands"
     >
       {items.map((item, idx) => (
         <li
@@ -194,10 +215,10 @@ const items: Item[] = [
           tabindex="-1"
         >
           <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
-            <span class="mono" style="font-size: 0.68rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em;">
+            <span class="pixel" style="font-size: 0.64rem; color: var(--accent);">
               {item.group}
             </span>
-            <span style="font-size: var(--text-sm); font-weight: 500; color: var(--text-primary);">
+            <span style="font-size: var(--text-sm); font-weight: 600; color: var(--text-primary);">
               {item.label}
             </span>
             <span class="mono" style="font-size: var(--text-xs); color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
@@ -209,10 +230,10 @@ const items: Item[] = [
       ))}
     </ul>
 
-    <div class="cmd-footer mono">
-      <span>↑↓ Navigate</span>
-      <span>↵ Execute</span>
-      <span>ESC Close</span>
+    <div class="cmd-footer pixel">
+      <span>↑↓ SELECT</span>
+      <span>↵ WARP</span>
+      <span>ESC EXIT</span>
     </div>
   </div>
 </dialog>
@@ -220,8 +241,8 @@ const items: Item[] = [
 <style>
   .cmd-dialog {
     margin: clamp(3rem, 10vh, 7rem) auto auto;
-    width: min(92vw, 38rem);
-    border: 1px solid var(--border-strong);
+    width: min(92vw, 40rem);
+    border: 3px solid var(--border-strong);
     border-radius: var(--radius-md);
     background-color: var(--bg-surface);
     color: var(--text-primary);
@@ -231,14 +252,32 @@ const items: Item[] = [
   }
 
   .cmd-dialog::backdrop {
-    background-color: rgba(10, 12, 16, 0.58);
-    backdrop-filter: blur(4px);
+    background-color: rgba(8, 10, 18, 0.72);
+    backdrop-filter: blur(3px);
   }
 
   .cmd-surface {
     display: flex;
     flex-direction: column;
-    max-height: 75dvh;
+    max-height: 78dvh;
+  }
+
+  .cmd-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: 0.45rem var(--space-4);
+    background-color: var(--bg-subtle);
+    border-bottom: 2px solid var(--border-strong);
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+  }
+
+  .cmd-banner > span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
 
   .cmd-header {
@@ -246,7 +285,7 @@ const items: Item[] = [
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-3) var(--space-4);
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 2px solid var(--border-subtle);
   }
 
   .cmd-input {
@@ -271,7 +310,8 @@ const items: Item[] = [
     justify-content: space-between;
     gap: var(--space-3);
     padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-xs);
+    border: 1.5px solid transparent;
     cursor: pointer;
     transition: background-color var(--duration-fast) var(--ease-out);
   }
@@ -279,6 +319,7 @@ const items: Item[] = [
   .cmd-option[aria-selected="true"],
   .cmd-option:hover {
     background-color: var(--bg-subtle);
+    border-color: var(--accent);
   }
 
   .cmd-option[hidden] {
@@ -290,9 +331,9 @@ const items: Item[] = [
     align-items: center;
     gap: var(--space-4);
     padding: var(--space-2) var(--space-4);
-    border-top: 1px solid var(--border-subtle);
+    border-top: 2px solid var(--border-strong);
     background-color: var(--bg-subtle);
-    font-size: 0.72rem;
+    font-size: 0.66rem;
     color: var(--text-muted);
   }
 </style>

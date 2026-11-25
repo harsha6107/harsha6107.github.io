@@ -70,8 +70,11 @@ const VIEWPORTS = [
 const THEMES = ['dark', 'light'];
 
 server.listen(4329, '127.0.0.1', async () => {
+  const systemBrowser = ['/usr/bin/chromium', '/usr/bin/google-chrome'].find((p) =>
+    fs.existsSync(p),
+  );
   const browser = await chromium.launch({
-    executablePath: fs.existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined,
+    executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || systemBrowser,
     args: ['--no-sandbox', '--disable-dev-shm-usage', '--no-proxy-server'],
   });
 
@@ -98,6 +101,9 @@ server.listen(4329, '127.0.0.1', async () => {
             await page.evaluate(() => window.scrollTo(0, 0));
             await page.waitForTimeout(100);
           }
+          await page.addStyleTag({
+            content: '* { content-visibility: visible !important; }',
+          });
           const filename = `${pg.name}-${vp.width}w-${theme}.png`;
           await page.screenshot({
             path: path.join(outDir, filename),

@@ -1,5 +1,6 @@
 ---
 import ProjectCard from '../../components/ProjectCard.astro';
+import RetroSprite from '../../components/RetroSprite.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getSiteData, getSortedProjects } from '../../utils/content';
 
@@ -16,11 +17,16 @@ const projects = await getSortedProjects();
     <div class="container cq-grid">
       <div class="section-header">
         <div>
-          <span class="section-index">{site.ui.selectedWorkIndex}</span>
+          <span class="section-index">WORLD SELECT // ALL 5 PRODUCTION STAGES</span>
           <h1 style="margin-top: var(--space-2);">{site.ui.selectedWorkTitle}</h1>
           <p style="margin-top: var(--space-3); font-size: var(--text-lg);">
             {site.ui.selectedWorkSub}
           </p>
+        </div>
+
+        <div class="world-tally pixel">
+          <RetroSprite name="super-star" size={16} />
+          <span>5 / 5 STAGES CLEARED</span>
         </div>
       </div>
 
@@ -36,3 +42,17 @@ const projects = await getSortedProjects();
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .world-tally {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.4rem 0.75rem;
+    background-color: var(--bg-surface);
+    border: 2px solid var(--border-strong);
+    box-shadow: var(--shadow-xs);
+    font-size: 0.7rem;
+    color: var(--accent);
+  }
+</style>

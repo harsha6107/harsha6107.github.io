@@ -1,4 +1,5 @@
 ---
+import RetroSprite from '../../components/RetroSprite.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getSiteData, getSortedWriting } from '../../utils/content';
 
@@ -15,27 +16,30 @@ const posts = await getSortedWriting();
     <div class="container">
       <div class="section-header">
         <div>
-          <span class="section-index">{site.ui.writingIndex}</span>
+          <span class="section-index">FIELD LOGS // STRATEGY MANUALS</span>
           <h1 style="margin-top: var(--space-2);">{site.ui.writingTitle}</h1>
           <p style="margin-top: var(--space-3); font-size: var(--text-lg);">
             {site.ui.writingSub}
           </p>
         </div>
         <a href="/rss.xml" class="btn">
-          <span class="mono">RSS 2.0 Feed</span>
+          <RetroSprite name="scroll" size={15} />
+          <span class="pixel" style="font-size: 0.7rem;">RSS 2.0 FEED</span>
           <span aria-hidden="true">↗</span>
         </a>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: var(--space-5);">
         {posts.map((post, idx) => (
-          <article class="spotlight-card">
-            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2);" class="mono">
-              <span style="font-size: var(--text-xs); color: var(--accent); font-weight: 700;">
-                ESSAY 0{idx + 1} // {post.data.category.toUpperCase()}
+          <article class="cartridge-card">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2);">
+              <span class="pixel" style="font-size: 0.7rem; color: var(--accent); display: inline-flex; align-items: center; gap: 6px;">
+                <RetroSprite name="scroll" size={15} />
+                <span>SCROLL 0{idx + 1} // {post.data.category.toUpperCase()}</span>
               </span>
               <time
                 datetime={post.data.pubDate.toISOString()}
+                class="mono"
                 style="font-size: var(--text-xs); color: var(--text-muted);"
               >
                 {post.data.pubDate.toLocaleDateString('en-US', {
@@ -64,10 +68,10 @@ const posts = await getSortedWriting();
               </ul>
               <a
                 href={`/writing/${post.data.slug}`}
-                class="btn"
-                aria-label={`Read essay: ${post.data.title}`}
+                class="btn btn-primary"
+                aria-label={`Read scroll: ${post.data.title}`}
               >
-                <span>Read Essay</span>
+                <span class="pixel" style="font-size: 0.7rem;"><span aria-hidden="true">▶ </span>READ SCROLL</span>
                 <span aria-hidden="true" class="mono">→</span>
               </a>
             </div>

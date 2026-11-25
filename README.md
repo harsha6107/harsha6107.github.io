@@ -2,7 +2,7 @@
 
 [![Deploy Portfolio to GitHub Pages](https://github.com/harsha6107/harsha6107.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/harsha6107/harsha6107.github.io/actions/workflows/deploy.yml)
 
-> **I build ML and search systems that ship: 26M-SKU catalog intelligence, tool-calling LLM agents, and high-throughput data platforms.**
+> **I build ML, search, and backend systems that ship: 26M-SKU catalog search, tool-calling LLM agents, and high-throughput data platforms.**
 
 Live production site: **[https://harsha6107.github.io](https://harsha6107.github.io)**
 
@@ -10,46 +10,40 @@ Live production site: **[https://harsha6107.github.io](https://harsha6107.github
 
 ## Preview
 
-| Dark Mode (`1440px` — Deep Carbon Slate) | Light Mode (`1440px` — Warm Archival Alabaster) |
+| Dark Mode (`1440px` — Midnight Arcade Cabinet) | Light Mode (`1440px` — Famicom Strategy Manual) |
 | :--- | :--- |
 | ![Harsha Tummala Portfolio — Dark Mode](public/images/portfolio-preview-dark.png) | ![Harsha Tummala Portfolio — Light Mode](public/images/portfolio-preview-light.png) |
 
 ---
 
-## Architecture & Stack
+## Architecture & Design System
 
 | Layer | Technology | Version / Specification |
 | :--- | :--- | :--- |
 | **Framework** | [Astro](https://astro.build/) | `7.4.12` (`output: 'static'`, zero-JS default, selective lazy islands) |
 | **Language** | [TypeScript](https://www.typescriptlang.org/) | `7.0.2` (`astro/tsconfigs/strict`, `exactOptionalPropertyTypes: true`) |
-| **Content Engine** | Astro Content Collections (`glob` loader) + [MDX](https://mdxjs.com/) | `@astrojs/mdx@8.1.6` with strict Zod schemas in `src/content.config.ts`. Components hold **zero hardcoded copy**; all content lives in `src/content/`. |
-| **Styling & Tokens** | Modern Native CSS | Cascade layers (`@layer reset, tokens, base, layout, components, utilities, motion`), `oklch()` color tokens with sRGB fallbacks, `@container` queries, fluid `clamp()` type scale, strict 8pt (`0.5rem`) grid. |
-| **Typography** | Self-hosted Variable Fonts (`WOFF2`) | `@fontsource-variable/inter` (body/display) + `@fontsource-variable/jetbrains-mono` (`tabular-nums` telemetry, equations, code). |
-| **Syntax Highlighting** | Shiki Dual Themes | `github-light-high-contrast` (Light) & `github-dark-default` (Dark) — zero runtime JS. |
-| **OpenGraph Images** | Build-Time SVG → PNG | `satori@0.26.0` + `@resvg/resvg-js@2.6.2` generating `1200×630` PNG cards for every route at `/og/[...slug].png`. |
+| **Content Engine** | Astro Content Collections (`glob` loader) + [MDX](https://mdxjs.com/) | `@astrojs/mdx@8.1.6` with strict Zod schemas in `src/content.config.ts`. |
+| **Styling & Tokens** | Tactile 16-Bit Native CSS | Cascade layers (`@layer reset, tokens, base, layout, components, utilities, motion`), beveled cartridge surfaces, microswitch push-buttons, `@container` queries, strict 8pt (`0.5rem`) grid. |
+| **Typography** | Self-hosted WOFF2 Fonts | `@fontsource-variable/space-grotesk` (editorial/prose), `@fontsource/silkscreen` (16-bit HUD, scores & stage badges), and `@fontsource-variable/jetbrains-mono` (code, SKUs & math). |
+| **Pixel Iconography** | Bespoke Crisp-Edge SVGs | `src/components/RetroSprite.astro` (`shape-rendering="crispEdges"`, zero raster blur). |
+| **OpenGraph Images** | Build-Time SVG → PNG | `satori` + `@resvg/resvg-js` generating `1200×630` Game Pak cards at `/og/[...slug].png`. |
 | **Linting & Formatting** | [Biome](https://biomejs.dev/) | `@biomejs/biome@2.6.7` |
-| **E2E & Accessibility** | [Playwright](https://playwright.dev/) + [Axe](https://github.com/dequelabs/axe-core) | `@playwright/test@1.65.1` + `@axe-core/playwright@4.14.0` enforcing zero WCAG 2.2 AA violations across all routes in Light & Dark themes and zero horizontal overflow (`320px` → `2560px`). |
-| **Performance Gate** | [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) | `@lhci/cli@0.16.1` enforcing **100 / 100** across Performance, Accessibility, Best Practices, and SEO on mobile (`LCP < 1.5s`, `CLS < 0.02`, `TBT < 100ms`). |
-| **CI / Deployment** | GitHub Actions | `.github/workflows/deploy.yml` → `actions/deploy-pages@v4` + Dependabot weekly updates. |
+| **E2E & Accessibility** | [Playwright](https://playwright.dev/) + [Axe](https://github.com/dequelabs/axe-core) | `@playwright/test` + `@axe-core/playwright` enforcing zero WCAG 2.2 AA violations across all routes in Light & Dark themes and zero horizontal overflow (`320px` → `2560px`). |
+| **Performance Gate** | [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) | `@lhci/cli` enforcing **100 / 100** across Performance, Accessibility, Best Practices, and SEO on mobile (`LCP < 1.5s`, `CLS < 0.02`, `TBT < 100ms`). |
 
 ---
 
-## Signature ML Moments & Interactions
+## Smart Retro Game Integrations & Signature Engineering Moments
 
-1. **Live Part-Number Search Demo (`src/components/SearchDemo.astro` + `src/utils/sku-search.ts`)**
-   - Rebuilds the tiered matching shipped for the 26M-SKU catalog (`Exact` → `Normalized` → `Prefix` → `Fuzzy` with edit distance → `Keyword`, breaking ties on popularity) in miniature over 24 illustrative SKUs right below the hero.
-   - Server-renders the first query (`62042rsc3` → `#1 6204-2RS/C3` via `Normalized`) so the console is populated at first paint with zero layout shift (`CLS = 0`), then lazy-loads the 3.68 KB matcher on approach.
-2. **Interactive 2D UMAP Embedding Map (`< 5 KB` lazy-loaded island)**
-   - Projects, technical essays, and core ML/data capabilities are projected onto a 2D latent manifold (`src/components/EmbeddingMap.astro` + `public/scripts/embedding-map.js`).
-   - Hovering or keyboard-focusing any vector node computes **live cosine similarity** ($\cos\theta = \frac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{u}\|\|\mathbf{v}\|}$) across all 4D capability embeddings (`[search, agents, data, ml]`) and renders SVG nearest-neighbor tethers (`k=3`).
-   - Clicking any project or essay node navigates directly to its specification. Includes a collapsible static HTML `<table>` matrix fallback for screen readers and no-JS environments.
-3. **Recruiter / Engineer Reading Lens**
-   - Every case study header includes a `Reading as: Recruiter | Engineer` toggle persisted in `localStorage` and restored before first paint. Recruiter mode keeps the 60-second summary (metrics, problem, approach) and folds constraints, schematics, prose, and retrospectives behind a single button.
-4. **Proof-Linked Telemetry Strip & Linear-Style Keyboard Shortcuts**
-   - Each hero metric (`26M`, `25/25`, `-95%`, `35K`) links directly to the case study that proves it.
-   - Single-key and two-key sequences (`?` help dialog, `/` focus search demo, `G H` / `G W` / `G N` / `G A` / `G R` navigation, `T` theme, `C` copy email) work alongside the `⌘K` / `Ctrl+K` native `<dialog>` command palette (`src/components/CommandPalette.astro`).
-5. **Cross-Document View Transitions & Scroll-Driven Animations (`@supports`)**
-   - Native CSS `@view-transition { navigation: auto; }` morphs project cards into the Case Study header. Reading progress (`animation-timeline: scroll(root)`) and section reveals (`animation-timeline: view()`) are guarded by `@supports` and `@media (prefers-reduced-motion: no-preference)`.
+1. **Pac-Man — 26M-SKU Maze Console (`src/components/SearchDemo.astro` + `src/utils/sku-search.ts`)**
+   - Rebuilds the 4-tier part-number matcher (`Exact` → `Blinky Normalized` → `Inky Prefix` → `Pinky Fuzzy` → `Clyde Keyword`) inside a double-walled arcade maze cabinet with power-pellet sample chips and SSR zero-CLS first paint.
+2. **Super Mario World — Overworld 2D Latent Map & `[?]` Mystery Block (`src/components/EmbeddingMap.astro` + `src/pages/index.astro`)**
+   - Projects 18 projects, field manuals, and capabilities across 4 Overworld biomes with live `k=3` cosine-similarity dotted travel paths.
+   - Includes a playable riveted `[?]` Mystery Block on the Player 1 Hero Card that pops coins and dispenses 6 hidden production engineering notes.
+3. **Tetris — Interlocking Capability Well (`src/components/TetrisStack.astro`)**
+   - Packs 7 production engineering domains (`I`, `T`, `L`, `J`, `S`, `Z`, `O` Tetrominoes) into a 10×6 matrix well with interactive domain inspection and a playable **Hard Drop `I`-Piece** line-clear action.
+4. **The Legend of Zelda — Triforce Principles, Boss Key Reading Lens & 5-Relic Quest Log**
+   - Frames the 3 core architectural principles as the **Triforce of Wisdom, Courage & Power**, styles the Recruiter/Engineer deep-dive fold as a **Boss Key Door**, turns `/404.html` into the iconic `"IT'S A SECRET TO EVERYBODY."` cave room, and tracks **5 collectible retro relics** + optional WebAudio 8-bit chiptune SFX (`M`) and the Konami Code (`↑↑↓↓←→←→BA`).
 
 ---
 
@@ -60,40 +54,42 @@ Live production site: **[https://harsha6107.github.io](https://harsha6107.github
 │   ├── dependabot.yml              # Weekly automated npm & GitHub Actions updates
 │   └── workflows/deploy.yml        # Quality gates + GitHub Pages deployment
 ├── public/
-│   ├── favicon.svg                 # Monogram vector icon
+│   ├── favicon.svg                 # 16x16 pixel cartridge emblem
 │   ├── images/                     # Portfolio preview screenshots
-│   ├── resume/Harsha_Tummala.pdf   # Printable 1-page engineering résumé PDF
+│   ├── resume/Harsha_Tummala.pdf   # Printable engineering résumé PDF
 │   ├── robots.txt                  # Crawler directives + sitemap pointer
-│   └── scripts/embedding-map.js    # Lazy-loaded 4.49 KB UMAP k-NN island
+│   └── scripts/embedding-map.js    # Lazy-loaded Overworld 2D UMAP k-NN island
 ├── src/
-│   ├── assets/profile.jpg          # Source portrait optimized to AVIF/WebP via astro:assets
+│   ├── assets/profile.jpg          # Source portrait optimized to WebP via astro:assets
 │   ├── components/
 │   │   ├── ArchitectureDiagram.astro # 5 bespoke accessible SVG system schematics
-│   │   ├── CommandPalette.astro    # ⌘K native <dialog> command palette
-│   │   ├── EmbeddingMap.astro      # 2D UMAP Latent Space Explorer + static table fallback
-│   │   ├── ProjectCard.astro       # Container-queried spotlight card with View Transition tags
-│   │   └── SearchDemo.astro        # SSR + lazy-hydrated tiered part-number search console
+│   │   ├── CommandPalette.astro    # ⌘K Warp Whistle <dialog> command palette
+│   │   ├── EmbeddingMap.astro      # Overworld 2D UMAP Explorer + static ledger fallback
+│   │   ├── ProjectCard.astro       # Tactile 16-bit Game Pak stage card with View Transitions
+│   │   ├── RetroSprite.astro       # Crisp-edge 16x16 pixel-art SVG sprite library
+│   │   ├── SearchDemo.astro        # Pac-Man 26M SKU Maze Console (SSR + lazy hydration)
+│   │   └── TetrisStack.astro       # Interactive 10x6 Tetromino capability matrix & line clear
 │   ├── content/
-│   │   ├── site/main.json          # All bio, hero telemetry, search demo index, shortcuts & UI copy
+│   │   ├── site/main.json          # All bio, hero high scores, SKU demo index & UI copy
 │   │   ├── projects/*.mdx          # 5 production engineering case studies
-│   │   └── writing/*.mdx           # 4 technical architecture essays
+│   │   └── writing/*.mdx           # 4 technical architecture field manuals
 │   ├── content.config.ts           # Strict Zod schemas for projects, writing & site collections
-│   ├── layouts/BaseLayout.astro    # Semantic shell, SEO/JSON-LD, theme/audience init, shortcuts
+│   ├── layouts/BaseLayout.astro    # Arcade HUD, 5-Relic Quest Log, 8-bit WebAudio synth & shortcuts
 │   ├── pages/
-│   │   ├── index.astro             # Home: positioning, telemetry, search demo, projects, UMAP map
-│   │   ├── about.astro             # Philosophy, portrait, experience timeline, capability matrix
-│   │   ├── resume.astro            # Print-styled HTML specification + PDF download
-│   │   ├── 404.astro               # Telemetry fault page with recovery routes
+│   │   ├── index.astro             # Home: P1 card, [?] block, Pac-Search, Overworld & Tetris stack
+│   │   ├── about.astro             # Player 1 character sheet, campaign timeline & skill slots
+│   │   ├── resume.astro            # Official cartridge specification + clean print stylesheet
+│   │   ├── 404.astro               # Zelda "Secret Cave" fault room with Warp Whistle routes
 │   │   ├── rss.xml.ts              # RSS 2.0 feed for technical writing
-│   │   ├── og/[...slug].png.ts     # Build-time Satori + Resvg OpenGraph PNG generator
-│   │   ├── projects/               # Index + [slug].astro case study layout (Recruiter/Engineer lens)
-│   │   └── writing/                # Index + [slug].astro essay layout
-│   ├── scripts/search-demo.ts      # Lazy-loaded browser controller for the SKU search demo
-│   ├── styles/global.css           # Cascade layers, OKLCH tokens, fluid type, print & motion rules
+│   │   ├── og/[...slug].png.ts     # Build-time Satori + Resvg Game Pak OpenGraph PNG generator
+│   │   ├── projects/               # World Select + [slug].astro Boss Key case study layout
+│   │   └── writing/                # Field Manuals archive + [slug].astro scroll layout
+│   ├── scripts/search-demo.ts      # Browser controller for the Pac-Search SKU maze
+│   ├── styles/global.css           # Cascade layers, Midnight Arcade & Famicom Manual tokens
 │   └── utils/sku-search.ts         # Pure Exact/Normalized/Prefix/Fuzzy/Keyword matcher
 └── tests/
     ├── check-bundle-size.mjs       # Enforces <50 KB home JS & <30 KB signature island
-    ├── portfolio.spec.ts           # 29 Playwright + Axe WCAG 2.2 AA, viewport & interaction tests
+    ├── portfolio.spec.ts           # 32 Playwright + Axe WCAG 2.2 AA, viewport & retro UX tests
     └── serve-dist.mjs              # Zero-dependency static server for CI testing
 ```
 

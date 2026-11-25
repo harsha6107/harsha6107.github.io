@@ -1,7 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <rect width="64" height="64" rx="12" fill="#141519"/>
-  <rect x="2" y="2" width="60" height="60" rx="10" stroke="#D97736" stroke-opacity="0.38" stroke-width="1.5"/>
-  <path d="M16 18V46M29 18V46M16 32H29" stroke="#F4F2ED" stroke-width="4" stroke-linecap="square"/>
-  <path d="M36 22H50M43 22V46" stroke="#D97736" stroke-width="4" stroke-linecap="square"/>
-  <circle cx="51" cy="44" r="3" fill="#D97736"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <rect x="1" y="1" width="14" height="14" fill="#0B0E1A" />
+  <path d="M2 1h12v1H2V1zm0 13h12v1H2v-1zM1 2h1v12H1V2zm13 0h1v12h-1V2z" fill="#FFD23F" />
+  <rect x="2" y="2" width="12" height="12" fill="#161C33" />
+  <path d="M2 2h12v1H3v11H2V2z" fill="#2D3860" />
+  <!-- Pixel H -->
+  <path d="M3 4h2v8H3V4zm4 0h2v8H7V4zM5 7h2v2H5V7z" fill="#F6F4EB" />
+  <!-- Pixel T in Arcade Gold -->
+  <path d="M10 4h4v2h-1v6h-2V6h-1V4z" fill="#FFD23F" />
 </svg>

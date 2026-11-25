@@ -1,5 +1,6 @@
 ---
 import { type CollectionEntry, render } from 'astro:content';
+import RetroSprite from '../../components/RetroSprite.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getSortedWriting } from '../../utils/content';
 
@@ -29,17 +30,20 @@ const { Content } = await render(post);
 >
   <article class="section" style="border-bottom: none;">
     <div class="container">
-      <nav aria-label="Breadcrumb" class="mono" style="font-size: var(--text-xs); color: var(--text-muted); margin-bottom: var(--space-5);">
-        <a href="/">Home</a>
+      <nav aria-label="Breadcrumb" class="pixel" style="font-size: 0.68rem; color: var(--text-muted); margin-bottom: var(--space-5);">
+        <a href="/">OVERWORLD</a>
         <span aria-hidden="true"> / </span>
-        <a href="/writing">Writing</a>
+        <a href="/writing">FIELD LOGS</a>
         <span aria-hidden="true"> / </span>
-        <span style="color: var(--accent);">{data.category}</span>
+        <span style="color: var(--accent);">{data.category.toUpperCase()}</span>
       </nav>
 
-      <header style="max-width: var(--measure-prose); padding-bottom: var(--space-6); border-bottom: 1px solid var(--border-subtle);">
+      <header class="cartridge-card" style="max-width: 50rem;">
         <div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);" class="mono">
-          <span class="metric-chip">{data.category}</span>
+          <span class="metric-chip">
+            <RetroSprite name="scroll" size={14} />
+            <span>{data.category}</span>
+          </span>
           <time datetime={data.pubDate.toISOString()} style="font-size: var(--text-xs); color: var(--text-muted);">
             {data.pubDate.toLocaleDateString('en-US', {
               year: 'numeric',
@@ -65,17 +69,17 @@ const { Content } = await render(post);
         </ul>
       </header>
 
-      <div class="prose" style="margin-top: var(--space-6);">
+      <div class="prose" style="margin-top: var(--space-7);">
         <Content />
       </div>
 
-      <footer style="max-width: var(--measure-prose); margin-top: var(--space-8); padding-top: var(--space-5); border-top: 1px solid var(--border-subtle); display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-3);">
+      <footer style="max-width: var(--measure-prose); margin-top: var(--space-8); padding-top: var(--space-5); border-top: 2px solid var(--border-subtle); display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-3);">
         <a href="/writing" class="btn">
           <span aria-hidden="true" class="mono">←</span>
-          <span>All Technical Writing</span>
+          <span>All Field Manuals</span>
         </a>
-        <a href="/projects" class="btn">
-          <span>Explore Related Case Studies</span>
+        <a href="/projects" class="btn btn-primary">
+          <span>Explore World Stages</span>
           <span aria-hidden="true" class="mono">→</span>
         </a>
       </footer>

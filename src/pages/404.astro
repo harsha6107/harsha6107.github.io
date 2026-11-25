@@ -1,4 +1,5 @@
 ---
+import RetroSprite from '../components/RetroSprite.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getSiteData, getSortedProjects } from '../utils/content';
 
@@ -7,32 +8,39 @@ const projects = await getSortedProjects();
 ---
 
 <BaseLayout
-  title="404 — Vector Out of Bounds"
+  title="404 — Lost Woods Secret Cave"
   description={site.ui.notFoundBody}
 >
-  <section class="section" style="border-bottom: none; min-height: 68dvh; display: flex; align-items: center;">
+  <section class="section" style="border-bottom: none; min-height: 70dvh; display: flex; align-items: center;">
     <div class="container">
-      <div class="spotlight-card" style="max-width: 46rem; padding: clamp(1.75rem, 4vw, 3rem);">
-        <span class="mono" style="font-size: var(--text-xs); color: var(--accent); font-weight: 700;">
-          HTTP 404 // {site.ui.notFoundCode}
+      <div class="cartridge-card cave-room" style="max-width: 48rem; margin-inline: auto;">
+        <div class="cave-torches" aria-hidden="true">
+          <RetroSprite name="flame" size={28} />
+          <span class="pixel cave-quote">"IT'S A SECRET TO EVERYBODY."</span>
+          <RetroSprite name="flame" size={28} />
+        </div>
+
+        <span class="pixel" style="font-size: 0.7rem; color: var(--accent); display: block; margin-top: var(--space-4);">
+          HTTP 404 // LOST WOODS · OUT OF BOUNDS
         </span>
 
-        <h1 style="margin-top: var(--space-3); font-size: var(--text-2xl);">
+        <h1 style="margin-top: var(--space-2); font-size: var(--text-2xl);">
           {site.ui.notFoundTitle}
         </h1>
 
         <p style="margin-top: var(--space-3);">
-          {site.ui.notFoundBody}
+          You wandered off the Overworld path. Grab a Warp Whistle below or press <kbd class="kbd-badge">⌘K</kbd> to return to cleared production stages.
         </p>
 
-        <div style="margin-top: var(--space-5); padding: var(--space-3) var(--space-4); border-radius: var(--radius-sm); background-color: var(--bg-subtle); border: 1px solid var(--border-subtle);" class="mono">
-          <span style="font-size: var(--text-xs); color: var(--text-muted);">
-            nearest_neighbors(query_uri, k=3) →
+        <div class="warp-box mono">
+          <span class="pixel" style="font-size: 0.66rem; color: var(--accent);">
+            WARP WHISTLE DESTINATIONS (k=3) →
           </span>
           <ul style="list-style: none; margin-top: var(--space-2); display: grid; gap: 8px; font-size: var(--text-xs);">
             {projects.slice(0, 3).map((p) => (
-              <li style="min-height: 26px; display: flex; align-items: center; flex-wrap: wrap; gap: 4px;">
-                <a href={`/projects/${p.data.slug}`} style="font-weight: 600; min-height: 26px; display: inline-flex; align-items: center;">
+              <li style="min-height: 28px; display: flex; align-items: center; flex-wrap: wrap; gap: 6px;">
+                <RetroSprite name="super-star" size={13} />
+                <a href={`/projects/${p.data.slug}`} style="font-weight: 700; min-height: 26px; display: inline-flex; align-items: center;">
                   /projects/{p.data.slug}
                 </a>
                 <span style="color: var(--text-muted);"> — {p.data.headlineMetric}</span>
@@ -43,14 +51,45 @@ const projects = await getSortedProjects();
 
         <div style="display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5);">
           <a href="/" class="btn btn-primary">
-            <span>{site.ui.notFoundCta}</span>
+            <span class="pixel" style="font-size: 0.72rem;">▶ WARP TO OVERWORLD</span>
             <span aria-hidden="true" class="mono">→</span>
           </a>
           <a href="/projects" class="btn">
-            <span>All Case Studies</span>
+            <span>All 5 World Stages</span>
           </a>
         </div>
       </div>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .cave-room {
+    padding: clamp(1.75rem, 4vw, 2.75rem);
+  }
+
+  .cave-torches {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--bg-subtle);
+    border: 2px solid var(--border-strong);
+    border-radius: var(--radius-xs);
+  }
+
+  .cave-quote {
+    font-size: clamp(0.68rem, 1.5vw, 0.85rem);
+    color: var(--text-primary);
+    text-align: center;
+  }
+
+  .warp-box {
+    margin-top: var(--space-5);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-xs);
+    background-color: var(--bg-subtle);
+    border: 2px solid var(--border-strong);
+  }
+</style>

@@ -1,7 +1,9 @@
 ---
 import EmbeddingMap from '../components/EmbeddingMap.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import RetroSprite from '../components/RetroSprite.astro';
 import SearchDemo from '../components/SearchDemo.astro';
+import TetrisStack from '../components/TetrisStack.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getSiteData, getSortedProjects, getSortedWriting } from '../utils/content';
 
@@ -9,86 +11,187 @@ const site = await getSiteData();
 const allProjects = await getSortedProjects();
 const featuredProjects = allProjects.filter((p) => p.data.featured).slice(0, 4);
 const posts = await getSortedWriting();
+
+const mysteryFacts = [
+  'SECRET #1: Built a native ~$40/mo transactional-outbox workflow engine—avoiding a ~$50K/yr n8n license and a 2026 RCE.',
+  'SECRET #2: Cut Elasticsearch facet aggregations from 100,000 → 500 buckets (-99.5%) while fixing 6 silent sync defects across 26M SKUs.',
+  'SECRET #3: Deduplicated ~400K product attachment rows down to ~29K unique files before indexing 28 GB (~35K docs) into Azure AI Search (~98% success).',
+  'SECRET #4: Shipped a stateless 36-tool OAuth 2.1 MCP server (156 tests, endpoint-matched permissions, audited user-confirmed writes) for Claude, ChatGPT & VS Code.',
+  'SECRET #5: Streamed 436 SQL Server tables to 2 Snowflakes (2 consumers on shared AKS Kafka) + 74 tables from a 2nd DB via a 3rd consumer, cutting compute spend ~95%.',
+  'SECRET #6: Scaled Adrich IoT at Carnegie Mellon 250x (20K → 5M embedded chips) while cutting assembly costs 60%.',
+];
+
+const scoreMeta: {
+  tag: string;
+  sprite: 'pacman' | 'triforce' | 'warp-pipe' | 'tetromino-t';
+}[] = [
+  { tag: '1UP · PAC-SEARCH', sprite: 'pacman' },
+  { tag: 'QUEST · AI & MCP', sprite: 'triforce' },
+  { tag: 'WARP · CDC SPEND', sprite: 'warp-pipe' },
+  { tag: 'CLEAR · SPEC RAG', sprite: 'tetromino-t' },
+];
+
+const triforceNames = ['WISDOM // DATA FIRST', 'COURAGE // SAFE AGENTS', 'POWER // HARD METRICS'];
 ---
 
 <BaseLayout
   description={site.positioningHeadline}
   ogImage="/og/default.png"
 >
-  <!-- Positioning Hero Section -->
+  <!-- PLAYER 1 SELECT & QUEST BRIEFING HERO -->
   <section class="section hero-section" aria-labelledby="hero-heading">
     <div class="container">
-      <div class="hero-meta mono">
-        <span class="status-pill">
-          <span class="status-dot" aria-hidden="true"></span>
-          <span>{site.availability}</span>
-        </span>
-        <span class="text-muted">{site.location} · {site.tagline}</span>
-      </div>
+      <div class="hero-grid">
+        <!-- Left Column: Positioning & Tactile Controls -->
+        <div class="hero-copy">
+          <div class="quest-status-box">
+            <RetroSprite name="rupee" size={16} />
+            <span class="quest-status-text">{site.availability}</span>
+          </div>
 
-      <h1 id="hero-heading" class="hero-headline">
-        {site.positioningHeadline}
-      </h1>
+          <p class="pixel hero-eyebrow">
+            {site.location.toUpperCase()} · {site.tagline.toUpperCase()}
+          </p>
 
-      <p class="hero-subhead">
-        {site.positioningSubhead}
-      </p>
+          <h1 id="hero-heading" class="hero-headline">
+            {site.positioningHeadline}
+          </h1>
 
-      <div class="hero-cta-row">
-        <a href="#selected-work" class="btn btn-primary">
-          <span>Explore Case Studies</span>
-          <span aria-hidden="true" class="mono">↓</span>
-        </a>
-        <a href={site.links.resumePdf} class="btn" download>
-          <span>Résumé PDF</span>
-          <span aria-hidden="true" class="mono">↗</span>
-        </a>
-        <button
-          type="button"
-          class="btn"
-          data-copy-email={site.email}
-          data-copy-feedback={site.ui.copiedEmailFeedback}
-        >
-          <span class="mono">{site.email}</span>
-          <span class="kbd-badge">Copy</span>
-        </button>
-      </div>
+          <p class="hero-subhead">
+            {site.positioningSubhead}
+          </p>
 
-      <!-- Production Telemetry Strip: every number links to its proof -->
-      <ul class="telemetry-strip" aria-label="Production engineering impact metrics">
-        {site.heroStats.map((stat, idx) => (
-          <li class="telemetry-item">
-            <a href={stat.href} class="telemetry-cell">
-              <span class="mono telemetry-index" aria-hidden="true">
-                0{idx + 1} // TELEMETRY
-              </span>
-              <span class="telemetry-value mono" data-count-value={stat.value}>{stat.value}</span>
-              <span class="telemetry-label">{stat.label}</span>
-              <span class="telemetry-context">{stat.context}</span>
-              <span class="telemetry-proof mono" aria-hidden="true">
-                {site.ui.telemetryProofLabel} <span class="telemetry-arrow">→</span>
-              </span>
+          <div class="hero-cta-row">
+            <a href="#selected-work" class="btn btn-primary">
+              <span class="pixel" style="font-size: 0.75rem;">▶ START: EXPLORE WORLDS</span>
+              <span aria-hidden="true" class="mono">↓</span>
             </a>
-          </li>
-        ))}
+            <a href={site.links.resumePdf} class="btn" download>
+              <RetroSprite name="cartridge" size={15} />
+              <span>Save File (PDF)</span>
+            </a>
+            <button
+              type="button"
+              class="btn"
+              data-copy-email={site.email}
+              data-copy-feedback={site.ui.copiedEmailFeedback}
+            >
+              <span class="mono">{site.email}</span>
+              <span class="kbd-badge">Copy</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Player 1 Cartridge Sheet + Interactive Super Mario [?] Block -->
+        <aside class="p1-card cartridge-card" aria-label="Player 1 engineering character card">
+          <div class="p1-topbar pixel">
+            <span>PLAYER 1 · SAVE SLOT A</span>
+            <div class="p1-hearts" role="img" aria-label="5 of 5 heart containers">
+              <RetroSprite name="heart" size={14} />
+              <RetroSprite name="heart" size={14} />
+              <RetroSprite name="heart" size={14} />
+              <RetroSprite name="heart" size={14} />
+              <RetroSprite name="heart" size={14} />
+            </div>
+          </div>
+
+          <div class="p1-identity">
+            <div>
+              <p class="pixel" style="font-size: 0.68rem; color: var(--accent);">
+                LV.05 · {site.role.toUpperCase()}
+              </p>
+              <p style="font-size: var(--text-lg); font-weight: 700; color: var(--text-primary); margin-top: 2px;">
+                {site.name}
+              </p>
+              <p class="mono" style="font-size: var(--text-xs); color: var(--text-muted); margin-top: 2px;">
+                eParts Services · Ex-BlackRock · CMU MSE (3.87)
+              </p>
+            </div>
+
+            <div class="p1-coins pixel" title="Coins earned from hitting the Mystery Block">
+              <RetroSprite name="coin" size={16} />
+              <span>×<span data-coin-counter>00</span></span>
+            </div>
+          </div>
+
+          <ul class="p1-loadout" aria-label="Equipped production systems">
+            <li>
+              <RetroSprite name="pacman" size={15} />
+              <span><strong>Pac-Ranker:</strong> 26M SKUs · 4-Tier Match</span>
+            </li>
+            <li>
+              <RetroSprite name="triforce" size={15} />
+              <span><strong>ReBAC Shield:</strong> 42 Foundry + 36 MCP Tools</span>
+            </li>
+            <li>
+              <RetroSprite name="warp-pipe" size={15} />
+              <span><strong>Warp CDC:</strong> 436+74 Tables · -95% Spend</span>
+            </li>
+            <li>
+              <RetroSprite name="tetromino-t" size={15} />
+              <span><strong>Polyomino ML:</strong> ~35K RAG Docs · 21 ms ETIM</span>
+            </li>
+          </ul>
+
+          <div class="mystery-box">
+            <button
+              type="button"
+              class="mystery-trigger"
+              data-mystery-block
+              data-facts={JSON.stringify(mysteryFacts)}
+              aria-label="Hit the Mystery Question Block to dispense a production engineering secret"
+            >
+              <RetroSprite name="question-block" size={28} />
+              <span class="pixel">HIT [?]</span>
+            </button>
+            <p class="mystery-readout mono" data-mystery-fact aria-live="polite">
+              Hit the [?] Block to pop a coin &amp; reveal hidden production architecture notes.
+            </p>
+          </div>
+        </aside>
+      </div>
+
+      <!-- 4-GAME ARCADE HIGH-SCORE TELEMETRY STRIP -->
+      <ul class="telemetry-strip" aria-label="Production engineering high scores">
+        {site.heroStats.map((stat, idx) => {
+          const meta = scoreMeta[idx] ?? { tag: `STAGE 0${idx + 1}`, sprite: 'super-star' as const };
+          return (
+            <li class="telemetry-item">
+              <a href={stat.href} class="telemetry-cell">
+                <span class="pixel telemetry-index">
+                  <RetroSprite name={meta.sprite} size={15} />
+                  <span>{meta.tag}</span>
+                </span>
+                <span class="telemetry-value pixel" data-count-value={stat.value}>{stat.value}</span>
+                <span class="telemetry-label">{stat.label}</span>
+                <span class="telemetry-context">{stat.context}</span>
+                <span class="telemetry-proof pixel" aria-hidden="true">
+                  ▶ {site.ui.telemetryProofLabel} <span class="telemetry-arrow">→</span>
+                </span>
+              </a>
+            </li>
+          );
+        })}
       </ul>
     </div>
   </section>
 
+  <!-- STAGE 01: PAC-MAN PART-NUMBER MAZE -->
   <SearchDemo demo={site.searchDemo} />
 
-  <!-- 01 / Selected Projects -->
+  <!-- STAGE 02: SUPER MARIO WORLD CASE STUDY CARTRIDGES -->
   <section id="selected-work" class="section" aria-labelledby="work-heading">
     <div class="container cq-grid">
       <div class="section-header">
         <div>
-          <span class="section-index">{site.ui.selectedWorkIndex}</span>
+          <span class="section-index">STAGE 02 // WORLD SELECT (CASE STUDIES)</span>
           <h2 id="work-heading" style="margin-top: var(--space-2);">
             {site.ui.selectedWorkTitle}
           </h2>
           <p style="margin-top: var(--space-2);">{site.ui.selectedWorkSub}</p>
         </div>
         <a href="/projects" class="btn">
+          <RetroSprite name="cartridge" size={15} />
           <span>{site.ui.viewAllProjects}</span>
           <span aria-hidden="true" class="mono">→</span>
         </a>
@@ -106,7 +209,7 @@ const posts = await getSortedWriting();
     </div>
   </section>
 
-  <!-- 02 / Signature ML Moment: 2D UMAP Embedding Map -->
+  <!-- STAGE 03: SUPER MARIO WORLD 2D UMAP OVERWORLD MAP -->
   <EmbeddingMap
     projects={allProjects}
     posts={posts}
@@ -116,32 +219,38 @@ const posts = await getSortedWriting();
     subtitle={site.ui.latentSpaceSub}
   />
 
-  <!-- 03 / Recent Technical Writing -->
+  <!-- STAGE 04: TETRIS INTERLOCKING CAPABILITY WELL -->
+  <TetrisStack />
+
+  <!-- STAGE 05: STRATEGY SCROLLS / TECHNICAL WRITING -->
   <section id="writing" class="section scroll-reveal" aria-labelledby="writing-heading">
     <div class="container">
       <div class="section-header">
         <div>
-          <span class="section-index">{site.ui.writingIndex}</span>
+          <span class="section-index">STAGE 05 // STRATEGY GUIDES &amp; FIELD LOGS</span>
           <h2 id="writing-heading" style="margin-top: var(--space-2);">
             {site.ui.writingTitle}
           </h2>
           <p style="margin-top: var(--space-2);">{site.ui.writingSub}</p>
         </div>
         <a href="/writing" class="btn">
+          <RetroSprite name="scroll" size={15} />
           <span>{site.ui.viewAllWriting}</span>
           <span aria-hidden="true" class="mono">→</span>
         </a>
       </div>
 
       <div class="writing-grid">
-        {posts.map((post) => (
-          <article class="spotlight-card writing-card">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap;" class="mono">
-              <span style="font-size: var(--text-xs); color: var(--accent); font-weight: 600;">
-                {post.data.category}
+        {posts.map((post, idx) => (
+          <article class="cartridge-card writing-card">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap;">
+              <span class="pixel" style="font-size: 0.68rem; color: var(--accent); display: inline-flex; align-items: center; gap: 6px;">
+                <RetroSprite name="scroll" size={14} />
+                <span>LOG 0{idx + 1} · {post.data.category.toUpperCase()}</span>
               </span>
               <time
                 datetime={post.data.pubDate.toISOString()}
+                class="mono"
                 style="font-size: var(--text-xs); color: var(--text-muted);"
               >
                 {post.data.pubDate.toLocaleDateString('en-US', {
@@ -162,7 +271,7 @@ const posts = await getSortedWriting();
               {post.data.summary}
             </p>
 
-            <ul class="tag-list" style="margin-top: var(--space-4);" aria-label="Article tags">
+            <ul class="tag-list" style="margin-top: auto; padding-top: var(--space-4);" aria-label="Article tags">
               {post.data.tags.map((tag) => (
                 <li class="tag">{tag}</li>
               ))}
@@ -173,42 +282,62 @@ const posts = await getSortedWriting();
     </div>
   </section>
 
-  <!-- 04 / Short About & Architectural Principles -->
+  <!-- STAGE 06: ZELDA TRIFORCE OF PRODUCTION SYSTEMS -->
   <section id="about-preview" class="section scroll-reveal" aria-labelledby="about-heading">
     <div class="container">
       <div class="section-header">
         <div>
-          <span class="section-index">{site.ui.aboutIndex}</span>
+          <span class="section-index">STAGE 06 // LORE &amp; THE TRIFORCE TENETS</span>
           <h2 id="about-heading" style="margin-top: var(--space-2);">
             {site.ui.aboutTitle}
           </h2>
         </div>
         <a href="/about" class="btn">
-          <span>Full Experience &amp; Timeline</span>
+          <span>Character Sheet &amp; Quest Timeline</span>
           <span aria-hidden="true" class="mono">→</span>
         </a>
       </div>
 
       <div class="about-split">
-        <div style="display: flex; flex-direction: column; gap: var(--space-4);">
-          {site.aboutShort.map((para) => (
-            <p style="font-size: var(--text-lg); color: var(--text-primary); line-height: 1.65;">
-              {para}
-            </p>
-          ))}
-          <div style="display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-2);">
-            <a href="/about" class="btn">About &amp; Experience</a>
-            <a href="/resume" class="btn">Interactive Résumé</a>
+        <div class="lore-panel cartridge-card">
+          <div class="triforce-crest" aria-hidden="true">
+            <svg width="64" height="56" viewBox="0 0 64 56" fill="none">
+              <polygon points="32,2 47,28 17,28" fill="#FFD23F" stroke="#141724" stroke-width="2.5" />
+              <polygon points="17,28 32,54 2,54" fill="#FFD23F" stroke="#141724" stroke-width="2.5" />
+              <polygon points="47,28 62,54 32,54" fill="#FFD23F" stroke="#141724" stroke-width="2.5" />
+            </svg>
+            <div>
+              <span class="pixel" style="font-size: 0.7rem; color: var(--accent);">
+                ORIGIN &amp; GUILD RECORD
+              </span>
+              <p class="mono" style="font-size: var(--text-xs); color: var(--text-muted); margin-top: 2px;">
+                CMU MSE · BlackRock Aladdin · eParts Peregrin
+              </p>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: var(--space-4); margin-top: var(--space-4);">
+            {site.aboutShort.map((para) => (
+              <p style="font-size: var(--text-base); color: var(--text-primary); line-height: 1.68;">
+                {para}
+              </p>
+            ))}
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5);">
+            <a href="/about" class="btn btn-primary">Player Lore &amp; Timeline</a>
+            <a href="/resume" class="btn">Official Save File (Résumé)</a>
           </div>
         </div>
 
         <div class="principles-list">
-          {site.engineeringPrinciples.map((p) => (
-            <div class="principle-item">
-              <span class="mono" style="font-size: var(--text-xs); color: var(--accent); font-weight: 700;">
-                PRINCIPLE // {p.index}
+          {site.engineeringPrinciples.map((p, idx) => (
+            <div class="principle-item cartridge-card">
+              <span class="pixel" style="font-size: 0.68rem; color: var(--accent); display: inline-flex; align-items: center; gap: 6px;">
+                <RetroSprite name="triforce" size={14} />
+                <span>TRIFORCE {p.index} · {triforceNames[idx] ?? 'TENET'}</span>
               </span>
-              <h3 style="font-size: var(--text-base); margin-top: var(--space-1);">
+              <h3 style="font-size: var(--text-base); margin-top: var(--space-2);">
                 {p.title}
               </h3>
               <p style="font-size: var(--text-sm); margin-top: var(--space-1);">
@@ -221,12 +350,16 @@ const posts = await getSortedWriting();
     </div>
   </section>
 
-  <!-- 05 / Contact Channel -->
+  <!-- CONTINUE SCREEN / DIRECT COMMS -->
   <section id="contact" class="section scroll-reveal" style="border-bottom: none;" aria-labelledby="contact-heading">
     <div class="container">
-      <div class="spotlight-card" style="padding: clamp(1.75rem, 4vw, 3rem);">
-        <span class="section-index">{site.ui.contactIndex}</span>
-        <h2 id="contact-heading" style="margin-top: var(--space-2);">
+      <div class="cartridge-card continue-card">
+        <div class="continue-top pixel">
+          <span><RetroSprite name="coin" size={15} /> READY PLAYER TWO? // DIRECT COMMS</span>
+          <span>CREDITS: ∞</span>
+        </div>
+
+        <h2 id="contact-heading" style="margin-top: var(--space-3);">
           {site.ui.contactTitle}
         </h2>
         <p style="margin-top: var(--space-2); font-size: var(--text-lg);">
@@ -241,7 +374,7 @@ const posts = await getSortedWriting();
             data-copy-feedback={site.ui.copiedEmailFeedback}
           >
             <span class="mono">{site.email}</span>
-            <span>(Click to Copy)</span>
+            <span class="pixel" style="font-size: 0.68rem;">[COPY]</span>
           </button>
           <a href={`mailto:${site.email}`} class="btn">
             <span>Open Mail Client</span>
@@ -263,47 +396,59 @@ const posts = await getSortedWriting();
 
 <style>
   .hero-section {
-    padding-top: clamp(2.5rem, 6vw, 5rem);
+    padding-top: clamp(2rem, 4.5vw, 3.75rem);
   }
 
-  .hero-meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-3);
-    font-size: var(--text-xs);
-    margin-bottom: var(--space-5);
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: start;
   }
 
-  .status-pill {
+  @media (min-width: 62rem) {
+    .hero-grid {
+      grid-template-columns: 1.32fr 1fr;
+      gap: var(--space-7);
+    }
+  }
+
+  .quest-status-box {
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    padding: 0.25rem 0.65rem;
-    border-radius: var(--radius-pill);
+    padding: 0.35rem 0.7rem;
     background-color: var(--status-ok-bg);
     color: var(--status-ok);
-    font-weight: 600;
+    border: 2px solid var(--border-strong);
+    box-shadow: var(--shadow-xs);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    max-width: 100%;
   }
 
-  .status-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background-color: var(--status-ok);
+  .quest-status-text {
+    line-height: 1.35;
+  }
+
+  .hero-eyebrow {
+    margin-top: var(--space-4);
+    font-size: 0.7rem;
+    color: var(--text-muted);
   }
 
   .hero-headline {
+    margin-top: var(--space-3);
     font-size: var(--text-display);
     max-width: 24ch;
-    line-height: 1.1;
-    letter-spacing: -0.035em;
+    line-height: 1.12;
+    letter-spacing: -0.028em;
   }
 
   .hero-subhead {
-    margin-top: var(--space-5);
+    margin-top: var(--space-4);
     font-size: var(--text-lg);
-    max-width: 62ch;
+    max-width: 60ch;
     color: var(--text-secondary);
   }
 
@@ -312,93 +457,175 @@ const posts = await getSortedWriting();
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-3);
-    margin-top: var(--space-6);
+    margin-top: var(--space-5);
   }
 
-  .telemetry-strip {
-    margin-top: var(--space-8);
+  /* Player 1 Cartridge Card + Super Mario [?] Block */
+  .p1-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding-top: 0;
+  }
+
+  .p1-topbar {
+    margin-inline: calc(-1 * clamp(1rem, 3vw, 1.85rem));
+    padding: 0.5rem clamp(1rem, 3vw, 1.85rem);
+    background-color: var(--bg-subtle);
+    border-bottom: 2px solid var(--border-strong);
+    border-top: 4px solid var(--retro-gold-fill);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    font-size: 0.66rem;
+    color: var(--text-secondary);
+  }
+
+  .p1-hearts {
+    display: inline-flex;
+    gap: 3px;
+  }
+
+  .p1-identity {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-top: var(--space-1);
+  }
+
+  .p1-coins {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0.25rem 0.55rem;
+    background-color: var(--bg-subtle);
+    border: 1.5px solid var(--border-strong);
+    box-shadow: 2px 2px 0 var(--shadow-color);
+    font-size: 0.75rem;
+    color: var(--text-primary);
+    flex-shrink: 0;
+  }
+
+  .p1-loadout {
+    list-style: none;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    background-color: var(--bg-surface);
-    overflow: hidden;
+    gap: 0.45rem;
+    padding: var(--space-3);
+    background-color: var(--bg-subtle);
+    border: 1.5px solid var(--border-subtle);
+    border-radius: var(--radius-xs);
+    font-size: var(--text-xs);
+  }
+
+  .p1-loadout li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-secondary);
+    max-width: none;
+  }
+
+  .p1-loadout strong {
+    color: var(--text-primary);
+  }
+
+  .mystery-box {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background-color: var(--accent-subtle);
+    border: 2px dashed var(--border-strong);
+    border-radius: var(--radius-xs);
+  }
+
+  .mystery-trigger {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 4.2rem;
+    padding: 0.4rem 0.5rem;
+    background-color: #f5b800;
+    color: #141724;
+    border: 2px solid #141724;
+    border-radius: var(--radius-xs);
+    box-shadow: 3px 3px 0 #141724;
+    cursor: pointer;
+    font-size: 0.62rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    transition:
+      transform var(--duration-fast) var(--ease-spring),
+      box-shadow var(--duration-fast) var(--ease-out);
+  }
+
+  .mystery-trigger:hover {
+    transform: translateY(-2px);
+    box-shadow: 4px 5px 0 #141724;
+  }
+
+  .mystery-trigger:active,
+  .mystery-trigger[data-bouncing="true"] {
+    transform: translateY(-8px) scale(1.05);
+  }
+
+  .mystery-readout {
+    font-size: var(--text-xs);
+    color: var(--accent-ink);
+    line-height: 1.42;
+    min-height: 3.3em;
+    display: flex;
+    align-items: center;
+  }
+
+  /* 4-Game High Score Telemetry Strip */
+  .telemetry-strip {
+    margin-top: var(--space-7);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14.5rem), 1fr));
+    gap: var(--space-4);
     list-style: none;
   }
 
   .telemetry-item {
     max-width: none;
     display: flex;
-    border-bottom: 1px solid var(--border-subtle);
-    border-right: 1px solid var(--border-subtle);
   }
 
   .telemetry-cell {
-    position: relative;
-    overflow: hidden;
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding: var(--space-4) var(--space-5);
+    gap: 5px;
+    padding: var(--space-4);
+    background-color: var(--bg-surface);
+    border: 2px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--bevel-highlight), var(--shadow-sm);
     text-decoration: none;
     color: inherit;
     transition:
-      background-color var(--duration-fast) var(--ease-out),
-      transform var(--duration-base) var(--ease-spring);
-  }
-
-  @media (min-width: 48rem) {
-    .telemetry-cell::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(
-        280px circle at var(--spot-x, 50%) var(--spot-y, 50%),
-        var(--spotlight-fill),
-        transparent 65%
-      );
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity var(--duration-base) var(--ease-out);
-    }
-
-    .telemetry-cell::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 2.5px;
-      background-color: var(--accent);
-      transform: scaleX(0);
-      transform-origin: left center;
-      transition: transform var(--duration-base) var(--ease-spring);
-    }
-
-    .telemetry-cell:hover::before,
-    .telemetry-cell:focus-visible::before {
-      opacity: 1;
-    }
-
-    .telemetry-cell:hover::after,
-    .telemetry-cell:focus-visible::after {
-      transform: scaleX(1);
-    }
+      transform var(--duration-base) var(--ease-spring),
+      border-color var(--duration-fast) var(--ease-out),
+      box-shadow var(--duration-fast) var(--ease-out);
   }
 
   .telemetry-cell:hover {
-    background-color: var(--bg-subtle);
+    border-color: var(--accent);
+    transform: translate(-2px, -3px);
+    box-shadow: var(--bevel-highlight), var(--shadow-md);
     color: inherit;
-    transform: translateY(-2px);
-  }
-
-  .telemetry-cell:focus-visible {
-    outline-offset: -3px;
   }
 
   .telemetry-index {
-    font-size: 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.66rem;
     color: var(--text-muted);
   }
 
@@ -406,8 +633,7 @@ const posts = await getSortedWriting();
     font-size: var(--text-2xl);
     font-weight: 700;
     color: var(--text-primary);
-    letter-spacing: -0.03em;
-    margin-top: 2px;
+    margin-top: 4px;
     transition: color var(--duration-fast) var(--ease-out);
   }
 
@@ -417,21 +643,20 @@ const posts = await getSortedWriting();
 
   .telemetry-label {
     font-size: var(--text-sm);
-    font-weight: 600;
+    font-weight: 700;
     color: var(--accent);
   }
 
   .telemetry-context {
     font-size: var(--text-xs);
     color: var(--text-muted);
-    line-height: 1.4;
+    line-height: 1.42;
   }
 
   .telemetry-proof {
     margin-top: auto;
     padding-top: var(--space-3);
-    font-size: var(--text-xs);
-    font-weight: 600;
+    font-size: 0.68rem;
     color: var(--text-secondary);
   }
 
@@ -469,14 +694,22 @@ const posts = await getSortedWriting();
   .about-split {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-7);
+    gap: var(--space-6);
   }
 
   @media (min-width: 56rem) {
     .about-split {
-      grid-template-columns: 1.15fr 1fr;
+      grid-template-columns: 1.12fr 1fr;
       align-items: start;
     }
+  }
+
+  .triforce-crest {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding-bottom: var(--space-4);
+    border-bottom: 2px dashed var(--border-subtle);
   }
 
   .principles-list {
@@ -486,43 +719,28 @@ const posts = await getSortedWriting();
   }
 
   .principle-item {
-    position: relative;
-    overflow: hidden;
-    padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
-    border-radius: var(--radius-sm);
-    background-color: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
-    border-left: 3px solid var(--accent);
-    transition:
-      transform var(--duration-base) var(--ease-spring),
-      border-color var(--duration-base) var(--ease-out),
-      box-shadow var(--duration-base) var(--ease-out);
+    border-left: 5px solid var(--retro-gold-fill);
   }
 
-  @media (min-width: 48rem) {
-    .principle-item::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(
-        320px circle at var(--spot-x, 50%) var(--spot-y, 50%),
-        var(--spotlight-fill),
-        transparent 65%
-      );
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity var(--duration-base) var(--ease-out);
-    }
-
-    .principle-item:hover::before {
-      opacity: 1;
-    }
+  .continue-card {
+    padding: clamp(1.5rem, 4vw, 2.5rem);
   }
 
-  .principle-item:hover {
-    transform: translateX(4px);
-    border-color: var(--border-strong);
-    border-left-color: var(--accent);
-    box-shadow: var(--shadow-sm);
+  .continue-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding-bottom: var(--space-3);
+    border-bottom: 2px dashed var(--border-subtle);
+    font-size: 0.7rem;
+    color: var(--accent);
+  }
+
+  .continue-top > span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
 </style>

@@ -1,10 +1,18 @@
 ---
 import { Image } from 'astro:assets';
 import profileImg from '../assets/profile.jpg';
+import RetroSprite from '../components/RetroSprite.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getSiteData } from '../utils/content';
 
 const site = await getSiteData();
+
+const skillSprites: ('pacman' | 'triforce' | 'warp-pipe' | 'tetromino-t')[] = [
+  'pacman',
+  'triforce',
+  'warp-pipe',
+  'tetromino-t',
+];
 ---
 
 <BaseLayout
@@ -14,7 +22,7 @@ const site = await getSiteData();
 >
   <section class="section">
     <div class="container">
-      <span class="section-index">{site.ui.aboutIndex}</span>
+      <span class="section-index">PLAYER 1 LORE // CHARACTER SHEET</span>
       <h1 style="margin-top: var(--space-2);">{site.ui.aboutTitle}</h1>
 
       <div class="bio-grid" style="margin-top: var(--space-6);">
@@ -32,7 +40,8 @@ const site = await getSiteData();
 
           <div style="display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-2);">
             <a href="/resume" class="btn btn-primary">
-              <span>View Full Résumé</span>
+              <RetroSprite name="cartridge" size={15} />
+              <span>View Official Save File (Résumé)</span>
               <span aria-hidden="true" class="mono">→</span>
             </a>
             <a href={site.links.resumePdf} class="btn" download>
@@ -42,7 +51,18 @@ const site = await getSiteData();
           </div>
         </div>
 
-        <aside class="profile-card spotlight-card">
+        <aside class="profile-card cartridge-card">
+          <div class="profile-topbar pixel">
+            <span>P1 AVATAR</span>
+            <span style="display: inline-flex; gap: 3px;">
+              <RetroSprite name="heart" size={13} />
+              <RetroSprite name="heart" size={13} />
+              <RetroSprite name="heart" size={13} />
+              <RetroSprite name="heart" size={13} />
+              <RetroSprite name="heart" size={13} />
+            </span>
+          </div>
+
           <div class="portrait-wrap">
             <Image
               src={profileImg}
@@ -54,80 +74,92 @@ const site = await getSiteData();
               class="portrait-img"
             />
           </div>
+
           <div style="margin-top: var(--space-4);">
-            <p style="font-weight: 600; color: var(--text-primary);">{site.name}</p>
-            <p class="mono" style="font-size: var(--text-xs); color: var(--accent); margin-top: 2px;">
-              {site.role}
+            <p style="font-weight: 700; font-size: var(--text-lg); color: var(--text-primary);">
+              {site.name}
             </p>
-            <p style="font-size: var(--text-xs); color: var(--text-muted); margin-top: var(--space-2);">
-              M.S. Software Engineering, Carnegie Mellon University · Ex-BlackRock Aladdin
+            <p class="pixel" style="font-size: 0.68rem; color: var(--accent); margin-top: 4px;">
+              LV.05 · {site.role.toUpperCase()}
             </p>
+            <dl class="char-stats mono">
+              <div><dt>GUILD</dt><dd>eParts Services (Peregrin)</dd></div>
+              <div><dt>PREV</dt><dd>BlackRock (Aladdin)</dd></div>
+              <div><dt>ACADEMY</dt><dd>Carnegie Mellon MSE (3.87)</dd></div>
+            </dl>
           </div>
         </aside>
       </div>
     </div>
   </section>
 
-  <!-- Experience Timeline -->
+  <!-- Experience Quest Log Timeline -->
   <section class="section" aria-labelledby="timeline-heading">
     <div class="container">
-      <span class="section-index">02 / PRODUCTION TRAJECTORY</span>
+      <span class="section-index">QUEST LOG // PRODUCTION CAMPAIGNS</span>
       <h2 id="timeline-heading" style="margin-top: var(--space-2);">
         Experience Timeline
       </h2>
 
       <div class="timeline" style="margin-top: var(--space-7);">
-        {site.experience.map((exp) => (
-          <article class="timeline-item spotlight-card scroll-reveal">
-            <div class="timeline-meta">
-              <span class="mono" style="font-size: var(--text-xs); color: var(--accent); font-weight: 700;">
-                {exp.period}
-              </span>
-              <h3 style="font-size: var(--text-xl); margin-top: var(--space-1);">
-                {exp.company}
-              </h3>
-              <p class="mono" style="font-size: var(--text-sm); color: var(--text-primary); font-weight: 600; margin-top: 2px;">
-                {exp.role}
-              </p>
-              {exp.product && (
-                <p style="font-size: var(--text-xs); color: var(--text-muted); margin-top: 4px;">
-                  {exp.product}
+        {site.experience.map((exp, idx) => {
+          const levelNum = site.experience.length - idx;
+          return (
+            <article class="timeline-item cartridge-card scroll-reveal">
+              <div class="timeline-meta">
+                <span class="pixel" style="font-size: 0.68rem; color: var(--accent); display: inline-flex; align-items: center; gap: 6px;">
+                  <RetroSprite name="super-star" size={14} />
+                  <span>CAMPAIGN LV.0{levelNum}</span>
+                </span>
+                <p class="mono" style="font-size: var(--text-xs); color: var(--text-muted); margin-top: 4px;">
+                  {exp.period}
                 </p>
-              )}
-              <p class="mono" style="font-size: var(--text-xs); color: var(--text-muted); margin-top: var(--space-2);">
-                {exp.location}
-              </p>
-            </div>
-
-            <div class="timeline-body">
-              <p style="font-size: var(--text-base); color: var(--text-primary); font-weight: 500;">
-                {exp.summary}
-              </p>
-
-              <div class="highlights-stack" style="margin-top: var(--space-4);">
-                {exp.highlights.map((h) => (
-                  <div class="highlight-row">
-                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2);">
-                      <strong style="font-size: var(--text-sm); color: var(--text-primary);">
-                        {h.domain}
-                      </strong>
-                      <span class="metric-chip">{h.metric}</span>
-                    </div>
-                    <p style="font-size: var(--text-sm); margin-top: var(--space-2); max-width: 72ch;">
-                      {h.text}
-                    </p>
-                  </div>
-                ))}
+                <h3 style="font-size: var(--text-xl); margin-top: var(--space-2);">
+                  {exp.company}
+                </h3>
+                <p class="mono" style="font-size: var(--text-sm); color: var(--text-primary); font-weight: 700; margin-top: 2px;">
+                  {exp.role}
+                </p>
+                {exp.product && (
+                  <p style="font-size: var(--text-xs); color: var(--text-muted); margin-top: 4px;">
+                    {exp.product}
+                  </p>
+                )}
+                <p class="mono" style="font-size: var(--text-xs); color: var(--text-muted); margin-top: var(--space-2);">
+                  📍 {exp.location}
+                </p>
               </div>
 
-              <ul class="tag-list" style="margin-top: var(--space-4);" aria-label={`${exp.company} stack`}>
-                {exp.stack.map((s) => (
-                  <li class="tag">{s}</li>
-                ))}
-              </ul>
-            </div>
-          </article>
-        ))}
+              <div class="timeline-body">
+                <p style="font-size: var(--text-base); color: var(--text-primary); font-weight: 600;">
+                  {exp.summary}
+                </p>
+
+                <div class="highlights-stack" style="margin-top: var(--space-4);">
+                  {exp.highlights.map((h) => (
+                    <div class="highlight-row">
+                      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2);">
+                        <strong style="font-size: var(--text-sm); color: var(--text-primary);">
+                          {h.domain}
+                        </strong>
+                        <span class="metric-chip">{h.metric}</span>
+                      </div>
+                      <p style="font-size: var(--text-sm); margin-top: var(--space-2); max-width: 72ch;">
+                        {h.text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <ul class="tag-list" style="margin-top: var(--space-4);" aria-label={`${exp.company} stack`}>
+                  {exp.stack.map((s) => (
+                    <li class="tag">{s}</li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+          );
+        })}
       </div>
     </div>
   </section>
@@ -135,18 +167,19 @@ const site = await getSiteData();
   <!-- Technical Domains & Education -->
   <section class="section" style="border-bottom: none;" aria-labelledby="domains-heading">
     <div class="container">
-      <span class="section-index">03 / CAPABILITY MATRIX &amp; ACADEMIA</span>
+      <span class="section-index">SKILL TREE // EQUIPPED CARTRIDGES &amp; ACADEMIA</span>
       <h2 id="domains-heading" style="margin-top: var(--space-2);">
         Systems Architecture Domains &amp; Education
       </h2>
 
       <div class="domains-grid" style="margin-top: var(--space-6);">
-        {site.skillGroups.map((group) => (
-          <div class="spotlight-card scroll-reveal">
-            <span class="mono" style="font-size: var(--text-xs); color: var(--accent); font-weight: 700;">
-              {group.code}
+        {site.skillGroups.map((group, idx) => (
+          <div class="cartridge-card scroll-reveal">
+            <span class="pixel" style="font-size: 0.68rem; color: var(--accent); display: inline-flex; align-items: center; gap: 6px;">
+              <RetroSprite name={skillSprites[idx % skillSprites.length]!} size={15} />
+              <span>SLOT 0{idx + 1} // {group.code}</span>
             </span>
-            <h3 style="font-size: var(--text-lg); margin-top: var(--space-1);">
+            <h3 style="font-size: var(--text-lg); margin-top: var(--space-2);">
               {group.category}
             </h3>
             <ul style="margin-top: var(--space-3); padding-left: var(--space-4); display: grid; gap: var(--space-2);">
@@ -160,14 +193,15 @@ const site = await getSiteData();
 
       <div class="domains-grid" style="margin-top: var(--space-6);">
         {site.education.map((edu) => (
-          <div class="spotlight-card scroll-reveal">
-            <span class="mono" style="font-size: var(--text-xs); color: var(--accent); font-weight: 700;">
-              EDUCATION // {edu.period}
+          <div class="cartridge-card scroll-reveal">
+            <span class="pixel" style="font-size: 0.68rem; color: var(--accent); display: inline-flex; align-items: center; gap: 6px;">
+              <RetroSprite name="triforce" size={14} />
+              <span>ACADEMY // {edu.period}</span>
             </span>
-            <h3 style="font-size: var(--text-lg); margin-top: var(--space-1);">
+            <h3 style="font-size: var(--text-lg); margin-top: var(--space-2);">
               {edu.institution}
             </h3>
-            <p style="font-size: var(--text-sm); color: var(--text-primary); font-weight: 600; margin-top: 4px;">
+            <p style="font-size: var(--text-sm); color: var(--text-primary); font-weight: 700; margin-top: 4px;">
               {edu.degree} {edu.gpa ? `· GPA ${edu.gpa}` : ''}
             </p>
             <p style="font-size: var(--text-sm); margin-top: var(--space-2);">
@@ -190,14 +224,33 @@ const site = await getSiteData();
 
   @media (min-width: 54rem) {
     .bio-grid {
-      grid-template-columns: 1.6fr 0.9fr;
+      grid-template-columns: 1.55fr 0.95fr;
     }
   }
 
+  .profile-card {
+    padding-top: 0;
+  }
+
+  .profile-topbar {
+    margin-inline: calc(-1 * clamp(1rem, 3vw, 1.85rem));
+    margin-bottom: var(--space-4);
+    padding: 0.5rem clamp(1rem, 3vw, 1.85rem);
+    background-color: var(--bg-subtle);
+    border-bottom: 2px solid var(--border-strong);
+    border-top: 4px solid var(--retro-gold-fill);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.66rem;
+    color: var(--text-secondary);
+  }
+
   .portrait-wrap {
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-xs);
     overflow: hidden;
-    border: 1px solid var(--border-subtle);
+    border: 3px solid var(--border-strong);
+    box-shadow: var(--shadow-xs);
     aspect-ratio: 4 / 4;
     max-width: 280px;
   }
@@ -206,12 +259,37 @@ const site = await getSiteData();
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: contrast(1.03);
+    filter: contrast(1.04);
     transition: transform var(--duration-slow) var(--ease-out);
   }
 
   .profile-card:hover .portrait-img {
     transform: scale(1.03);
+  }
+
+  .char-stats {
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1.5px dashed var(--border-subtle);
+    display: grid;
+    gap: 6px;
+    font-size: var(--text-xs);
+  }
+
+  .char-stats div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  .char-stats dt {
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+
+  .char-stats dd {
+    color: var(--text-secondary);
+    text-align: right;
   }
 
   .timeline {
@@ -240,17 +318,18 @@ const site = await getSiteData();
 
   .highlight-row {
     padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-xs);
     background-color: var(--bg-subtle);
-    border: 1px solid var(--border-subtle);
+    border: 1.5px solid var(--border-subtle);
     transition:
       transform var(--duration-base) var(--ease-spring),
       border-color var(--duration-base) var(--ease-out);
   }
 
   .highlight-row:hover {
-    transform: translateX(4px);
+    transform: translate(-2px, -1px);
     border-color: var(--accent);
+    box-shadow: 2px 2px 0 var(--shadow-color);
   }
 
   .domains-grid {

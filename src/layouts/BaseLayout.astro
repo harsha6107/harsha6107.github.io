@@ -1,10 +1,11 @@
 ---
-import '@fontsource-variable/inter/opsz.css';
-import interLatinWoff2 from '@fontsource-variable/inter/files/inter-latin-opsz-normal.woff2?url';
-import '@fontsource-variable/jetbrains-mono/wght.css';
+import spaceGroteskWoff2 from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url';
+import silkscreenWoff2 from '@fontsource/silkscreen/files/silkscreen-latin-400-normal.woff2?url';
 import jetbrainsLatinWoff2 from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 import '../styles/global.css';
 import CommandPalette from '../components/CommandPalette.astro';
+import RetroSprite from '../components/RetroSprite.astro';
+import RetroSpriteSheet from '../components/RetroSpriteSheet.astro';
 import { getSiteData, getSortedProjects, getSortedWriting } from '../utils/content';
 
 interface Props {
@@ -31,6 +32,44 @@ const pageTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? site.links.website).toString();
 const ogImageUrl = new URL(ogImage, Astro.site ?? site.links.website).toString();
 const currentPath = Astro.url.pathname;
+
+const relicsList = [
+  {
+    id: 'coin',
+    title: 'Mystery ? Coin (Super Mario)',
+    hint: 'Hit the [?] Mystery Block on the Player 1 Hero Card.',
+    href: '/#hero-heading',
+    sprite: 'question-block' as const,
+  },
+  {
+    id: 'pacman',
+    title: 'Power Pellet (Pac-Man)',
+    hint: 'Chomp a part-number query or pellet in the 26M SKU Maze.',
+    href: '/#search-demo',
+    sprite: 'pacman' as const,
+  },
+  {
+    id: 'overworld',
+    title: 'Star Road Compass (Super Mario World)',
+    hint: 'Explore any stage node on the 2D Overworld Map.',
+    href: '/#latent-space',
+    sprite: 'super-star' as const,
+  },
+  {
+    id: 'tetris',
+    title: '4-Line Clear (Tetris)',
+    hint: 'Hard-drop the I-piece into the Interlocking Stack Well.',
+    href: '/#tetris-stack',
+    sprite: 'tetromino-i' as const,
+  },
+  {
+    id: 'triforce',
+    title: 'Triforce of Wisdom (Legend of Zelda)',
+    hint: 'Enter any Case Study Dungeon—or key in ↑↑↓↓←→←→BA.',
+    href: '/projects/catalog-search-26m',
+    sprite: 'triforce' as const,
+  },
+];
 
 const personJsonLd = {
   '@context': 'https://schema.org',
@@ -69,8 +108,13 @@ const personJsonLd = {
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preload" as="font" type="font/woff2" href={interLatinWoff2} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={spaceGroteskWoff2} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={silkscreenWoff2} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={jetbrainsLatinWoff2} crossorigin />
+    <style
+      is:inline
+      set:html={`@font-face{font-family:"Silkscreen";font-style:normal;font-weight:400;font-display:optional;src:url("${silkscreenWoff2}") format("woff2");}@font-face{font-family:"Space Grotesk Variable";font-style:normal;font-weight:300 700;font-display:optional;src:url("${spaceGroteskWoff2}") format("woff2-variations");}@font-face{font-family:"JetBrains Mono Variable";font-style:normal;font-weight:100 800;font-display:optional;src:url("${jetbrainsLatinWoff2}") format("woff2-variations");}`}
+    ></style>
     <link
       rel="alternate"
       type="application/rss+xml"
@@ -120,6 +164,7 @@ const personJsonLd = {
     data-email-feedback={site.ui.copiedEmailFeedback}
     data-greeting={site.consoleGreeting}
   >
+    <RetroSpriteSheet />
     <a href="#main-content" class="skip-link">{site.ui.skipToContent}</a>
 
     {showReadingProgress && <div class="reading-progress" aria-hidden="true"></div>}
@@ -128,8 +173,10 @@ const personJsonLd = {
       <div class="container nav-inner">
         <a href="/" class="brand-link">
           <span class="brand-monogram" aria-hidden="true">{site.monogram}</span>
-          <span>{site.name}</span>
-          <span class="brand-role">// {site.role}</span>
+          <span class="brand-meta">
+            <span class="brand-name">{site.name}</span>
+            <span class="brand-role">1UP · LV.05 {site.role.toUpperCase()}</span>
+          </span>
         </a>
 
         <nav aria-label="Primary">
@@ -156,9 +203,31 @@ const personJsonLd = {
         <div class="nav-actions">
           <button
             type="button"
+            id="quest-trigger"
+            class="btn btn-icon quest-btn"
+            title="Explorer Quest Log — Discover 5 Retro Relics"
+          >
+            <RetroSprite name="super-star" size={14} />
+            <span class="sr-only">Explorer Quest Log </span>
+            <span data-relic-count>0/5</span>
+          </button>
+
+          <button
+            type="button"
+            id="sfx-toggle"
+            class="btn btn-icon"
+            aria-pressed="false"
+            title="Toggle 8-Bit Chiptune SFX (M)"
+          >
+            <span class="sr-only">8-Bit Sound </span>
+            <span data-sfx-label>♪ OFF</span>
+          </button>
+
+          <button
+            type="button"
             id="cmd-trigger"
             class="btn btn-icon"
-            title="Command Palette (⌘K / Ctrl+K)"
+            title="Warp Whistle Command Palette (⌘K / Ctrl+K)"
           >
             <span class="sr-only">{site.ui.commandPaletteLabel} </span>
             <span aria-hidden="true">⌘K</span>
@@ -171,7 +240,7 @@ const personJsonLd = {
             title={site.ui.themeToggleLabel}
           >
             <span class="sr-only">{site.ui.themeToggleLabel}</span>
-            <span data-theme-icon class="mono" aria-hidden="true">◐</span>
+            <span data-theme-icon aria-hidden="true">◐</span>
           </button>
         </div>
       </div>
@@ -185,15 +254,17 @@ const personJsonLd = {
       <div class="container" style="display: flex; flex-direction: column; gap: var(--space-5);">
         <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-4);">
           <div>
-            <p style="font-weight: 600; color: var(--text-primary);">
-              {site.name} · <span class="mono" style="font-weight: 400; font-size: var(--text-xs); color: var(--text-muted);">{site.role}</span>
+            <p class="pixel" style="font-size: 0.78rem; color: var(--text-primary); display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <RetroSprite name="cartridge" size={16} />
+              <span>{site.name}</span>
+              <span style="color: var(--accent);">· {site.role}</span>
             </p>
-            <p style="font-size: var(--text-xs); color: var(--text-muted); margin-top: 4px;">
-              {site.footerColophon ?? site.ui.footerColophon}
+            <p style="font-size: var(--text-xs); color: var(--text-muted); margin-top: 6px; max-width: 72ch;">
+              Crafted with Space Grotesk, Silkscreen &amp; JetBrains Mono. Inspired by Pac-Man, Super Mario World, Tetris &amp; The Legend of Zelda—zero AI slopstack, 100% real production metrics.
             </p>
           </div>
 
-          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);" class="mono">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);">
             <button
               type="button"
               class="btn btn-icon"
@@ -216,10 +287,16 @@ const personJsonLd = {
             </a>
           </div>
         </div>
-        <button type="button" class="shortcuts-hint mono" data-open-shortcuts>
-          <kbd class="kbd-badge">?</kbd>
-          <span>{site.ui.shortcutsHint}</span>
-        </button>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3);">
+          <button type="button" class="shortcuts-hint pixel" data-open-shortcuts>
+            <kbd class="kbd-badge">?</kbd>
+            <span>{site.ui.shortcutsHint} · SECRET CODE: ↑↑↓↓←→←→BA</span>
+          </button>
+          <span class="pixel" style="font-size: 0.65rem; color: var(--text-muted);">
+            CREDIT 01 · PRESS START TO EXPLORE
+          </span>
+        </div>
       </div>
     </footer>
 
@@ -227,13 +304,59 @@ const personJsonLd = {
       id="copy-toast"
       role="status"
       aria-live="polite"
-      class="copy-toast mono"
+      class="copy-toast pixel"
       hidden
     ></div>
 
+    <!-- Explorer Quest Log Dialog (5 Collectible Retro Relics) -->
+    <dialog id="quest-dialog" class="quest-dialog" aria-labelledby="quest-title">
+      <div class="quest-head">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <RetroSprite name="triforce" size={18} />
+          <h2 id="quest-title" class="pixel" style="font-size: var(--text-base);">
+            EXPLORER QUEST LOG
+          </h2>
+        </div>
+        <button type="button" class="btn btn-icon" data-close-quest>
+          ESC
+        </button>
+      </div>
+
+      <p style="font-size: var(--text-xs); color: var(--text-secondary); margin-bottom: var(--space-4);">
+        Explore interactive systems across this portfolio to collect all 5 retro artifacts. Progress saves locally in your cartridge slot.
+      </p>
+
+      <ul class="quest-list">
+        {relicsList.map((r) => (
+          <li class="quest-item" data-quest-relic={r.id}>
+            <div class="quest-icon">
+              <RetroSprite name={r.sprite} size={20} />
+            </div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+                <strong style="font-size: var(--text-sm); color: var(--text-primary);">
+                  {r.title}
+                </strong>
+                <span class="pixel quest-state" data-quest-state>LOCKED</span>
+              </div>
+              <p style="font-size: var(--text-xs); color: var(--text-muted); margin-top: 2px;">
+                {r.hint}
+              </p>
+            </div>
+            <a href={r.href} class="btn btn-icon" data-quest-warp>
+              WARP →
+            </a>
+          </li>
+        ))}
+      </ul>
+    </dialog>
+
+    <!-- Keyboard Shortcuts Sheet -->
     <dialog id="shortcuts-dialog" class="shortcuts-dialog" aria-labelledby="shortcuts-title">
       <div class="shortcuts-head">
-        <h2 id="shortcuts-title">{site.ui.shortcutsTitle}</h2>
+        <h2 id="shortcuts-title" class="pixel" style="font-size: var(--text-base);">
+          {site.ui.shortcutsTitle}
+        </h2>
         <button type="button" class="btn btn-icon" data-close-shortcuts>
           {site.ui.shortcutsClose}
         </button>
@@ -249,6 +372,14 @@ const personJsonLd = {
             </dd>
           </div>
         ))}
+        <div class="shortcuts-row">
+          <dt>Toggle 8-bit chiptune SFX</dt>
+          <dd><kbd class="kbd-badge">M</kbd></dd>
+        </div>
+        <div class="shortcuts-row">
+          <dt>Unlock Star Road (Konami Code)</dt>
+          <dd><kbd class="kbd-badge">↑↑↓↓←→←→BA</kbd></dd>
+        </div>
       </dl>
     </dialog>
 
@@ -264,399 +395,51 @@ const personJsonLd = {
       shortcutsLabel={site.ui.shortcutsTitle}
     />
 
-    <!-- Lightweight interaction controller (< 2.5 KB, deferred to idle for 0ms TBT) -->
-    <script is:inline>
-      (() => {
-        const init = () => {
-          const root = document.documentElement;
-          const themeBtn = document.getElementById('theme-toggle');
-          const toast = document.getElementById('copy-toast');
-          let toastTimer = null;
-
-          function showToast(msg) {
-            if (!toast) return;
-            toast.textContent = msg;
-            toast.hidden = false;
-            if (toastTimer) clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => {
-              toast.hidden = true;
-            }, 2400);
-          }
-
-          function toggleTheme() {
-            const current = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-            const next = current === 'dark' ? 'light' : 'dark';
-            root.setAttribute('data-theme', next);
-            try {
-              localStorage.setItem('theme', next);
-            } catch {}
-            showToast(`Theme set to ${next} mode`);
-          }
-
-          if (themeBtn) {
-            themeBtn.addEventListener('click', toggleTheme);
-          }
-
-          async function copyText(text, feedback) {
-            try {
-              await navigator.clipboard.writeText(text);
-            } catch {
-              const ta = document.createElement('textarea');
-              ta.value = text;
-              document.body.appendChild(ta);
-              ta.select();
-              document.execCommand('copy');
-              ta.remove();
-            }
-            showToast(feedback || `Copied ${text}`);
-          }
-
-          document.querySelectorAll('[data-copy-email]').forEach((btn) => {
-            btn.addEventListener('click', () => {
-              const email = btn.getAttribute('data-copy-email') || '';
-              const fb = btn.getAttribute('data-copy-feedback') || `Copied ${email}`;
-              copyText(email, fb);
-            });
-          });
-
-          // Pointer-tracked spotlight & specular border surfaces
-          document
-            .querySelectorAll('.spotlight-card, .telemetry-cell, .principle-item, .spec-box')
-            .forEach((card) => {
-              card.addEventListener(
-                'pointermove',
-                (e) => {
-                  const rect = card.getBoundingClientRect();
-                  card.style.setProperty('--spot-x', `${e.clientX - rect.left}px`);
-                  card.style.setProperty('--spot-y', `${e.clientY - rect.top}px`);
-                },
-                { passive: true },
-              );
-            });
-
-          // Interactive tabular-nums telemetry counter scrub on hover & first scroll
-          const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-          function scrubCounter(el) {
-            if (reducedMotion || el.dataset.animating === '1') return;
-            const raw = el.getAttribute('data-count-value') || el.textContent || '';
-            const m = raw.match(/^([^0-9]*)(\d+)(.*)$/);
-            if (!m) return;
-            const prefix = m[1] || '';
-            const target = Number.parseInt(m[2], 10);
-            const suffix = m[3] || '';
-            if (!Number.isFinite(target) || target <= 0) return;
-            el.dataset.animating = '1';
-            const t0 = performance.now();
-            const dur = 320;
-            const step = (now) => {
-              const p = Math.min(1, (now - t0) / dur);
-              const eased = 1 - (1 - p) ** 3;
-              const val = Math.round(target * eased);
-              el.textContent = `${prefix}${val}${suffix}`;
-              if (p < 1) requestAnimationFrame(step);
-              else {
-                el.textContent = raw;
-                el.dataset.animating = '0';
-              }
-            };
-            requestAnimationFrame(step);
-          }
-
-          document.querySelectorAll('.telemetry-cell').forEach((cell) => {
-            const valEl = cell.querySelector('[data-count-value]');
-            if (valEl) {
-              cell.addEventListener('pointerenter', () => scrubCounter(valEl), { passive: true });
-            }
-          });
-          window.addEventListener(
-            'scroll',
-            () => {
-              document.querySelectorAll('[data-count-value]').forEach((el) => scrubCounter(el));
-            },
-            { once: true, passive: true },
-          );
-
-          // Command Palette (⌘K / Ctrl+K)
-          const dialog = document.getElementById('cmd-palette');
-          const cmdTrigger = document.getElementById('cmd-trigger');
-          const cmdClose = document.getElementById('cmd-close');
-          const cmdInput = document.getElementById('cmd-input');
-          const cmdItems = Array.from(document.querySelectorAll('[data-cmd-item]'));
-          let activeIdx = 0;
-
-          function visibleItems() {
-            return cmdItems.filter((el) => !el.hidden);
-          }
-
-          function updateSelection(newIdx) {
-            const vis = visibleItems();
-            if (vis.length === 0) return;
-            activeIdx = ((newIdx % vis.length) + vis.length) % vis.length;
-            cmdItems.forEach((el) => el.setAttribute('aria-selected', 'false'));
-            const current = vis[activeIdx];
-            if (current) {
-              current.setAttribute('aria-selected', 'true');
-              current.scrollIntoView({ block: 'nearest' });
-            }
-          }
-
-          function openPalette() {
-            if (!dialog || typeof dialog.showModal !== 'function') return;
-            if (!dialog.open) {
-              dialog.showModal();
-            }
-            if (cmdInput) {
-              cmdInput.value = '';
-              filterPalette('');
-              cmdInput.focus();
-            }
-          }
-
-          function closePalette() {
-            if (dialog && dialog.open) dialog.close();
-          }
-
-          function filterPalette(query) {
-            const q = query.trim().toLowerCase();
-            cmdItems.forEach((item) => {
-              const hay = item.getAttribute('data-label') || '';
-              item.hidden = q.length > 0 && !hay.includes(q);
-            });
-            updateSelection(0);
-          }
-
-          const shortcuts = document.getElementById('shortcuts-dialog');
-          const body = document.body;
-          const email = body.getAttribute('data-email') || '';
-          const emailFeedback = body.getAttribute('data-email-feedback') || `Copied ${email}`;
-
-          function openShortcuts() {
-            closePalette();
-            if (shortcuts && typeof shortcuts.showModal === 'function' && !shortcuts.open) {
-              shortcuts.showModal();
-            }
-          }
-
-          document.querySelectorAll('[data-open-shortcuts]').forEach((btn) => {
-            btn.addEventListener('click', openShortcuts);
-          });
-          document.querySelectorAll('[data-close-shortcuts]').forEach((btn) => {
-            btn.addEventListener('click', () => shortcuts && shortcuts.close());
-          });
-          if (shortcuts) {
-            shortcuts.addEventListener('click', (e) => {
-              if (e.target === shortcuts) shortcuts.close();
-            });
-          }
-
-          function executeItem(item) {
-            if (!item) return;
-            const action = item.getAttribute('data-action');
-            const href = item.getAttribute('data-href');
-            const payload = item.getAttribute('data-payload');
-            closePalette();
-            if (action === 'toggle-theme') {
-              toggleTheme();
-            } else if (action === 'copy-email' && payload) {
-              copyText(payload, `Copied ${payload}`);
-            } else if (action === 'toast' && payload) {
-              showToast(payload);
-            } else if (action === 'shortcuts') {
-              openShortcuts();
-            } else if (href) {
-              window.location.href = href;
-            }
-          }
-
-          if (cmdTrigger) cmdTrigger.addEventListener('click', openPalette);
-          if (cmdClose) cmdClose.addEventListener('click', closePalette);
-
-          if (dialog) {
-            dialog.addEventListener('click', (e) => {
-              if (e.target === dialog) closePalette();
-            });
-          }
-
-          if (cmdInput) {
-            cmdInput.addEventListener('input', (e) => filterPalette(e.target.value));
-          }
-
-          cmdItems.forEach((item) => {
-            item.addEventListener('click', () => executeItem(item));
-          });
-
-          // Audience lens: recruiter (summary) vs engineer (full deep dive)
-          function syncAudience() {
-            const current = root.getAttribute('data-audience') === 'recruiter' ? 'recruiter' : 'engineer';
-            document.querySelectorAll('[data-audience-set]').forEach((b) => {
-              b.setAttribute('aria-pressed', String(b.getAttribute('data-audience-set') === current));
-            });
-          }
-
-          function setAudience(next) {
-            root.setAttribute('data-audience', next);
-            try {
-              localStorage.setItem('audience', next);
-            } catch {}
-            syncAudience();
-          }
-
-          document.querySelectorAll('[data-audience-set]').forEach((b) => {
-            b.addEventListener('click', () => setAudience(b.getAttribute('data-audience-set') || 'engineer'));
-          });
-          document.querySelectorAll('[data-deep-dive-open]').forEach((b) => {
-            b.addEventListener('click', () => {
-              setAudience('engineer');
-              const target = document.getElementById('deep-dive');
-              if (target) {
-                target.scrollIntoView({ block: 'start' });
-                target.focus({ preventScroll: true });
-              }
-            });
-          });
-          if (root.getAttribute('data-audience') === 'recruiter') {
-            syncAudience();
-          }
-
-          // Linear-style keyboard shortcuts (ignored while typing)
-          const GO = { h: '/', w: '/projects', n: '/writing', a: '/about', r: '/resume' };
-          let goPending = false;
-          let goTimer = null;
-
-          function isTyping(el) {
-            if (!el || !(el instanceof HTMLElement)) return false;
-            return el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName);
-          }
-
-          window.addEventListener('keydown', (e) => {
-            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-              e.preventDefault();
-              if (dialog && dialog.open) closePalette();
-              else openPalette();
-              return;
-            }
-            if (dialog && dialog.open) {
-              if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                updateSelection(activeIdx + 1);
-              } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                updateSelection(activeIdx - 1);
-              } else if (e.key === 'Enter') {
-                e.preventDefault();
-                const vis = visibleItems();
-                if (vis[activeIdx]) executeItem(vis[activeIdx]);
-              }
-              return;
-            }
-            if ((shortcuts && shortcuts.open) || e.metaKey || e.ctrlKey || e.altKey) return;
-            if (isTyping(e.target)) return;
-
-            const key = e.key.toLowerCase();
-            if (goPending) {
-              goPending = false;
-              if (goTimer) clearTimeout(goTimer);
-              if (GO[key]) {
-                e.preventDefault();
-                window.location.href = GO[key];
-              }
-              return;
-            }
-            if (e.key === '?') {
-              e.preventDefault();
-              openShortcuts();
-            } else if (e.key === '/') {
-              e.preventDefault();
-              const demoInput = document.getElementById('sd-input');
-              if (demoInput) {
-                demoInput.scrollIntoView({ block: 'center' });
-                demoInput.focus({ preventScroll: true });
-                demoInput.select();
-              } else {
-                openPalette();
-              }
-            } else if (key === 'g') {
-              goPending = true;
-              goTimer = setTimeout(() => {
-                goPending = false;
-              }, 1200);
-            } else if (key === 't') {
-              toggleTheme();
-            } else if (key === 'c' && email) {
-              copyText(email, emailFeedback);
-            }
-          });
-
-          // A note for whoever opens devtools
-          const greeting = body.getAttribute('data-greeting');
-          if (greeting) console.log(`%c${greeting}`, 'font-family: monospace; color: #e07a3c;');
-
-          // Lazy-load 2D Embedding Map module when scrolled into view
-          const explorer = document.querySelector('[data-embedding-explorer]');
-          if (explorer) {
-            const loadMap = () => {
-              import('/scripts/embedding-map.js')
-                .then((m) => m.initEmbeddingMap(explorer))
-                .catch(() => {});
-            };
-            if ('IntersectionObserver' in window) {
-              const io = new IntersectionObserver(
-                (entries) => {
-                  if (entries.some((entry) => entry.isIntersecting)) {
-                    io.disconnect();
-                    loadMap();
-                  }
-                },
-                { rootMargin: '80px' },
-              );
-              io.observe(explorer);
-            } else {
-              loadMap();
-            }
-          }
-        };
-
-        let initialized = false;
-        const runInit = () => {
-          if (initialized) return;
-          initialized = true;
-          init();
-        };
-        window.addEventListener('keydown', runInit, { once: true, capture: true });
-        window.addEventListener('pointerdown', runInit, { once: true, capture: true, passive: true });
-        window.addEventListener('pointermove', runInit, { once: true, capture: true, passive: true });
-        window.addEventListener('focusin', runInit, { once: true, capture: true, passive: true });
-        window.addEventListener('scroll', runInit, { once: true, capture: true, passive: true });
-      })();
+    <script>
+      import '../scripts/arcade-shell';
     </script>
 
     <style>
+      .quest-btn {
+        background-color: var(--accent-subtle);
+        color: var(--accent-ink);
+        border-color: var(--border-strong);
+      }
+
       .copy-toast {
         position: fixed;
         bottom: var(--space-5);
         right: var(--space-5);
         z-index: 9000;
+        max-width: min(90vw, 28rem);
         padding: var(--space-2) var(--space-4);
-        border-radius: var(--radius-sm);
-        background-color: var(--text-primary);
-        color: var(--bg-canvas);
-        font-size: var(--text-xs);
+        border-radius: var(--radius-xs);
+        border: 2px solid var(--border-frame);
+        background-color: var(--accent);
+        color: #fffdf7;
+        font-size: 0.7rem;
+        font-weight: 700;
         box-shadow: var(--shadow-md);
+      }
+
+      :global(html[data-theme="dark"]) .copy-toast {
+        color: #0b0e1a;
+        border-color: #ffffff;
       }
 
       @media (prefers-reduced-motion: no-preference) {
         .copy-toast:not([hidden]) {
-          animation: toast-in 200ms var(--ease-spring) both;
+          animation: toast-in 180ms var(--ease-spring) both;
         }
 
         @keyframes toast-in {
           from {
             opacity: 0;
-            transform: translateY(8px) scale(0.98);
+            transform: translateY(8px);
           }
           to {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
           }
         }
       }
@@ -666,11 +449,11 @@ const personJsonLd = {
         align-self: flex-start;
         align-items: center;
         gap: var(--space-2);
-        min-height: 26px;
+        min-height: 28px;
         padding: 0;
         border: none;
         background: none;
-        font-size: var(--text-xs);
+        font-size: 0.68rem;
         color: var(--text-muted);
         cursor: pointer;
       }
@@ -685,22 +468,25 @@ const personJsonLd = {
         }
       }
 
-      .shortcuts-dialog {
-        margin: clamp(3rem, 12vh, 8rem) auto auto;
-        width: min(92vw, 26rem);
+      .shortcuts-dialog,
+      .quest-dialog {
+        margin: clamp(3rem, 10vh, 7rem) auto auto;
+        width: min(92vw, 34rem);
         padding: var(--space-5);
-        border: 1px solid var(--border-strong);
+        border: 3px solid var(--border-strong);
         border-radius: var(--radius-md);
         background-color: var(--bg-surface);
         color: var(--text-primary);
         box-shadow: var(--shadow-dialog);
       }
 
-      .shortcuts-dialog::backdrop {
-        background-color: rgba(10, 12, 16, 0.58);
+      .shortcuts-dialog::backdrop,
+      .quest-dialog::backdrop {
+        background-color: rgba(8, 10, 18, 0.72);
       }
 
-      .shortcuts-head {
+      .shortcuts-head,
+      .quest-head {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -708,8 +494,46 @@ const personJsonLd = {
         margin-bottom: var(--space-4);
       }
 
-      .shortcuts-head h2 {
-        font-size: var(--text-lg);
+      .quest-list {
+        list-style: none;
+        display: grid;
+        gap: var(--space-2);
+      }
+
+      .quest-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3);
+        border: 2px solid var(--border-subtle);
+        border-radius: var(--radius-xs);
+        background-color: var(--bg-subtle);
+      }
+
+      .quest-item[data-unlocked] {
+        border-color: var(--retro-green-fill);
+        background-color: var(--bg-surface);
+      }
+
+      .quest-icon {
+        width: 2.2rem;
+        height: 2.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--bg-surface);
+        border: 1.5px solid var(--border-strong);
+        flex-shrink: 0;
+      }
+
+      .quest-state {
+        font-size: 0.64rem;
+        color: var(--text-muted);
+      }
+
+      .quest-item[data-unlocked] .quest-state {
+        color: var(--retro-green);
+        font-weight: 700;
       }
 
       .shortcuts-list {
@@ -723,7 +547,7 @@ const personJsonLd = {
         justify-content: space-between;
         gap: var(--space-4);
         padding: var(--space-2) 0;
-        border-top: 1px solid var(--border-subtle);
+        border-top: 1.5px solid var(--border-subtle);
         font-size: var(--text-sm);
       }
 
@@ -733,6 +557,7 @@ const personJsonLd = {
 
       .shortcuts-row dd {
         display: flex;
+        flex-wrap: wrap;
         gap: var(--space-1);
       }
 
@@ -740,12 +565,6 @@ const personJsonLd = {
         color: var(--text-primary);
         min-width: 1.6rem;
         justify-content: center;
-      }
-
-      @media (prefers-reduced-motion: no-preference) {
-        .shortcuts-dialog[open] {
-          animation: toast-in 200ms var(--ease-out) both;
-        }
       }
     </style>
   </body>

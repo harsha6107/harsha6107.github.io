@@ -1,5 +1,6 @@
 ---
 import { searchSkus, TIERS } from '../utils/sku-search';
+import RetroSprite from './RetroSprite.astro';
 
 interface Props {
   demo: {
@@ -32,9 +33,21 @@ const { demo } = Astro.props;
 const initialQuery = demo.samples[1] ?? demo.samples[0] ?? '';
 const initial = searchSkus(demo.items, initialQuery);
 const top = initial.hits[0];
+const initialWinningTier = top ? top.tier : 'none';
 const initialStatus = top
   ? `${initial.total} ${demo.hitsLabel}. #1 ${top.item.sku} (${demo.tiers[top.tier]})`
   : demo.idleText;
+
+const tierSprites: Record<
+  'exact' | 'normalized' | 'prefix' | 'fuzzy' | 'text',
+  'pacman' | 'ghost-red' | 'ghost-cyan' | 'ghost-pink' | 'ghost-orange'
+> = {
+  exact: 'pacman',
+  normalized: 'ghost-red',
+  prefix: 'ghost-cyan',
+  fuzzy: 'ghost-pink',
+  text: 'ghost-orange',
+};
 
 const config = JSON.stringify({
   items: demo.items,
@@ -50,9 +63,29 @@ const config = JSON.stringify({
 <section id="search-demo" class="section" aria-labelledby="sd-heading">
   <div class="container sd-layout">
     <div class="sd-intro">
-      <span class="section-index">{demo.index}</span>
+      <span class="section-index">STAGE 01 // PAC-SEARCH MAZE</span>
       <h2 id="sd-heading" style="margin-top: var(--space-2);">{demo.title}</h2>
       <p style="margin-top: var(--space-3);">{demo.sub}</p>
+
+      <div class="ghost-legend" role="group" aria-label="4-Ghost Part-Number Ranking Legend">
+        <div class="gl-row">
+          <RetroSprite name="pacman" size={16} />
+          <span><strong>Exact:</strong> Direct part-number chomp</span>
+        </div>
+        <div class="gl-row">
+          <RetroSprite name="ghost-red" size={16} />
+          <span><strong>Blinky (Normalized):</strong> Strips <code>/</code> &amp; <code>-</code> (~77% of SKUs)</span>
+        </div>
+        <div class="gl-row">
+          <RetroSprite name="ghost-cyan" size={16} />
+          <span><strong>Inky (Prefix):</strong> Slash-aware prefix corridor</span>
+        </div>
+        <div class="gl-row">
+          <RetroSprite name="ghost-pink" size={16} />
+          <span><strong>Pinky (Fuzzy):</strong> Levenshtein typo ambush</span>
+        </div>
+      </div>
+
       <p class="sd-disclaimer mono">{demo.disclaimer}</p>
       <a href={demo.caseStudyHref} class="btn" style="margin-top: var(--space-5);">
         <span>{demo.caseStudyLabel}</span>
@@ -60,10 +93,22 @@ const config = JSON.stringify({
       </a>
     </div>
 
-    <div class="sd-console" data-search-demo data-config={config}>
+    <div
+      class="sd-console crt-screen"
+      data-search-demo
+      data-winning-tier={initialWinningTier}
+      data-config={config}
+    >
+      <div class="sd-marquee pixel">
+        <span><RetroSprite name="pacman" size={15} /> HIGH-SPEED SKU MAZE · 26M ENGINE</span>
+        <span class="sd-marquee-tag" data-sd-winner-badge>
+          TOP GATE: {top ? demo.tiers[top.tier].toUpperCase() : 'READY'}
+        </span>
+      </div>
+
       <div class="sd-inputrow">
         <label for="sd-input" class="sr-only">{demo.inputLabel}</label>
-        <span class="sd-prompt mono" aria-hidden="true">&gt;</span>
+        <span class="sd-prompt pixel" aria-hidden="true">ᗧ</span>
         <input
           id="sd-input"
           data-sd-input
@@ -81,10 +126,11 @@ const config = JSON.stringify({
       </div>
 
       <div class="sd-samples">
-        <span class="mono sd-samples-label">{demo.samplesLabel}</span>
+        <span class="pixel sd-samples-label">{demo.samplesLabel} PELLETS:</span>
         {demo.samples.map((sample) => (
           <button type="button" class="sd-chip mono" data-sd-sample={sample}>
-            {sample}
+            <span class="pellet-dot" aria-hidden="true"></span>
+            <span>{sample}</span>
           </button>
         ))}
       </div>
@@ -98,17 +144,39 @@ const config = JSON.stringify({
           <dt class="sr-only">{demo.hitsLabel}</dt>
           <dd data-sd-total>{initial.total} {demo.hitsLabel} · {initial.scanned} {demo.scannedLabel}</dd>
         </div>
-      <div class="sd-meta-latency">
+        <div class="sd-meta-latency">
           <dt class="sr-only">latency</dt>
           <dd data-sd-latency>&lt; 0.1 ms</dd>
         </div>
       </dl>
 
+      <div
+        class="sd-corridor"
+        data-sd-corridor
+        style={`--pac-pct: ${initialWinningTier === 'exact' ? 8 : initialWinningTier === 'normalized' ? 29 : initialWinningTier === 'prefix' ? 50 : initialWinningTier === 'fuzzy' ? 71 : initialWinningTier === 'text' ? 92 : 4}%;`}
+        aria-hidden="true"
+      >
+        <div class="sd-rail-pellets"></div>
+        <div class="sd-rail-eaten"></div>
+        <div class="sd-pac-runner">
+          <RetroSprite name="pacman" size={18} />
+        </div>
+        <div class="sd-scared-target">
+          <RetroSprite name="ghost-scared" size={16} />
+          <span class="pixel sd-pts" data-sd-pts>+200</span>
+        </div>
+      </div>
+
       <ol class="sd-funnel mono" aria-label={demo.funnelLabel}>
         {TIERS.map((tier) => (
-          <li data-sd-funnel={tier} data-active={initial.counts[tier] > 0 ? '' : undefined}>
+          <li
+            data-sd-funnel={tier}
+            data-active={initial.counts[tier] > 0 ? '' : undefined}
+            data-winner={initialWinningTier === tier ? '' : undefined}
+          >
+            <RetroSprite name={tierSprites[tier]} size={15} />
             <span>{demo.tiers[tier]}</span>
-            <span class="sd-count" data-sd-count>{initial.counts[tier]}</span>
+            <span class="sd-count pixel" data-sd-count>{initial.counts[tier]}</span>
           </li>
         ))}
       </ol>
@@ -116,7 +184,7 @@ const config = JSON.stringify({
       <ol class="sd-results" data-sd-results aria-label={demo.resultsLabel}>
         {initial.hits.map((hit, idx) => (
           <li class="sd-row" data-tier={hit.tier} data-sku={hit.item.sku}>
-            <span class="sd-rank">{String(idx + 1).padStart(2, '0')}</span>
+            <span class="sd-rank pixel">{String(idx + 1).padStart(2, '0')}</span>
             <span class="sd-tier">{demo.tiers[hit.tier]}</span>
             <span class="sd-sku">
               {hit.segments.map((seg) => (seg.hit ? <mark>{seg.text}</mark> : seg.text))}
@@ -160,9 +228,38 @@ const config = JSON.stringify({
 
   @media (min-width: 60rem) {
     .sd-layout {
-      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.5fr);
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.48fr);
       align-items: start;
     }
+  }
+
+  .ghost-legend {
+    margin-top: var(--space-4);
+    display: grid;
+    gap: 0.45rem;
+    padding: var(--space-3);
+    background-color: var(--bg-surface);
+    border: 2px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-xs);
+    font-size: var(--text-xs);
+  }
+
+  .gl-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-secondary);
+  }
+
+  .gl-row strong {
+    color: var(--text-primary);
+  }
+
+  .gl-row code {
+    padding: 0 0.25rem;
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
   }
 
   .sd-disclaimer {
@@ -170,16 +267,43 @@ const config = JSON.stringify({
     font-size: var(--text-xs);
     color: var(--text-muted);
     padding-left: var(--space-3);
-    border-left: 2px solid var(--border-strong);
+    border-left: 3px solid var(--retro-maze);
   }
 
+  /* Double-walled Pac-Man Arcade Maze Frame */
   .sd-console {
     min-width: 0;
-    border: 1px solid var(--border-strong);
+    border: 3px solid var(--retro-maze);
+    outline: 2px solid var(--border-strong);
+    outline-offset: -7px;
     border-radius: var(--radius-md);
     background-color: var(--bg-surface);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-md);
     overflow: hidden;
+  }
+
+  .sd-marquee {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: 0.55rem var(--space-4);
+    background-color: var(--bg-subtle);
+    border-bottom: 2px solid var(--retro-maze);
+    font-size: 0.68rem;
+    color: var(--text-primary);
+  }
+
+  .sd-marquee > span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .sd-marquee-tag {
+    color: var(--accent);
+    font-weight: 700;
   }
 
   .sd-inputrow {
@@ -187,16 +311,17 @@ const config = JSON.stringify({
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-3) var(--space-4);
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 2px dashed var(--border-subtle);
   }
 
   .sd-inputrow:focus-within {
-    box-shadow: inset 0 -2px 0 var(--accent);
+    box-shadow: inset 0 -3px 0 var(--accent);
   }
 
   .sd-prompt {
-    color: var(--accent);
-    font-weight: 700;
+    color: var(--retro-gold-fill);
+    font-size: var(--text-lg);
+    text-shadow: 1px 1px 0 #141724;
   }
 
   .sd-input {
@@ -205,6 +330,7 @@ const config = JSON.stringify({
     border: none;
     background: transparent;
     font-size: var(--text-lg);
+    font-weight: 600;
     color: var(--text-primary);
     outline: none;
   }
@@ -233,36 +359,49 @@ const config = JSON.stringify({
     align-items: center;
     gap: var(--space-2);
     padding: var(--space-3) var(--space-4);
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1.5px solid var(--border-subtle);
   }
 
   .sd-samples-label {
-    font-size: var(--text-xs);
+    font-size: 0.66rem;
     color: var(--text-muted);
   }
 
   .sd-chip {
-    min-height: 26px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 28px;
     padding: 0.15rem 0.55rem;
     font-size: var(--text-xs);
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xs);
+    border: 1.5px solid var(--border-strong);
     background-color: var(--bg-subtle);
-    color: var(--text-secondary);
+    color: var(--text-primary);
+    box-shadow: 2px 2px 0 var(--shadow-color);
     cursor: pointer;
     transition:
       transform var(--duration-fast) var(--ease-out),
-      border-color var(--duration-fast) var(--ease-out),
-      color var(--duration-fast) var(--ease-out);
+      border-color var(--duration-fast) var(--ease-out);
+  }
+
+  .pellet-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 1px;
+    background-color: var(--retro-gold-fill);
+    border: 1px solid #141724;
+    flex-shrink: 0;
   }
 
   .sd-chip:hover {
     border-color: var(--accent);
-    color: var(--text-primary);
+    transform: translate(-1px, -1px);
   }
 
   .sd-chip:active {
-    transform: scale(0.96);
+    transform: translate(1px, 1px);
+    box-shadow: none;
   }
 
   .sd-meta {
@@ -281,6 +420,7 @@ const config = JSON.stringify({
 
   .sd-meta dd {
     color: var(--text-primary);
+    font-weight: 600;
   }
 
   .sd-meta-latency {
@@ -291,6 +431,71 @@ const config = JSON.stringify({
     min-width: 8ch;
     text-align: right;
     color: var(--status-ok);
+  }
+
+  .sd-corridor {
+    position: relative;
+    height: 2rem;
+    margin: var(--space-3) var(--space-4) 0;
+    padding-inline: var(--space-3);
+    background-color: #090c18;
+    border: 2px solid var(--retro-maze);
+    border-radius: var(--radius-xs);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .sd-rail-pellets {
+    position: absolute;
+    left: 1rem;
+    right: 3.5rem;
+    height: 4px;
+    background: repeating-linear-gradient(
+      90deg,
+      #ffe885 0px,
+      #ffe885 4px,
+      transparent 4px,
+      transparent 16px
+    );
+  }
+
+  .sd-rail-eaten {
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 4px;
+    width: var(--pac-pct, 29%);
+    background-color: #090c18;
+    transition: width var(--duration-base) var(--ease-spring);
+  }
+
+  .sd-pac-runner {
+    position: absolute;
+    left: calc(var(--pac-pct, 29%) - 9px);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    transition: left var(--duration-base) var(--ease-spring);
+  }
+
+  .sd-scared-target {
+    margin-left: auto;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding-left: 8px;
+    background-color: #090c18;
+  }
+
+  .sd-pts {
+    font-size: 0.62rem;
+    color: #52eb94;
+  }
+
+  [data-search-demo][data-empty] .sd-pts {
+    color: #ff8585;
   }
 
   .sd-funnel {
@@ -305,10 +510,10 @@ const config = JSON.stringify({
   .sd-funnel li {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-2);
-    padding: 0.15rem 0.5rem;
+    gap: 0.4rem;
+    padding: 0.22rem 0.55rem;
     border-radius: var(--radius-xs);
-    border: 1px dashed var(--border-strong);
+    border: 1.5px dashed var(--border-subtle);
     color: var(--text-muted);
     max-width: none;
     transition:
@@ -320,20 +525,25 @@ const config = JSON.stringify({
 
   .sd-funnel li[data-active] {
     border-style: solid;
-    border-color: var(--accent);
+    border-color: var(--border-strong);
+    background-color: var(--bg-subtle);
     color: var(--text-primary);
+    box-shadow: 2px 2px 0 var(--shadow-color);
   }
 
+  .sd-funnel li[data-winner],
   .sd-funnel li[data-highlight] {
-    transform: translateY(-2px) scale(1.04);
+    transform: translateY(-2px);
     border-style: solid;
     border-color: var(--accent);
     background-color: var(--accent-subtle);
     color: var(--accent-ink);
+    box-shadow: 2px 2px 0 var(--shadow-color);
   }
 
   .sd-count {
     font-weight: 700;
+    font-size: 0.68rem;
   }
 
   .sd-funnel li[data-active] .sd-count {
@@ -343,12 +553,12 @@ const config = JSON.stringify({
   .sd-results {
     list-style: none;
     min-height: calc(6 * 3.5rem);
-    padding: 0 var(--space-2);
+    padding: 0 var(--space-3);
   }
 
   .sd-row {
     display: grid;
-    grid-template-columns: 2.5ch 6.75rem minmax(0, 1fr);
+    grid-template-columns: 2.8ch 6.8rem minmax(0, 1fr);
     grid-template-areas:
       "rank tier sku"
       "rank tier name";
@@ -356,7 +566,7 @@ const config = JSON.stringify({
     align-items: center;
     block-size: 3.5rem;
     padding: var(--space-1) var(--space-2);
-    border-top: 1px solid var(--border-subtle);
+    border-top: 1.5px solid var(--border-subtle);
     border-radius: var(--radius-xs);
     max-width: none;
     cursor: pointer;
@@ -372,12 +582,11 @@ const config = JSON.stringify({
 
   .sd-row:hover .sd-rank {
     color: var(--accent);
-    font-weight: 700;
   }
 
   @media (min-width: 36rem) {
     .sd-row {
-      grid-template-columns: 2.5ch 6.75rem minmax(0, 1fr) auto;
+      grid-template-columns: 2.8ch 6.8rem minmax(0, 1fr) auto;
       grid-template-areas:
         "rank tier sku pop"
         "rank tier name name";
@@ -386,8 +595,7 @@ const config = JSON.stringify({
 
   .sd-rank {
     grid-area: rank;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
+    font-size: 0.7rem;
     color: var(--text-muted);
   }
 
@@ -398,29 +606,30 @@ const config = JSON.stringify({
     border-radius: var(--radius-xs);
     font-family: var(--font-mono);
     font-size: 0.72rem;
-    font-weight: 600;
+    font-weight: 700;
     background-color: var(--bg-subtle);
     color: var(--text-secondary);
-    border: 1px solid var(--border-subtle);
+    border: 1.5px solid var(--border-subtle);
   }
 
   .sd-row[data-tier="exact"] .sd-tier,
   .sd-row[data-tier="normalized"] .sd-tier {
     background-color: var(--accent-subtle);
     color: var(--accent-ink);
-    border-color: transparent;
+    border-color: var(--border-strong);
   }
 
   .sd-row[data-tier="fuzzy"] .sd-tier {
     border-style: dashed;
-    border-color: var(--border-strong);
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .sd-sku {
     grid-area: sku;
     font-family: var(--font-mono);
     font-size: var(--text-sm);
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
@@ -430,6 +639,7 @@ const config = JSON.stringify({
   .sd-sku mark {
     background-color: var(--accent-subtle);
     color: var(--accent-ink);
+    padding-inline: 2px;
     border-radius: 2px;
   }
 
@@ -458,7 +668,7 @@ const config = JSON.stringify({
 
   .sd-status {
     padding: var(--space-3) var(--space-4);
-    border-top: 1px solid var(--border-subtle);
+    border-top: 2px solid var(--retro-maze);
     background-color: var(--bg-subtle);
     font-size: var(--text-xs);
     color: var(--text-secondary);
@@ -467,7 +677,7 @@ const config = JSON.stringify({
 
   @media (prefers-reduced-motion: no-preference) {
     [data-search-demo][data-interacted] .sd-row {
-      animation: sd-in 180ms var(--ease-out) both;
+      animation: sd-in 160ms var(--ease-out) both;
     }
 
     @keyframes sd-in {

@@ -1,0 +1,41 @@
+---
+interface Props {
+  name:
+    | 'pacman'
+    | 'ghost-red'
+    | 'ghost-pink'
+    | 'ghost-cyan'
+    | 'ghost-orange'
+    | 'ghost-scared'
+    | 'p1-walker'
+    | 'question-block'
+    | 'coin'
+    | 'warp-pipe'
+    | 'super-star'
+    | 'triforce'
+    | 'heart'
+    | 'rupee'
+    | 'boss-key'
+    | 'tetromino-t'
+    | 'tetromino-i'
+    | 'tetromino-l'
+    | 'tetromino-s'
+    | 'cartridge'
+    | 'scroll'
+    | 'flame';
+  size?: number;
+  class?: string;
+}
+
+const { name, size = 18, class: className = '' } = Astro.props;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 16 16"
+  aria-hidden="true"
+  class:list={['retro-sprite', className]}
+>
+  <use href={`#sp-${name}`} />
+</svg>

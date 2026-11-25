@@ -1,0 +1,478 @@
+---
+import RetroSprite from './RetroSprite.astro';
+
+interface PieceSpec {
+  id: string;
+  code: 'I' | 'T' | 'L' | 'J' | 'S' | 'Z' | 'O';
+  name: string;
+  metric: string;
+  summary: string;
+  tags: string[];
+  href: string;
+}
+
+const pieces: PieceSpec[] = [
+  {
+    id: 'I',
+    code: 'I',
+    name: '26M-SKU Elasticsearch Sync & Ranking',
+    metric: '26M Docs · 0 Loss · 500 Buckets',
+    summary:
+      'Root-caused 6 sync defects; rebuilt ingestion with keyset pagination, ~1,000-doc / 5 MB chunks, count-checked alias swaps, 15-min deltas, 2x write concurrency, and 4-tier slash-SKU ranking.',
+    tags: ['Elasticsearch', 'C# / .NET', 'PostgreSQL', 'Keyset Pagination'],
+    href: '/projects/catalog-search-26m',
+  },
+  {
+    id: 'T',
+    code: 'T',
+    name: '42-Tool Foundry Agent & ReBAC Guards',
+    metric: '25/25 Golden Eval · 5-Min Tokens',
+    summary:
+      'Benchmarked Azure AI Foundry vs. LangGraph/CrewAI/AutoGen; shipped 42 strict function-calling tools with Permit ReBAC and signed 5-minute human-confirmed action tokens.',
+    tags: ['Azure AI Foundry', 'Permit ReBAC', 'Python', 'LLM Evals'],
+    href: '/projects/agentic-ai-mcp-platform',
+  },
+  {
+    id: 'L',
+    code: 'L',
+    name: 'Stateless 36-Tool OAuth 2.1 MCP Server',
+    metric: '36 Tools · 156 Automated Tests',
+    summary:
+      'Connected Claude, ChatGPT, and VS Code to Peregrin with endpoint-matched OAuth 2.1 permissions, audited user-confirmed writes, and a Chrome/Edge supplier browser agent.',
+    tags: ['MCP', 'OAuth 2.1', 'TypeScript', 'Claude Code'],
+    href: '/projects/agentic-ai-mcp-platform',
+  },
+  {
+    id: 'J',
+    code: 'J',
+    name: '436+74 Table Kafka → 2x Snowflake CDC',
+    metric: '-95% Compute Spend · 3 Consumers',
+    summary:
+      'Streamed 436 SQL Server tables to 2 Snowflakes (2 consumers on shared AKS Strimzi Kafka) + 74 tables from a 2nd DB (3rd consumer); cut spend ~95% via batched MERGEs & auto-suspend.',
+    tags: ['Debezium', 'Kafka (Strimzi)', 'Snowflake', 'Kubernetes (AKS)'],
+    href: '/projects/cdc-snowflake-pipeline',
+  },
+  {
+    id: 'S',
+    code: 'S',
+    name: '28 GB Spec RAG & Cortex Knowledge Layer',
+    metric: '~35K Docs · ~98% Ingest · 400K→29K',
+    summary:
+      'Deduplicated ~400K attachment rows to ~29K unique files across Azure Blob + Azure AI Search (~35K docs, 28 GB), plus eParts Brain hybrid retrieval on Snowflake Cortex.',
+    tags: ['Azure AI Search', 'Snowflake Cortex', 'Azure Blob', 'Hybrid RAG'],
+    href: '/projects/industrial-rag-etim-classification',
+  },
+  {
+    id: 'Z',
+    code: 'Z',
+    name: '382-Class ETIM OCR & Whisper ASR',
+    metric: '21 ms ETIM · +30% Accented ASR',
+    summary:
+      'Directed 382-class ETIM classification (~95% OCR, ~92% class match, 21 ms latency, confidence routing) and built a Whisper-based ASR system across 1M samples (+30% accuracy, -25% error rate).',
+    tags: ['Computer Vision / OCR', 'OpenAI Whisper', 'MLflow', 'Python'],
+    href: '/projects/industrial-rag-etim-classification',
+  },
+  {
+    id: 'O',
+    code: 'O',
+    name: 'Event-Driven .NET Outbox & 250x IoT Scale',
+    metric: '~$40/mo Engine · 5M IoT Chips',
+    summary:
+      'Built a native transactional-outbox workflow engine (~$40/mo vs ~$50K/yr n8n license), 3–10 replica SignalR notifications, and 250x Adrich IoT scaling (20K → 5M chips).',
+    tags: ['Azure Service Bus', 'Transactional Outbox', 'SignalR', 'Terraform'],
+    href: '/projects/iot-scale-and-accented-asr',
+  },
+];
+
+// 6 rows x 10 columns Tetris matrix.
+// Row 0 shows the hovering I-piece over the 4-cell gap in Row 1!
+// Every row 2..5 is a complete 10-wide interlocking stack; Row 1 has 6 filled + 4 gap ('G') ready for Hard Drop!
+const matrix: string[][] = [
+  ['.', '.', '.', '.', '.', '.', 'H', 'H', 'H', 'H'],
+  ['O', 'O', 'T', 'T', 'T', 'L', 'G', 'G', 'G', 'G'],
+  ['O', 'O', 'Z', 'T', 'S', 'L', 'J', 'J', 'J', 'I'],
+  ['Z', 'Z', 'Z', 'S', 'S', 'L', 'L', 'O', 'J', 'I'],
+  ['I', 'I', 'I', 'I', 'S', 'T', 'T', 'O', 'O', 'I'],
+  ['J', 'J', 'J', 'L', 'L', 'L', 'T', 'Z', 'Z', 'I'],
+];
+
+const initialPiece = pieces[0]!;
+---
+
+<section id="tetris-stack" class="section scroll-reveal" aria-labelledby="tetris-heading">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-index">STAGE 04 // TETROMINO ARCHITECTURE WELL</span>
+        <h2 id="tetris-heading" style="margin-top: var(--space-2);">
+          Interlocking Production Stack
+        </h2>
+        <p style="margin-top: var(--space-2);">
+          Systems engineering is polyomino packing: bounded chunks, batched drains, and scoped permissions locking together with zero gaps. Select any Tetromino block—or hard-drop the active <code>I</code>-piece to lock the pipeline.
+        </p>
+      </div>
+
+      <div class="tetris-scoreboard pixel" role="group" aria-label="Matrix status">
+        <div class="ts-stat">
+          <span class="ts-label">LINES</span>
+          <span class="ts-val" data-tetris-lines>0436</span>
+        </div>
+        <div class="ts-stat">
+          <span class="ts-label">SYNC LOSS</span>
+          <span class="ts-val ts-ok">0.00%</span>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="tetris-console"
+      data-tetris-widget
+      data-pieces={JSON.stringify(pieces)}
+    >
+      <!-- Left: 10x6 Interlocking Tetris Well -->
+      <div class="tetris-cabinet">
+        <div class="tetris-hud pixel">
+          <span><RetroSprite name="tetromino-t" size={14} /> MATRIX WELL [10×6]</span>
+          <span class="tetris-banner" data-tetris-banner>READY: 4-CELL GAP DETECTED</span>
+        </div>
+
+        <div class="tetris-well crt-screen" role="group" aria-label="Interactive Tetromino capability matrix">
+          {matrix.map((row, rIdx) =>
+            row.map((cell, cIdx) => {
+              const isPiece = ['I', 'T', 'L', 'J', 'S', 'Z', 'O'].includes(cell);
+              const isHoverPiece = cell === 'H';
+              const isGap = cell === 'G';
+              return isPiece ? (
+                <button
+                  type="button"
+                  class={`t-cell t-piece t-piece--${cell}`}
+                  data-t-cell={cell}
+                  data-selected={cell === 'I' ? 'true' : undefined}
+                  aria-label={`Inspect ${cell}-piece system domain`}
+                >
+                  <span class="pixel" aria-hidden="true">{cell}</span>
+                </button>
+              ) : (
+                <div
+                  class:list={[
+                    't-cell',
+                    isHoverPiece && 't-hover-i',
+                    isGap && 't-gap',
+                    !isHoverPiece && !isGap && 't-empty',
+                  ]}
+                  data-r={rIdx}
+                  data-c={cIdx}
+                  data-gap={isGap ? 'true' : undefined}
+                  data-hover-piece={isHoverPiece ? 'true' : undefined}
+                  aria-hidden="true"
+                >
+                  {isHoverPiece ? <span class="pixel">I</span> : isGap ? <span class="pixel">·</span> : null}
+                </div>
+              );
+            }),
+          )}
+        </div>
+
+        <div class="tetris-controls">
+          <button type="button" class="btn btn-primary" data-tetris-drop>
+            <RetroSprite name="tetromino-i" size={16} />
+            <span class="pixel" data-tetris-drop-label>▼ HARD DROP I-PIECE</span>
+          </button>
+
+          <div class="piece-selector" role="toolbar" aria-label="Select Tetromino engineering domain">
+            {pieces.map((p, idx) => (
+              <button
+                type="button"
+                class={`piece-pill pixel piece-pill--${p.code}`}
+                data-piece-btn={p.code}
+                aria-pressed={idx === 0 ? 'true' : 'false'}
+              >
+                {p.code}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Selected Tetromino Engineering Spec -->
+      <aside class="tetris-inspector cartridge-card" aria-live="polite">
+        <div class="inspector-top pixel">
+          <span data-t-badge>TETROMINO // I-BLOCK</span>
+          <span class="metric-chip" data-t-metric>{initialPiece.metric}</span>
+        </div>
+
+        <h3 data-t-title style="font-size: var(--text-xl); margin-top: var(--space-3);">
+          {initialPiece.name}
+        </h3>
+
+        <p data-t-summary style="margin-top: var(--space-3); font-size: var(--text-sm);">
+          {initialPiece.summary}
+        </p>
+
+        <ul class="tag-list" data-t-tags style="margin-top: var(--space-4);" aria-label="Domain technologies">
+          {initialPiece.tags.map((t) => (
+            <li class="tag">{t}</li>
+          ))}
+        </ul>
+
+        <div style="margin-top: auto; padding-top: var(--space-5);">
+          <a data-t-link href={initialPiece.href} class="btn" style="width: 100%;">
+            <span>Inspect Production Case Study</span>
+            <span aria-hidden="true" class="mono">→</span>
+          </a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tetris-scoreboard {
+    display: inline-flex;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--bg-surface);
+    border: 2px solid var(--border-strong);
+    box-shadow: var(--shadow-xs);
+  }
+
+  .ts-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-inline: var(--space-2);
+  }
+
+  .ts-stat + .ts-stat {
+    border-left: 1.5px dashed var(--border-subtle);
+  }
+
+  .ts-label {
+    font-size: 0.62rem;
+    color: var(--text-muted);
+  }
+
+  .ts-val {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .ts-ok {
+    color: var(--retro-green);
+  }
+
+  .tetris-console {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+    align-items: stretch;
+  }
+
+  @media (min-width: 58rem) {
+    .tetris-console {
+      grid-template-columns: 1.25fr 1fr;
+    }
+  }
+
+  .tetris-cabinet {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: clamp(0.85rem, 2.5vw, 1.35rem);
+    background-color: var(--bg-surface);
+    border: 2px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    box-shadow: var(--bevel-highlight), var(--shadow-sm);
+  }
+
+  .tetris-hud {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+  }
+
+  .tetris-hud > span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .tetris-banner {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .tetris-well {
+    display: grid;
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    gap: 3px;
+    padding: 6px;
+    background-color: #090c16;
+    border: 3px solid var(--border-strong);
+    border-radius: var(--radius-xs);
+    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.55);
+  }
+
+  .t-cell {
+    aspect-ratio: 1 / 1;
+    min-height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(0.55rem, 1.1vw, 0.72rem);
+    border-radius: 2px;
+    padding: 0;
+  }
+
+  .t-empty {
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .t-gap {
+    background-color: rgba(99, 230, 242, 0.08);
+    border: 1.5px dashed #4ce0f4;
+    color: #63e6f2;
+  }
+
+  .t-hover-i {
+    background-color: #4ce0f4;
+    color: #090c16;
+    border: 1.5px solid #ffffff;
+    box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.65), inset -2px -2px 0 rgba(0, 0, 0, 0.3);
+    font-weight: 700;
+    transition:
+      transform var(--duration-base) var(--ease-spring),
+      opacity var(--duration-base) var(--ease-out);
+  }
+
+  [data-tetris-widget][data-dropped="true"] .t-hover-i {
+    opacity: 0.18;
+    transform: translateY(4px);
+    background-color: transparent;
+    border: 1px dashed rgba(255, 255, 255, 0.14);
+    box-shadow: none;
+    color: transparent;
+  }
+
+  [data-tetris-widget][data-dropped="true"] .t-gap {
+    background-color: #4ce0f4;
+    border: 1.5px solid #090c16;
+    box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.7), inset -2px -2px 0 rgba(0, 0, 0, 0.32);
+    color: #090c16;
+    font-weight: 700;
+  }
+
+  [data-tetris-widget][data-flash="true"] [data-r="1"] {
+    filter: brightness(1.35);
+  }
+
+  .t-piece {
+    cursor: pointer;
+    border: 1.5px solid #090c16;
+    color: #090c16;
+    font-weight: 700;
+    box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.65), inset -2px -2px 0 rgba(0, 0, 0, 0.32);
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      filter var(--duration-fast) var(--ease-out);
+  }
+
+  /* Authentic 7-Tetromino arcade fills (zero purple-on-dark!) */
+  .t-piece--I {
+    background-color: #4ce0f4;
+  }
+  .t-piece--T {
+    background-color: #ffd23f;
+  }
+  .t-piece--L {
+    background-color: #ffa94d;
+  }
+  .t-piece--J {
+    background-color: #6ea8fe;
+  }
+  .t-piece--S {
+    background-color: #3ee084;
+  }
+  .t-piece--Z {
+    background-color: #ff6b6b;
+  }
+  .t-piece--O {
+    background-color: #ffe066;
+  }
+
+  .t-piece:hover,
+  .t-piece[data-selected="true"] {
+    filter: brightness(1.12);
+    outline: 2px solid #ffffff;
+    outline-offset: -2px;
+    z-index: 3;
+  }
+
+  .tetris-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-top: var(--space-1);
+  }
+
+  .piece-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .piece-pill {
+    min-width: 30px;
+    min-height: 30px;
+    padding: 0 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-radius: var(--radius-xs);
+    border: 2px solid var(--border-strong);
+    background-color: var(--bg-subtle);
+    color: var(--text-primary);
+    cursor: pointer;
+    box-shadow: 2px 2px 0 var(--shadow-color);
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .piece-pill:hover {
+    transform: translate(-1px, -1px);
+    border-color: var(--accent);
+  }
+
+  .piece-pill[aria-pressed="true"] {
+    background-color: var(--accent);
+    color: #fffdf7;
+    border-color: var(--border-frame);
+  }
+
+  :global(html[data-theme="dark"]) .piece-pill[aria-pressed="true"] {
+    color: #0b0e1a;
+  }
+
+  .tetris-inspector {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .inspector-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    font-size: 0.7rem;
+    color: var(--accent);
+  }
+</style>

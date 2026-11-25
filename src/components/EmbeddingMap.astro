@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import RetroSprite from './RetroSprite.astro';
 
 interface SkillNode {
   id: string;
@@ -21,7 +22,7 @@ interface Props {
   subtitle: string;
 }
 
-const { projects, posts, skillNodes, sectionIndex, title, subtitle } = Astro.props;
+const { projects, posts, skillNodes, title, subtitle } = Astro.props;
 
 interface MapPoint {
   id: string;
@@ -59,7 +60,7 @@ const points: MapPoint[] = [
     vector: post.data.embedding.vector,
     summary: post.data.summary,
     href: `/writing/${post.data.slug}`,
-    metricBadge: `Essay · ${post.data.readingTime}`,
+    metricBadge: `Field Log · ${post.data.readingTime}`,
   })),
   ...skillNodes.map((s) => ({
     id: s.id,
@@ -71,16 +72,16 @@ const points: MapPoint[] = [
     vector: s.vector,
     summary: s.detail,
     href: `/projects/${s.relatedProjectSlug}`,
-    metricBadge: `Capability → /projects/${s.relatedProjectSlug}`,
+    metricBadge: `Warp → /projects/${s.relatedProjectSlug}`,
   })),
 ];
 
 const clusterMeta = [
-  { id: 'all', label: 'All Clusters (18)', cx: 0, cy: 0 },
-  { id: 'search', label: 'Search & RAG', cx: 23, cy: 27 },
-  { id: 'agents', label: 'Agentic AI & MCP', cx: 73, cy: 27 },
-  { id: 'data', label: 'Streaming CDC & Data', cx: 23, cy: 75 },
-  { id: 'ml', label: 'Applied ML, Vision & ASR', cx: 73, cy: 75 },
+  { id: 'all', label: 'All Worlds (18)' },
+  { id: 'search', label: 'W1: Search Island' },
+  { id: 'agents', label: 'W2: Agent Citadel' },
+  { id: 'data', label: 'W3: CDC Pipeworks' },
+  { id: 'ml', label: 'W4: Star Peaks' },
 ];
 
 function cosineSimilarity(a: number[], b: number[]): number {
@@ -115,11 +116,11 @@ const initialNeighbors = initialSource
   <div class="container">
     <div class="section-header">
       <div>
-        <span class="section-index">{sectionIndex}</span>
+        <span class="section-index">STAGE 03 // SUPER OVERWORLD LATENT MAP</span>
         <h2 id="latent-space-heading" style="margin-top: var(--space-2);">{title}</h2>
         <p style="margin-top: var(--space-2);">{subtitle}</p>
       </div>
-      <div class="cluster-pills" role="toolbar" aria-label="Filter embedding clusters">
+      <div class="cluster-pills" role="toolbar" aria-label="Filter overworld biomes">
         {clusterMeta.map((c, idx) => (
           <button
             type="button"
@@ -139,52 +140,82 @@ const initialNeighbors = initialSource
       data-points={JSON.stringify(points)}
     >
       <div class="embedding-canvas-wrap">
+        <div class="overworld-topbar pixel">
+          <span><RetroSprite name="super-star" size={14} /> DINOSAUR-STYLE 2D UMAP OVERWORLD</span>
+          <span>k=3 COSINE WARP ROADS</span>
+        </div>
+
         <svg
           class="embedding-svg"
           viewBox="0 0 1000 540"
           role="group"
-          aria-label="2D UMAP Embedding Map of Projects, Essays, and ML Systems"
+          aria-label="Interactive Overworld Embedding Map of Projects, Field Logs, and Production Capabilities"
         >
-          <defs>
-            <pattern id="umap-grid" width="50" height="50" patternUnits="userSpaceOnUse">
-              <path
-                d="M 50 0 L 0 0 0 50"
-                fill="none"
-                stroke="var(--border-subtle)"
-                stroke-width="0.75"
-              />
-            </pattern>
-          </defs>
+          <!-- Overworld Ocean Backdrop -->
+          <rect width="1000" height="540" class="ow-sea" />
 
-          <!-- Coordinate Grid Background -->
-          <rect width="1000" height="540" fill="url(#umap-grid)" />
+          <!-- Decorative Overworld Sea Waves -->
+          <g class="ow-waves" aria-hidden="true">
+            <path d="M465 90h24M480 265h30M468 445h28M30 268h22M940 268h24" stroke-width="3" stroke-linecap="square" />
+          </g>
 
-          <!-- Quadrant Axis Dividers -->
-          <line x1="500" y1="0" x2="500" y2="540" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 4" />
-          <line x1="0" y1="270" x2="1000" y2="270" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 4" />
+          <!-- Wooden Overworld Bridges & Central Star Road Warp -->
+          <g aria-hidden="true">
+            <!-- Horizontal Upper Bridge (W1 <-> W2) -->
+            <rect x="448" y="142" width="72" height="14" fill="#B87400" stroke="#141724" stroke-width="2" />
+            <path d="M460 142v14M472 142v14M484 142v14M496 142v14M508 142v14" stroke="#141724" stroke-width="1.5" />
+            <!-- Horizontal Lower Bridge (W3 <-> W4) -->
+            <rect x="448" y="394" width="72" height="14" fill="#B87400" stroke="#141724" stroke-width="2" />
+            <path d="M460 394v14M472 394v14M484 394v14M496 394v14M508 394v14" stroke="#141724" stroke-width="1.5" />
+            <!-- Left Vertical Bridge (W1 <-> W3) -->
+            <rect x="232" y="256" width="14" height="38" fill="#B87400" stroke="#141724" stroke-width="2" />
+            <path d="M232 265h14M232 275h14M232 285h14" stroke="#141724" stroke-width="1.5" />
+            <!-- Right Vertical Bridge (W2 <-> W4) -->
+            <rect x="738" y="256" width="14" height="38" fill="#B87400" stroke="#141724" stroke-width="2" />
+            <path d="M738 265h14M738 275h14M738 285h14" stroke="#141724" stroke-width="1.5" />
+            <!-- Central Star Road Atoll -->
+            <rect x="466" y="257" width="36" height="34" rx="6" fill="#FFE885" stroke="#141724" stroke-width="2" />
+            <use href="#sp-super-star" x="474" y="264" width="20" height="20" />
+          </g>
 
-          <!-- Axis Telemetry Labels -->
-          <text x="16" y="24" fill="var(--text-muted)" font-size="11" class="mono">
-            UMAP-2 ↑ [RETRIEVAL &amp; AGENTIC REASONING]
-          </text>
-          <text x="16" y="524" fill="var(--text-muted)" font-size="11" class="mono">
-            UMAP-1 → [INFRASTRUCTURE &amp; STREAMING ← · → MODEL &amp; AGENT SURFACES]
-          </text>
+          <!-- WORLD 1: SEARCH & RAG GRASSLANDS (Top-Left) -->
+          <g aria-hidden="true">
+            <rect x="28" y="42" width="420" height="214" rx="14" class="ow-island ow-island--w1" />
+            <rect x="38" y="50" width="400" height="196" rx="10" class="ow-island-inner" />
+            <!-- Pixel Warp Pipe & Hill Landmark -->
+            <rect x="398" y="64" width="24" height="8" fill="#2BC46D" stroke="#141724" stroke-width="2" />
+            <rect x="401" y="72" width="18" height="16" fill="#2BC46D" stroke="#141724" stroke-width="2" />
+            <text x="52" y="74" class="pixel ow-world-title">WORLD 1 · SEARCH &amp; RAG VALLEY</text>
+          </g>
 
-          <!-- Semantic Cluster Ellipses -->
-          <ellipse cx="235" cy="148" rx="205" ry="96" fill="var(--accent-subtle)" fill-opacity="0.35" stroke="var(--border-strong)" stroke-dasharray="3 3" />
-          <text x="55" y="70" fill="var(--accent)" font-size="11" font-weight="700" class="mono">CLUSTER 01 // SEARCH &amp; HYBRID RAG</text>
+          <!-- WORLD 2: AGENTIC AI & MCP CITADEL (Top-Right) -->
+          <g aria-hidden="true">
+            <rect x="520" y="42" width="452" height="214" rx="14" class="ow-island ow-island--w2" />
+            <rect x="530" y="50" width="432" height="196" rx="10" class="ow-island-inner" />
+            <!-- Pixel Fortress Turrets Landmark -->
+            <path d="M922 62h8v8h6v-8h8v24h-22V62z" fill="#FFD23F" stroke="#141724" stroke-width="2" />
+            <text x="546" y="74" class="pixel ow-world-title">WORLD 2 · AGENTIC AI &amp; MCP CITADEL</text>
+          </g>
 
-          <ellipse cx="735" cy="148" rx="215" ry="96" fill="var(--accent-subtle)" fill-opacity="0.35" stroke="var(--border-strong)" stroke-dasharray="3 3" />
-          <text x="545" y="70" fill="var(--accent)" font-size="11" font-weight="700" class="mono">CLUSTER 02 // AGENTIC AI, MCP &amp; EVALS</text>
+          <!-- WORLD 3: STREAMING CDC PIPEWORKS (Bottom-Left) -->
+          <g aria-hidden="true">
+            <rect x="28" y="294" width="420" height="214" rx="14" class="ow-island ow-island--w3" />
+            <rect x="38" y="302" width="400" height="196" rx="10" class="ow-island-inner" />
+            <!-- Twin Snowflake Pipe Landmark -->
+            <rect x="398" y="314" width="24" height="20" fill="#4CE0F4" stroke="#141724" stroke-width="2" />
+            <text x="52" y="326" class="pixel ow-world-title">WORLD 3 · CDC &amp; SNOWFLAKE PIPEWORKS</text>
+          </g>
 
-          <ellipse cx="235" cy="402" rx="205" ry="92" fill="var(--accent-subtle)" fill-opacity="0.35" stroke="var(--border-strong)" stroke-dasharray="3 3" />
-          <text x="55" y="324" fill="var(--accent)" font-size="11" font-weight="700" class="mono">CLUSTER 03 // STREAMING CDC &amp; DATA</text>
+          <!-- WORLD 4: PERCEPTION STAR PEAKS (Bottom-Right) -->
+          <g aria-hidden="true">
+            <rect x="520" y="294" width="452" height="214" rx="14" class="ow-island ow-island--w4" />
+            <rect x="530" y="302" width="432" height="196" rx="10" class="ow-island-inner" />
+            <!-- Star Peak Landmark -->
+            <polygon points="934,312 946,336 922,336" fill="#FFA94D" stroke="#141724" stroke-width="2" />
+            <text x="546" y="326" class="pixel ow-world-title">WORLD 4 · ETIM VISION, ASR &amp; IoT PEAKS</text>
+          </g>
 
-          <ellipse cx="735" cy="402" rx="215" ry="92" fill="var(--accent-subtle)" fill-opacity="0.35" stroke="var(--border-strong)" stroke-dasharray="3 3" />
-          <text x="545" y="324" fill="var(--accent)" font-size="11" font-weight="700" class="mono">CLUSTER 04 // VISION, OCR, ASR &amp; IoT</text>
-
-          <!-- Dynamic k-NN Cosine Similarity Edges Layer -->
+          <!-- Dynamic k-NN Overworld Dotted Travel Paths -->
           <g id="knn-edges-layer" aria-hidden="true">
             {initialSource && initialNeighbors.map((nb) => (
               <line
@@ -193,19 +224,21 @@ const initialNeighbors = initialSource
                 x2={Math.round(nb.point.x * 10)}
                 y2={Math.round(nb.point.y * 5.4)}
                 stroke="var(--accent)"
-                stroke-width="1.75"
-                stroke-dasharray="5 4"
-                stroke-opacity="0.8"
+                stroke-width="3"
+                stroke-dasharray="6 6"
+                stroke-linecap="square"
               />
             ))}
           </g>
 
-          <!-- Interactive Vector Nodes -->
-          {points.map((pt, idx) => {
+          <!-- Interactive Overworld Stage Nodes -->
+          {points.map((pt) => {
             const cx = Math.round(pt.x * 10);
             const cy = Math.round(pt.y * 5.4);
             const isProject = pt.kind === 'project';
-            const radius = isProject ? 10 : pt.kind === 'essay' ? 7.5 : 6;
+            const isEssay = pt.kind === 'essay';
+            const size = isProject ? 20 : isEssay ? 15 : 12;
+            const half = size / 2;
             return (
               <g
                 class="umap-node-group"
@@ -218,34 +251,50 @@ const initialNeighbors = initialSource
                   href={pt.href}
                   class="umap-node-link"
                   data-node-trigger={pt.id}
-                  aria-label={`${pt.kind.toUpperCase()}: ${pt.label} (${pt.metricBadge}) — Click to open ${pt.href}`}
+                  aria-label={`${pt.kind.toUpperCase()}: ${pt.label} (${pt.metricBadge}) — Open ${pt.href}`}
                 >
                   {isProject && (
-                    <circle
-                      cx={cx}
-                      cy={cy}
-                      r={radius + 6}
+                    <rect
+                      x={cx - half - 5}
+                      y={cy - half - 5}
+                      width={size + 10}
+                      height={size + 10}
+                      rx="2"
                       fill="none"
                       stroke="var(--accent)"
-                      stroke-width="1.25"
-                      stroke-opacity="0.55"
+                      stroke-width="2"
+                      stroke-dasharray="4 2"
                       class="umap-pulse-ring"
                     />
                   )}
-                  <circle
-                    cx={cx}
-                    cy={cy}
-                    r={radius}
-                    fill={isProject ? 'var(--accent)' : pt.kind === 'essay' ? 'var(--text-primary)' : 'var(--bg-surface)'}
-                    stroke={isProject ? 'var(--bg-surface)' : 'var(--accent)'}
-                    stroke-width="2"
+                  <rect
+                    x={cx - half}
+                    y={cy - half}
+                    width={size}
+                    height={size}
+                    rx="2"
+                    class:list={[
+                      'stage-tile',
+                      isProject && 'stage-tile--project',
+                      isEssay && 'stage-tile--essay',
+                      !isProject && !isEssay && 'stage-tile--skill',
+                    ]}
                   />
+                  {isProject && (
+                    <rect
+                      x={cx - 3}
+                      y={cy - 3}
+                      width="6"
+                      height="6"
+                      fill="#141724"
+                    />
+                  )}
                   <text
-                    x={cx + 14}
+                    x={cx + half + 7}
                     y={cy + 4}
                     fill="var(--text-primary)"
                     font-size={isProject ? '12.5' : '11'}
-                    font-weight={isProject ? '700' : '500'}
+                    font-weight={isProject ? '700' : '600'}
                     class="mono umap-label"
                   >
                     {pt.label}
@@ -254,27 +303,46 @@ const initialNeighbors = initialSource
               </g>
             );
           })}
+
+          <!-- Animated Player 1 Overworld Walker -->
+          {initialSource && (
+            <g
+              id="ow-player-walker"
+              class="ow-walker"
+              style={`transform: translate(${Math.round(initialSource.x * 10)}px, ${Math.round(initialSource.y * 5.4)}px);`}
+              aria-hidden="true"
+            >
+              <rect x="-13" y="-34" width="26" height="12" rx="2" fill="#FFD23F" stroke="#141724" stroke-width="1.5" />
+              <text x="0" y="-25" text-anchor="middle" fill="#141724" font-size="8" font-weight="700" class="pixel">P1</text>
+              <use href="#sp-p1-walker" x="-11" y="-22" width="22" height="22" />
+            </g>
+          )}
+
+          <!-- Axis Legend Footer inside Map -->
+          <text x="28" y="528" fill="var(--text-muted)" font-size="10.5" class="mono">
+            UMAP LATENT COORDINATES · HOVER OR FOCUS ANY STAGE TILE TO TRACE k=3 COSINE WARP PATHS
+          </text>
         </svg>
 
         <div class="embedding-legend mono">
-          <span><i class="legend-dot legend-dot--project"></i> Case Study (Click to open)</span>
-          <span><i class="legend-dot legend-dot--essay"></i> Technical Essay</span>
-          <span><i class="legend-dot legend-dot--skill"></i> Production Capability</span>
+          <span><i class="legend-tile legend-tile--project"></i> Fortress Stage (Case Study)</span>
+          <span><i class="legend-tile legend-tile--essay"></i> Info Block (Field Essay)</span>
+          <span><i class="legend-tile legend-tile--skill"></i> Star Road Node (Capability)</span>
         </div>
       </div>
 
-      <!-- Live Telemetry & Nearest-Neighbor Inspector Panel -->
-      <aside class="embedding-inspector" aria-live="polite">
-        <div class="inspector-header mono">
-          <span>VECTOR TELEMETRY INSPECTOR</span>
+      <!-- Stage Select HUD Inspector -->
+      <aside class="embedding-inspector cartridge-card" aria-live="polite">
+        <div class="inspector-header pixel">
+          <span>STAGE SELECT HUD</span>
           <span id="emb-kind-badge" class="metric-chip">PROJECT</span>
         </div>
 
-        <h3 id="emb-title" style="font-size: var(--text-lg); margin-top: var(--space-2);">
+        <h3 id="emb-title" style="font-size: var(--text-lg); margin-top: var(--space-3);">
           {points[0]?.label}
         </h3>
 
-        <p id="emb-metric" class="mono" style="font-size: var(--text-xs); color: var(--accent); font-weight: 600; margin-top: var(--space-1);">
+        <p id="emb-metric" class="mono" style="font-size: var(--text-xs); color: var(--accent); font-weight: 700; margin-top: var(--space-1);">
           {points[0]?.metricBadge}
         </p>
 
@@ -283,21 +351,21 @@ const initialNeighbors = initialSource
         </p>
 
         <div class="inspector-vector mono">
-          <span style="color: var(--text-muted); font-size: 0.72rem;">EMBEDDING [SEARCH, AGENT, DATA, ML]:</span>
+          <span class="pixel" style="color: var(--text-muted); font-size: 0.64rem;">4D VECTOR [SEARCH, AGENT, DATA, ML]:</span>
           <code id="emb-vector" style="font-size: var(--text-xs); color: var(--text-primary);">
             [{points[0]?.vector.map((v) => v.toFixed(2)).join(', ')}]
           </code>
         </div>
 
         <div style="margin-top: var(--space-4);">
-          <p class="mono" style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">
-            Top k=3 Cosine Nearest Neighbors
+          <p class="pixel" style="font-size: 0.66rem; color: var(--text-muted);">
+            NEAREST WARP PATHS (k=3 COSINE)
           </p>
           <ul id="emb-neighbors" class="neighbor-list mono">
             {initialNeighbors.map((nb) => (
               <li data-neighbor-id={nb.point.id}>
                 <span>{nb.point.label}</span>
-                <span style="color: var(--accent); font-weight: 600;">cos θ = {nb.score.toFixed(3)}</span>
+                <span style="color: var(--accent); font-weight: 700;">cos θ = {nb.score.toFixed(3)}</span>
               </li>
             ))}
           </ul>
@@ -305,7 +373,7 @@ const initialNeighbors = initialSource
 
         <div style="margin-top: auto; padding-top: var(--space-4);">
           <a id="emb-cta" href={points[0]?.href} class="btn btn-primary" style="width: 100%;">
-            <span>Open Case Study Specification</span>
+            <span>Enter Stage Specification</span>
             <span aria-hidden="true" class="mono">→</span>
           </a>
         </div>
@@ -314,23 +382,23 @@ const initialNeighbors = initialSource
 
     <!-- Accessible Static Fallback Summary for Screen Readers / No-JS -->
     <details class="static-fallback-details">
-      <summary class="mono" style="font-size: var(--text-xs); color: var(--text-muted); cursor: pointer; padding-block: var(--space-2);">
-        View Tabular Matrix Fallback (All 18 Embedded Systems &amp; Capabilities)
+      <summary class="pixel" style="font-size: 0.7rem; color: var(--text-secondary); cursor: pointer; padding-block: var(--space-2);">
+        ▶ OPEN WORLD MAP LEDGER (ALL 18 STAGES &amp; CAPABILITIES)
       </summary>
       <div style="overflow-x: auto; margin-top: var(--space-3);">
         <table style="width: 100%; border-collapse: collapse; font-size: var(--text-sm);">
           <thead>
-            <tr style="border-bottom: 1px solid var(--border-strong); text-align: left;" class="mono">
-              <th style="padding: var(--space-2);">Node</th>
+            <tr style="border-bottom: 2px solid var(--border-strong); text-align: left;" class="pixel">
+              <th style="padding: var(--space-2);">Stage</th>
               <th style="padding: var(--space-2);">Type</th>
-              <th style="padding: var(--space-2);">Cluster</th>
-              <th style="padding: var(--space-2);">Outcome / Detail</th>
+              <th style="padding: var(--space-2);">World</th>
+              <th style="padding: var(--space-2);">Clear Metric / Warp</th>
             </tr>
           </thead>
           <tbody>
             {points.map((pt) => (
               <tr style="border-bottom: 1px solid var(--border-subtle);">
-                <td style="padding: var(--space-2); font-weight: 600;">
+                <td style="padding: var(--space-2); font-weight: 700;">
                   <a href={pt.href}>{pt.label}</a>
                 </td>
                 <td style="padding: var(--space-2);" class="mono">{pt.kind}</td>
@@ -353,40 +421,125 @@ const initialNeighbors = initialSource
   }
 
   .cluster-btn[aria-pressed="true"] {
-    background-color: var(--text-primary);
-    color: var(--bg-canvas);
-    border-color: var(--text-primary);
+    background-color: var(--accent);
+    color: #fffdf7;
+    border-color: var(--border-frame);
+  }
+
+  :global(html[data-theme="dark"]) .cluster-btn[aria-pressed="true"] {
+    color: #0b0e1a;
   }
 
   .embedding-explorer {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-5);
     align-items: stretch;
   }
 
   @media (min-width: 60rem) {
     .embedding-explorer {
-      grid-template-columns: 1.75fr 1fr;
+      grid-template-columns: 1.72fr 1fr;
     }
   }
 
   .embedding-canvas-wrap {
     background-color: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
+    border: 2px solid var(--border-strong);
     border-radius: var(--radius-md);
     padding: var(--space-3);
-    box-shadow: var(--shadow-xs);
+    box-shadow: var(--bevel-highlight), var(--shadow-sm);
     overflow-x: auto;
+  }
+
+  .overworld-topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding-bottom: var(--space-2);
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+  }
+
+  .overworld-topbar > span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
 
   .embedding-svg {
     width: 100%;
     height: auto;
-    min-width: 560px;
+    min-width: 580px;
     border-radius: var(--radius-sm);
-    background-color: var(--bg-canvas);
-    border: 1px solid var(--border-subtle);
+    border: 2px solid var(--border-strong);
+  }
+
+  .ow-sea {
+    fill: #dcebfb;
+  }
+
+  :global(html[data-theme="dark"]) .ow-sea {
+    fill: #091224;
+  }
+
+  .ow-waves {
+    stroke: #9ec5ef;
+  }
+
+  :global(html[data-theme="dark"]) .ow-waves {
+    stroke: #1b3158;
+  }
+
+  .ow-island {
+    stroke: var(--border-strong);
+    stroke-width: 2.5px;
+  }
+
+  .ow-island--w1 {
+    fill: #cbeed9;
+  }
+  .ow-island--w2 {
+    fill: #f9e6b3;
+  }
+  .ow-island--w3 {
+    fill: #cde5fa;
+  }
+  .ow-island--w4 {
+    fill: #f9d8c5;
+  }
+
+  :global(html[data-theme="dark"]) .ow-island--w1 {
+    fill: #102a22;
+  }
+  :global(html[data-theme="dark"]) .ow-island--w2 {
+    fill: #272214;
+  }
+  :global(html[data-theme="dark"]) .ow-island--w3 {
+    fill: #112238;
+  }
+  :global(html[data-theme="dark"]) .ow-island--w4 {
+    fill: #291a1c;
+  }
+
+  .ow-island-inner {
+    fill: none;
+    stroke: var(--border-subtle);
+    stroke-width: 1.5px;
+    stroke-dasharray: 5 4;
+  }
+
+  .ow-world-title {
+    font-size: 10.5px;
+    fill: var(--accent);
+    font-weight: 700;
+  }
+
+  .ow-walker {
+    pointer-events: none;
+    transition: transform 280ms var(--ease-spring);
   }
 
   .umap-node-group {
@@ -398,7 +551,7 @@ const initialNeighbors = initialSource
   }
 
   .embedding-svg[data-hovering="true"] .umap-node-group[data-unrelated="true"] {
-    opacity: 0.35;
+    opacity: 0.34;
   }
 
   .umap-node-link {
@@ -406,27 +559,42 @@ const initialNeighbors = initialSource
     outline: none;
   }
 
-  .umap-node-link circle {
+  .stage-tile {
+    stroke: #141724;
+    stroke-width: 2px;
     transition: transform var(--duration-base) var(--ease-spring);
-  }
-
-  .umap-node-link:hover circle,
-  .umap-node-link:focus-visible circle,
-  .umap-node-group[data-selected="true"] circle,
-  .umap-node-group[data-highlighted="true"] circle {
     transform-box: fill-box;
     transform-origin: center;
-    transform: scale(1.26);
   }
 
-  .umap-node-link:focus-visible circle {
-    stroke: var(--text-primary);
+  .stage-tile--project {
+    fill: #ffd23f;
+  }
+
+  .stage-tile--essay {
+    fill: #ff8585;
+  }
+
+  .stage-tile--skill {
+    fill: #3ee084;
+  }
+
+  .umap-node-link:hover .stage-tile,
+  .umap-node-link:focus-visible .stage-tile,
+  .umap-node-group[data-selected="true"] .stage-tile,
+  .umap-node-group[data-highlighted="true"] .stage-tile {
+    transform: scale(1.28);
+    stroke: #ffffff;
+  }
+
+  :global(html[data-theme="light"]) .umap-node-link:focus-visible .stage-tile {
+    stroke: #b42318;
     stroke-width: 3px;
   }
 
   .umap-label {
     paint-order: stroke;
-    stroke: var(--bg-canvas);
+    stroke: var(--bg-surface);
     stroke-width: 4px;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -446,35 +614,30 @@ const initialNeighbors = initialSource
     color: var(--text-muted);
   }
 
-  .legend-dot {
+  .legend-tile {
     display: inline-block;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
+    width: 11px;
+    height: 11px;
+    border: 1.5px solid #141724;
     margin-right: 6px;
+    vertical-align: -1px;
   }
 
-  .legend-dot--project {
-    background-color: var(--accent);
+  .legend-tile--project {
+    background-color: #ffd23f;
   }
 
-  .legend-dot--essay {
-    background-color: var(--text-primary);
+  .legend-tile--essay {
+    background-color: #ff8585;
   }
 
-  .legend-dot--skill {
-    background-color: var(--bg-surface);
-    border: 2px solid var(--accent);
+  .legend-tile--skill {
+    background-color: #3ee084;
   }
 
   .embedding-inspector {
     display: flex;
     flex-direction: column;
-    background-color: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: var(--space-5);
-    box-shadow: var(--shadow-xs);
   }
 
   .inspector-header {
@@ -482,9 +645,8 @@ const initialNeighbors = initialSource
     align-items: center;
     justify-content: space-between;
     gap: var(--space-2);
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     color: var(--text-muted);
-    letter-spacing: 0.05em;
   }
 
   .inspector-vector {
@@ -492,10 +654,10 @@ const initialNeighbors = initialSource
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-xs);
     background-color: var(--bg-subtle);
-    border: 1px solid var(--border-subtle);
+    border: 1.5px solid var(--border-subtle);
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 3px;
   }
 
   .neighbor-list {
@@ -511,10 +673,11 @@ const initialNeighbors = initialSource
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: var(--space-2);
     padding: 0.35rem 0.55rem;
     border-radius: var(--radius-xs);
     background-color: var(--bg-subtle);
-    border: 1px solid var(--border-subtle);
+    border: 1.5px solid var(--border-subtle);
     color: var(--text-secondary);
     transition:
       transform var(--duration-fast) var(--ease-out),
@@ -529,8 +692,9 @@ const initialNeighbors = initialSource
   .static-fallback-details {
     margin-top: var(--space-4);
     padding: var(--space-2) var(--space-4);
-    border: 1px solid var(--border-subtle);
+    border: 2px solid var(--border-strong);
     border-radius: var(--radius-sm);
     background-color: var(--bg-surface);
+    box-shadow: var(--shadow-xs);
   }
 </style>

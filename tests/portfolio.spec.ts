@@ -91,6 +91,10 @@ test.describe('Interactive Features: Theme Toggle, Command Palette & Embedding M
 
     await expect(page.locator('#emb-title')).toContainText('Agentic AI');
     await expect(page.locator('#emb-neighbors')).toContainText('cos θ =');
+    await expect(page.locator('#ow-player-walker')).toHaveAttribute(
+      'style',
+      /translate\(620px,\s*130px\)/,
+    );
   });
 
   test('Search demo matches typos via the Fuzzy tier and updates live status', async ({ page }) => {
@@ -104,6 +108,7 @@ test.describe('Interactive Features: Theme Toggle, Command Palette & Embedding M
     const firstRow = page.locator('[data-sd-results] .sd-row').first();
     await expect(firstRow).toHaveAttribute('data-tier', 'fuzzy');
     await expect(firstRow).toContainText('6204-2RS/C3');
+    await expect(page.locator('[data-sd-corridor]')).toHaveAttribute('style', /--pac-pct:\s*70%/);
   });
 
   test('Recruiter / Engineer toggle folds and unfolds the case-study deep dive', async ({
@@ -128,5 +133,56 @@ test.describe('Interactive Features: Theme Toggle, Command Palette & Embedding M
     await expect(dialog).toBeHidden();
     await page.keyboard.press('?');
     await expect(dialog).toBeVisible();
+  });
+
+  test('Super Mario [?] Mystery Block dispenses secrets, coins, and unlocks Explorer Relic', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await expect(page.locator('[data-coin-counter]')).toHaveText('00');
+    await page.locator('[data-mystery-block]').click();
+    await expect(page.locator('[data-coin-counter]')).toHaveText('01');
+    await expect(page.locator('[data-mystery-fact]')).toContainText('SECRET #1');
+    await expect(page.locator('[data-relic-count]')).toHaveText('1/5');
+
+    await page.locator('#quest-trigger').click();
+    await expect(page.locator('#quest-dialog')).toBeVisible();
+    await expect(page.locator('[data-quest-relic="coin"]')).toHaveAttribute('data-unlocked', '');
+  });
+
+  test('Tetris Capability Matrix inspects polyomino domains and hard-drops the I-piece', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    const widget = page.locator('[data-tetris-widget]');
+    await widget.scrollIntoViewIfNeeded();
+
+    await widget.locator('[data-piece-btn="J"]').click();
+    await expect(widget.locator('[data-t-title]')).toContainText('Snowflake CDC');
+
+    await widget.locator('[data-tetris-drop]').click();
+    await expect(widget).toHaveAttribute('data-dropped', 'true');
+    await expect(page.locator('[data-tetris-lines]')).toHaveText('0440');
+  });
+
+  test('Konami Code (↑↑↓↓←→←→BA) unlocks secret Triforce achievement', async ({ page }) => {
+    await page.goto('/');
+    const keys = [
+      'ArrowUp',
+      'ArrowUp',
+      'ArrowDown',
+      'ArrowDown',
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowLeft',
+      'ArrowRight',
+      'b',
+      'a',
+    ];
+    for (const k of keys) {
+      await page.keyboard.press(k);
+    }
+    await expect(page.locator('#copy-toast')).toContainText('KONAMI CODE');
+    await expect(page.locator('[data-relic-count]')).toHaveText('1/5');
   });
 });

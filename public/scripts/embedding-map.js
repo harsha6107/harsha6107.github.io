@@ -1,7 +1,7 @@
 /**
- * Lazy-loaded 2D UMAP Embedding Space Explorer (< 4 KB minified)
+ * Lazy-loaded Overworld 2D UMAP Latent Explorer (< 4.5 KB)
  * Computes real cosine similarity across 4D semantic vectors, renders k-NN (k=3)
- * tether lines in SVG, updates the telemetry inspector, and filters clusters.
+ * dotted overworld travel paths in SVG, updates the Stage Select HUD, and unlocks the Overworld relic.
  */
 export function initEmbeddingMap(root) {
   if (!root || root.dataset.initialized === 'true') return;
@@ -15,6 +15,7 @@ export function initEmbeddingMap(root) {
 
   const svgEl = root.querySelector('.embedding-svg');
   const edgesLayer = root.querySelector('#knn-edges-layer');
+  const walkerEl = root.querySelector('#ow-player-walker');
   const titleEl = root.querySelector('#emb-title');
   const kindEl = root.querySelector('#emb-kind-badge');
   const metricEl = root.querySelector('#emb-metric');
@@ -43,9 +44,15 @@ export function initEmbeddingMap(root) {
     return denom === 0 ? 0 : dot / denom;
   }
 
-  function selectNode(nodeId) {
+  function selectNode(nodeId, userTriggered = false) {
     const active = byId.get(nodeId);
     if (!active) return;
+
+    if (userTriggered) {
+      window.dispatchEvent(
+        new CustomEvent('relic:unlock', { detail: 'overworld' }),
+      );
+    }
 
     const scored = points
       .filter((p) => p.id !== active.id)
@@ -82,8 +89,8 @@ export function initEmbeddingMap(root) {
       if (span) {
         span.textContent =
           active.kind === 'essay'
-            ? 'Read Technical Essay'
-            : 'Open Case Study Specification';
+            ? 'Read Field Manual Essay'
+            : 'Enter Stage Specification';
       }
     }
 
@@ -91,23 +98,27 @@ export function initEmbeddingMap(root) {
       neighborsEl.innerHTML = scored
         .map(
           ({ point, sim }) =>
-            `<li data-neighbor-id="${point.id}"><a href="${point.href}" style="text-decoration:none;font-weight:600;">${point.label}</a><span style="color:var(--accent);">cos θ = ${sim.toFixed(3)}</span></li>`,
+            `<li data-neighbor-id="${point.id}"><a href="${point.href}" style="text-decoration:none;font-weight:700;">${point.label}</a><span style="color:var(--accent);font-weight:700;">cos θ = ${sim.toFixed(3)}</span></li>`,
         )
         .join('');
     }
 
+    const x1 = Math.round(active.x * 10);
+    const y1 = Math.round(active.y * 5.4);
+    if (walkerEl) {
+      walkerEl.style.transform = `translate(${x1}px, ${y1}px)`;
+    }
+
     if (edgesLayer) {
-      const x1 = Math.round(active.x * 10);
-      const y1 = Math.round(active.y * 5.4);
       edgesLayer.innerHTML = scored
         .map(({ point, sim }) => {
           const x2 = Math.round(point.x * 10);
           const y2 = Math.round(point.y * 5.4);
           const mx = Math.round((x1 + x2) / 2);
-          const my = Math.round((y1 + y2) / 2) - 6;
+          const my = Math.round((y1 + y2) / 2) - 7;
           return `<g>
-            <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--accent)" stroke-width="1.75" stroke-dasharray="4 3" />
-            <text x="${mx}" y="${my}" fill="var(--accent)" font-size="9.5" class="mono" text-anchor="middle">${sim.toFixed(2)}</text>
+            <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--accent)" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="square" />
+            <text x="${mx}" y="${my}" fill="var(--accent)" font-size="10" font-weight="700" class="mono umap-label" text-anchor="middle">${sim.toFixed(2)}</text>
           </g>`;
         })
         .join('');
@@ -154,10 +165,12 @@ export function initEmbeddingMap(root) {
     const link = group.querySelector('[data-node-trigger]');
     if (!id || !link) continue;
 
-    link.addEventListener('pointerenter', () => selectNode(id), {
+    link.addEventListener('pointerenter', () => selectNode(id, true), {
       passive: true,
     });
-    link.addEventListener('focus', () => selectNode(id), { passive: true });
+    link.addEventListener('focus', () => selectNode(id, true), {
+      passive: true,
+    });
   }
 
   for (const btn of filterBtns) {
@@ -171,6 +184,9 @@ export function initEmbeddingMap(root) {
         const dimmed = cluster !== 'all' && nodeCluster !== cluster;
         group.setAttribute('data-dimmed', dimmed ? 'true' : 'false');
       }
+      window.dispatchEvent(
+        new CustomEvent('relic:unlock', { detail: 'overworld' }),
+      );
     });
   }
 
@@ -179,6 +195,6 @@ export function initEmbeddingMap(root) {
     ? focusedLink.getAttribute('data-node-trigger')
     : points[0]?.id;
   if (initialId) {
-    selectNode(initialId);
+    selectNode(initialId, false);
   }
 }

@@ -1,6 +1,8 @@
 const fs = require('node:fs');
 
-const systemChromium = fs.existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined;
+const systemChromium = ['/usr/bin/chromium', '/usr/bin/google-chrome'].find((p) =>
+  fs.existsSync(p),
+);
 
 module.exports = {
   ci: {

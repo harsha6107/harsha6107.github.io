@@ -12,7 +12,7 @@ interface DemoConfig {
 
 const pad = (n: number): string => String(n).padStart(2, '0');
 
-/** Wire up the server-rendered demo markup. Rendering mirrors SearchDemo.astro. */
+/** Wire up the server-rendered Pac-Search Maze console. Mirrors SearchDemo.astro. */
 export function initSearchDemo(root: HTMLElement): void {
   const input = root.querySelector<HTMLInputElement>('[data-sd-input]');
   const list = root.querySelector<HTMLOListElement>('[data-sd-results]');
@@ -20,7 +20,25 @@ export function initSearchDemo(root: HTMLElement): void {
   const latency = root.querySelector<HTMLElement>('[data-sd-latency]');
   const normalized = root.querySelector<HTMLElement>('[data-sd-normalized]');
   const total = root.querySelector<HTMLElement>('[data-sd-total]');
+  const winnerBadge = root.querySelector<HTMLElement>('[data-sd-winner-badge]');
+  const corridor = root.querySelector<HTMLElement>('[data-sd-corridor]');
+  const ptsBadge = root.querySelector<HTMLElement>('[data-sd-pts]');
   if (!input || !list || !status || !latency || !normalized || !total) return;
+
+  const TIER_PCT: Record<Tier, number> = {
+    exact: 10,
+    normalized: 30,
+    prefix: 50,
+    fuzzy: 70,
+    text: 86,
+  };
+  const TIER_PTS: Record<Tier, string> = {
+    exact: '+800',
+    normalized: '+400',
+    prefix: '+200',
+    fuzzy: '+200',
+    text: '+100',
+  };
 
   let cached: DemoConfig | null = null;
   const getConfig = (): DemoConfig => {
@@ -37,7 +55,7 @@ export function initSearchDemo(root: HTMLElement): void {
       li.dataset.sku = hit.item.sku;
 
       const rank = document.createElement('span');
-      rank.className = 'sd-rank';
+      rank.className = 'sd-rank pixel';
       rank.textContent = pad(idx + 1);
 
       const tier = document.createElement('span');
@@ -70,7 +88,7 @@ export function initSearchDemo(root: HTMLElement): void {
     list.replaceChildren(frag);
   };
 
-  const renderFunnel = (result: SearchResult): void => {
+  const renderFunnel = (result: SearchResult, topTier: Tier | null): void => {
     for (const tier of TIERS) {
       const cell = root.querySelector<HTMLElement>(`[data-sd-funnel="${tier}"]`);
       const count = cell?.querySelector<HTMLElement>('[data-sd-count]');
@@ -78,6 +96,7 @@ export function initSearchDemo(root: HTMLElement): void {
       const n = result.counts[tier];
       count.textContent = String(n);
       cell.toggleAttribute('data-active', n > 0);
+      cell.toggleAttribute('data-winner', tier === topTier);
     }
   };
 
@@ -87,13 +106,23 @@ export function initSearchDemo(root: HTMLElement): void {
     const result = searchSkus(config.items, input.value);
     const ms = performance.now() - t0;
 
+    const top = result.hits[0];
     renderRows(result, config);
-    renderFunnel(result);
+    renderFunnel(result, top ? top.tier : null);
     latency.textContent = `${ms < 0.1 ? ms.toFixed(3) : ms.toFixed(2)} ms`;
     normalized.textContent = result.normalized ? `"${result.normalized}"` : '—';
     total.textContent = `${result.total} ${config.hitsLabel} · ${result.scanned} ${config.scannedLabel}`;
 
-    const top = result.hits[0];
+    if (winnerBadge) {
+      winnerBadge.textContent = `TOP GATE: ${top ? config.tiers[top.tier].toUpperCase() : 'NO MATCH'}`;
+    }
+    if (corridor) {
+      corridor.style.setProperty('--pac-pct', `${top ? TIER_PCT[top.tier] : 4}%`);
+    }
+    if (ptsBadge) {
+      ptsBadge.textContent = top ? TIER_PTS[top.tier] : 'MISS';
+    }
+
     if (!result.normalized) status.textContent = config.idleText;
     else if (!top) status.textContent = config.emptyText;
     else
@@ -104,6 +133,7 @@ export function initSearchDemo(root: HTMLElement): void {
   const onInteract = (): void => {
     root.setAttribute('data-interacted', '');
     run();
+    window.dispatchEvent(new CustomEvent('relic:unlock', { detail: 'pacman' }));
   };
 
   input.addEventListener('input', onInteract);

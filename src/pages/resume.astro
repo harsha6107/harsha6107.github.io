@@ -1,4 +1,5 @@
 ---
+import RetroSprite from '../components/RetroSprite.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getSiteData, getSortedProjects } from '../utils/content';
 
@@ -15,12 +16,13 @@ const projects = await getSortedProjects();
     <div class="container">
       <div class="section-header no-print">
         <div>
-          <span class="section-index">SPECIFICATION // CURRICULUM VITAE</span>
+          <span class="section-index">SAVE FILE // OFFICIAL SPECIFICATION</span>
           <h1 style="margin-top: var(--space-2);">Résumé</h1>
         </div>
         <div style="display: flex; flex-wrap: wrap; gap: var(--space-3);">
           <a href={site.links.resumePdf} class="btn btn-primary" download>
-            <span>Download PDF</span>
+            <RetroSprite name="cartridge" size={15} />
+            <span>Download Save File (PDF)</span>
             <span aria-hidden="true" class="mono">↓</span>
           </a>
           <button
@@ -34,13 +36,13 @@ const projects = await getSortedProjects();
         </div>
       </div>
 
-      <div class="resume-sheet spotlight-card">
+      <div class="resume-sheet cartridge-card">
         <!-- Header -->
         <header class="resume-header">
           <div>
             <h2 style="font-size: var(--text-2xl);">{site.name}</h2>
-            <p class="mono" style="font-size: var(--text-sm); color: var(--accent); font-weight: 600; margin-top: 4px;">
-              {site.role} · {site.tagline}
+            <p class="pixel" style="font-size: 0.74rem; color: var(--accent); margin-top: 6px;">
+              {site.role.toUpperCase()} · {site.tagline.toUpperCase()}
             </p>
           </div>
           <div class="mono resume-contact">
@@ -53,7 +55,7 @@ const projects = await getSortedProjects();
 
         <!-- Summary -->
         <section class="resume-section" aria-labelledby="res-summary">
-          <h3 id="res-summary" class="resume-sec-title mono">01 // EXECUTIVE SUMMARY</h3>
+          <h3 id="res-summary" class="resume-sec-title pixel">▶ 01 · EXECUTIVE SUMMARY</h3>
           <p style="max-width: 85ch; font-size: var(--text-sm);">
             {site.positioningHeadline} {site.aboutShort[0]}
           </p>
@@ -61,7 +63,7 @@ const projects = await getSortedProjects();
 
         <!-- Skills -->
         <section class="resume-section" aria-labelledby="res-skills">
-          <h3 id="res-skills" class="resume-sec-title mono">02 // TECHNICAL CAPABILITIES</h3>
+          <h3 id="res-skills" class="resume-sec-title pixel">▶ 02 · TECHNICAL CAPABILITIES</h3>
           <div style="display: grid; gap: var(--space-2); font-size: var(--text-sm);">
             {site.skillGroups.map((g) => (
               <div>
@@ -74,7 +76,7 @@ const projects = await getSortedProjects();
 
         <!-- Experience -->
         <section class="resume-section" aria-labelledby="res-exp">
-          <h3 id="res-exp" class="resume-sec-title mono">03 // PROFESSIONAL EXPERIENCE</h3>
+          <h3 id="res-exp" class="resume-sec-title pixel">▶ 03 · PROFESSIONAL EXPERIENCE</h3>
           <div style="display: flex; flex-direction: column; gap: var(--space-5);">
             {site.experience.map((exp) => (
               <div>
@@ -111,14 +113,14 @@ const projects = await getSortedProjects();
 
         <!-- Selected Engineering Projects -->
         <section class="resume-section" aria-labelledby="res-proj">
-          <h3 id="res-proj" class="resume-sec-title mono">04 // SELECTED CASE STUDIES</h3>
+          <h3 id="res-proj" class="resume-sec-title pixel">▶ 04 · SELECTED CASE STUDIES</h3>
           <div style="display: grid; gap: var(--space-3);">
             {projects.map((p) => (
               <div style="font-size: var(--text-sm);">
-                <a href={`/projects/${p.data.slug}`} style="font-weight: 600; color: var(--text-primary);">
+                <a href={`/projects/${p.data.slug}`} style="font-weight: 700; color: var(--text-primary);">
                   {p.data.title}
                 </a>
-                <span class="mono" style="font-size: var(--text-xs); color: var(--accent);">
+                <span class="mono" style="font-size: var(--text-xs); color: var(--accent); font-weight: 600;">
                   {' '}[{p.data.headlineMetric}]
                 </span>
                 <p style="font-size: var(--text-sm); max-width: 88ch; margin-top: 2px;">
@@ -131,13 +133,13 @@ const projects = await getSortedProjects();
 
         <!-- Education & Leadership -->
         <section class="resume-section" style="border-bottom: none; padding-bottom: 0;" aria-labelledby="res-edu">
-          <h3 id="res-edu" class="resume-sec-title mono">05 // EDUCATION &amp; ACADEMIC LEADERSHIP</h3>
+          <h3 id="res-edu" class="resume-sec-title pixel">▶ 05 · EDUCATION &amp; ACADEMIC LEADERSHIP</h3>
           <div style="display: grid; gap: var(--space-3);">
             {site.education.map((edu) => (
               <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); font-size: var(--text-sm);">
                 <div>
                   <strong style="color: var(--text-primary);">{edu.institution}</strong> — {edu.degree}
-                  {edu.gpa && <span class="mono" style="color: var(--accent);"> (GPA {edu.gpa})</span>}
+                  {edu.gpa && <span class="mono" style="color: var(--accent); font-weight: 600;"> (GPA {edu.gpa})</span>}
                 </div>
                 <span class="mono" style="font-size: var(--text-xs); color: var(--text-muted);">
                   {edu.period} · {edu.location}
@@ -171,7 +173,7 @@ const projects = await getSortedProjects();
     justify-content: space-between;
     gap: var(--space-4);
     padding-bottom: var(--space-4);
-    border-bottom: 2px solid var(--border-strong);
+    border-bottom: 3px solid var(--border-strong);
   }
 
   .resume-contact {
@@ -203,13 +205,12 @@ const projects = await getSortedProjects();
 
   .resume-section {
     padding-bottom: var(--space-4);
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1.5px solid var(--border-subtle);
   }
 
   .resume-sec-title {
-    font-size: var(--text-xs);
+    font-size: 0.72rem;
     color: var(--accent);
-    letter-spacing: 0.08em;
     margin-bottom: var(--space-3);
   }
 </style>

@@ -4,7 +4,9 @@ import { defineConfig, devices } from '@playwright/test';
 process.env.NO_PROXY = 'localhost,127.0.0.1';
 process.env.no_proxy = 'localhost,127.0.0.1';
 
-const systemChromium = fs.existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined;
+const systemChromium = process.env.GITHUB_ACTIONS
+  ? undefined
+  : ['/usr/bin/chromium', '/usr/bin/google-chrome'].find((p) => fs.existsSync(p));
 
 export default defineConfig({
   testDir: './tests',
